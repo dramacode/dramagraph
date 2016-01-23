@@ -1,6 +1,7 @@
+
+// try javascript autoloader, haven’t found a way to have sigma loaded
 ;(function() {
   'use strict';
-  
   if ("onhashchange" in window) {
     window.addEventListener("hashchange", function() {
       window.scrollBy(0, -60);

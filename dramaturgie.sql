@@ -1,6 +1,7 @@
 PRAGMA encoding = 'UTF-8';
 PRAGMA page_size = 8192;
-
+PRAGMA foreign_keys = ON;
+-- The VACUUM command may change the ROWIDs of entries in any tables that do not have an explicit INTEGER PRIMARY KEY
 CREATE TABLE play (
   -- une pièce
   id      INTEGER, -- rowid auto
@@ -23,7 +24,7 @@ CREATE UNIQUE INDEX play_code ON play(code);
 CREATE TABLE act (
   -- un acte
   id      INTEGER, -- rowid auto
-  play    TEXT,    -- code pièce
+  play    INTEGER REFERENCES play(id), -- id pièce
   code    TEXT,    -- code acte, unique pour la pièce
   n       INTEGER, -- numéro d’ordre dans la pièce
   label   TEXT,    -- intitulé affichabe
@@ -45,8 +46,8 @@ CREATE INDEX act_type ON act(type);
 CREATE TABLE scene (
   -- une scène (référence pour la présence d’un rôle)
   id      INTEGER, -- rowid auto
-  play    TEXT,    -- code pièce
-  act     TEXT,    -- code acte
+  play    INTEGER REFERENCES play(id),    -- id pièce
+  act     INTEGER REFERENCES act(id),    -- id acte
   code    TEXT,    -- code scene, unique pour la pièce
   n       INTEGER, -- numéro d’ordre dans l’acte
   label   TEXT,    -- intitulé affichabe
@@ -66,7 +67,7 @@ CREATE INDEX scene_act ON scene(play, act);
 CREATE TABLE role (
   -- un rôle
   id       INTEGER,  -- rowid auto
-  play     TEXT,     -- code pièce
+  play     INTEGER REFERENCES play(id),     -- code pièce
   code     TEXT,     -- code personne
   label    TEXT,     -- nom affichable
   title    TEXT,     -- description du rôle (mère de…, amant de…) tel que dans la source
@@ -87,9 +88,9 @@ CREATE UNIQUE INDEX role_who ON role(play, code);
 CREATE TABLE sp (
   -- une réplique 
   id INTEGER,           -- rowid auto
-  play         TEXT,    -- nom de fichier de la pièce sans extension
-  act          TEXT,    -- identifiant d’acte dans le fichier
-  scene        TEXT,    -- identifiant de scene dans le fichier
+  play         INTEGER REFERENCES play(id),    -- id pièce dans la base
+  act          INTEGER REFERENCES act(id),     -- identifiant d’acte
+  scene        INTEGER REFERENCES scene(id),   -- id de scene
   code         TEXT,    -- identifiant de réplique dans le fichier
   source       TEXT,    -- code de personnage
   target       TEXT,    -- code de personnage
@@ -109,12 +110,13 @@ CREATE UNIQUE INDEX sp_cn ON sp(play, cn);
 CREATE UNIQUE INDEX sp_wn ON sp(play, wn);
 CREATE INDEX sp_ln ON sp(play, ln);
 
+
 CREATE TRIGGER playDel
   -- si on supprime une pièce, supprimer la cascade qui en dépend
   BEFORE DELETE ON play
   FOR EACH ROW BEGIN
-    DELETE FROM act WHERE act.play = OLD.code;
-    DELETE FROM scene WHERE scene.play = OLD.code;
-    DELETE FROM role WHERE role.play = OLD.code;
-    DELETE FROM sp WHERE sp.play = OLD.code;
+    DELETE FROM act WHERE act.play = OLD.id;
+    DELETE FROM scene WHERE scene.play = OLD.id;
+    DELETE FROM role WHERE role.play = OLD.id;
+    DELETE FROM sp WHERE sp.play = OLD.id;
 END;

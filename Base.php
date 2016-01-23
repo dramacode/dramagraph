@@ -8,6 +8,8 @@ else if (php_sapi_name() == "cli") {
   Dramaturgie_Base::cli();
 }
 class Dramaturgie_Base {
+  /** filtrer */
+  const FILTER = true;
   /** Lien à une base SQLite, unique */
   public $pdo;
   /** Document XML */
@@ -16,24 +18,23 @@ class Dramaturgie_Base {
   private $_xpath;
   /** Processeur xslt */
   private $_xslt;
-  /** Couleurs de nœuds */
-
-  public $ncols = array(
-    "#FF4C4C",
-    "#A64CA6",
-    "#4C4CFF",
-    "#4c4ca6",
-    "#A6A6A6",
-  );
-
-
-  /** Couleurs de liens */
-  public $ecols = array(
-    "rgba(255, 0, 0, 0.5)",
-    "rgba(128, 0, 128, 0.5)",
-    "rgba(0, 0, 255, 0.5)",
-    "rgba(0, 0, 128, 0.5)",
-    "rgba(140, 140, 160, 0.6)",
+  /** Couleurs pour le graphe, la clé est une classe de nœud, les valeurs son 1: nœud, 2: lien */
+  public static $colors = array(
+    1 => array("#FF4C4C", "rgba(255, 0, 0, 0.5)"),
+    2 => array("#A64CA6", "rgba(128, 0, 128, 0.5)"),
+    3 => array("#4C4CFF", "rgba(0, 0, 255, 0.5)"),
+    4 => array("#4c4ca6", "rgba(0, 0, 128, 0.5)"),
+    5 => array("#A6A6A6", "rgba(140, 140, 160, 0.6)"),
+    "female" => array("#FF4C4C", "rgba(255, 0, 0, 0.5)"),
+    "female superior" => array("#FF0000", "rgba(255, 0, 0, 0.5)"),
+    "female junior" => array("#FFb0D0", "rgba(255, 128, 192, 0.5)"),
+    "female inferior" => array("#D07070", "rgba(192, 96, 96, 0.3)"),
+    "male" => array("#4C4CFF", "rgba(0, 0, 255, 0.3)"),
+    "male junior" => array("#B0D0FF", "rgba(128, 192, 255, 0.5)"),
+    "male veteran" => array("#333390", "rgba(0, 0, 128, 0.3)"),
+    "male superior" => array("#0000FF", "rgba(0, 0, 255, 0.3)"),
+    "male inferior" => array("#C0C0FF", "rgba(96, 96, 192, 0.3)"),
+    "male exterior" => array("#A0A0A0", "rgba(96, 96, 192, 0.3)"),
   );
 
   /**
@@ -101,21 +102,46 @@ class Dramaturgie_Base {
   /**
    * Json compatible avec la librairie sigma.js
    */
-  public function sigma($play) {
-    $color = array();
-    echo "{ nodes: [\n";
-    $data = $this->nodes($play);
-    // 'Id', 'Label', 'c', 'title', 'targets', 'color'
-    $count = count($data) - 1;
-    for ($i=1; $i<count($data); $i++) {
-      // ne pas mettre les personnages non liés, écarte topr le réseau
-      if (!$data[$i][4]) continue;
+  public function sigma($playcode) {
+    $nodes = $this->nodes($playcode, self::FILTER);
+    $edges = $this->edges($playcode);
+
+    echo "{ ";
+    echo "\n  edges: [\n    ";
+    for ($i=0; $i < count($edges); $i++) {
+      $edge = $edges[$i];
+      if (!isset($nodes[$edge['source']])) continue;
+      if (!isset($nodes[$edge['target']])) continue;
+      if ($i) echo ",\n    ";
+      $source = $nodes[$edge['source']];
       $col = "";
-      // position initiale en cercle, en diagonale
-      $angle = 2*M_PI/3 + (2*M_PI/$count) * ($i -1); 
+      if (isset(self::$colors[$source['class']])) {
+        $col = ', color: "'.self::$colors[$source['class']][1].'"';
+      }
+      else if (isset(self::$colors['role'.$i])) {
+        $col = ', color: "'.self::$colors[$source['rank']][1].'"';
+      }
+
+      echo '{id:"e'.$i.'", source:"'.$edge['source'].'", target:"'.$edge['target'].'", size:"'.$edge['c'].'"'.$col.', type:"drama"}';
+
+    }
+    echo "\n  ]";
+
+    echo ",";
+    
+    echo "\n  nodes: [\n    ";
+    
+    
+    $count = count($nodes);
+    $i = 1;
+    foreach ($nodes as $code=>$node) {
+      if (!$code) continue;
+      if ($i > 1) echo ",\n    ";
+      // position initiale en cercle, à 1h30
+      $angle = M_PI/2+ ($count/7.6)*(M_PI*2/$count) * $i; 
       // $angle =  2*M_PI/$count * ($i -1);
-      $x =  number_format(cos($angle)*6, 4);
-      $y =  number_format(sin($angle)*6, 4);
+      $x =  number_format(6.0*cos($angle), 4);
+      $y =  number_format(6.0*sin($angle), 4);
       /*
       // position initiale en ligne
       // $x = $i ; 
@@ -123,28 +149,20 @@ class Dramaturgie_Base {
       // $x = -$i*(1-2*($i%2));
       $x=$i;
       */
-      if (isset($this->ncols[$i-1])) {
-        $color[$data[$i][0]] = $this->ecols[$i-1];
-        $col = ", color: '".$this->ncols[$i-1]."'";
+      $col = "";
+      if (isset(self::$colors[$node['class']])) {
+        $col = ', color: "'.self::$colors[$node['class']][0].'"';
+      }
+      else if (isset(self::$colors['role'.$i])) {
+        $col = ', color: "'.self::$colors[$node['class']][0].'"';
       }
       $json_options = JSON_UNESCAPED_UNICODE;
-      echo "  {id:'".$data[$i][0]."', label:".json_encode($data[$i][1],  $json_options).", size:".(0+$data[$i][2]).", x: $x, y: $y".$col.", title: ".json_encode($data[$i][3],  $json_options)."}";
-      if ($i+1<count($data)) echo ',';
-      echo "\n";
+      echo "{id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options)."}";
+      $i++;
     }
-    echo "], edges: [\n";
-    $data = $this->edges($play);
-    for ($i=1; $i < count($data); $i++) {
-      $col = "";
-      if (isset($color[$data[$i][0]])) $col = ", color: '".$color[$data[$i][0]]."'";
-      // bigger less opacity ?
-      // number_format(0.5+(1-$data[$i][3])*0.5, 1)
-      // $col=", color: 'rgba(128, 128, 128, 0.5)'";
-      echo "  {id:'e".$i."', source:'".$data[$i][0]."', target:'".$data[$i][1]."', size:".$data[$i][2].$col.", type:'drama'}";
-      echo ',';
-      echo "\n";
-    }
-    echo "]};\n";
+    echo "\n  ]";
+    
+    echo "\n};";
   }
   /**
    * Ligne bibliographique pour une pièce
@@ -260,7 +278,7 @@ div.rolerate:after { content:""; display: table; clear: both; }
    * Panneau vertical de pièce
    */
   public function charline($playcode, $width=150, $heightref=800) {
-    $scenewidth = $width - 80;
+    $scenewidth = $width - 75;
     echo '
 <style>
 .charline { font-family: sans-serif; font-size: 13px; line-height: 1.2em; position: relative; }
@@ -273,8 +291,8 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 
 .charline div.scene { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 .charline .acthead { display: block; text-align: center; padding: 5px  30px 1px 0; clear: both;  }
-.charline a.cast { display: block; height: 100%; float: left; padding-left: 3ex; }
-.charline div.sps { margin-left: 5px; margin-bottom: 1px; float: right; width: 35px; border-right: 1px dotted #CCCCCC; background: #FFFFFF; }
+.charline a.cast { display: block; height: 100%; float: left; padding-left: 2ex; }
+.charline div.sps { margin-left: 5px; margin-bottom: 1px; float: left; width: 35px; border-right: 1px dotted #CCCCCC; background: #FFFFFF; }
 .charline div.sps a { display: block; line-height: 3px; position: relative; }
 .charline div.sps b { background: #AAAAAA; display: block; }
 .charline .role { float: left; height: 100%; border-left: 1px rgba(255, 255, 255, 0.5) solid; border-radius: 3px/1em; font-stretch: ultra-condensed; }
@@ -282,26 +300,30 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 
 </style>
     ';
-    $playcode = $this->pdo->quote($playcode);
-    $play = $this->pdo->query("SELECT * FROM play WHERE code = $playcode")->fetch();
+    
+    $play = $this->pdo->query("SELECT * FROM play WHERE code = ".$this->pdo->quote($playcode))->fetch();
     // 1 pixel = 1000 caractères
     if (!$heightref) $playheight = '800';
     else if (is_numeric($heightref) && $heightref > 50) $playheight = round($play['c'] / (100000/$heightref));
     else $playheight = '800';
-    
+    $playid = $play['id'];
     
     // requête sur le nombre de caractère d’un rôle dans une scène
-    $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE play = $playcode AND scene = ? AND source = ?");
-    $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE play = $playcode AND scene = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
+    $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE play = $playid AND scene = ? AND source = ?");
+    $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE play = $playid AND scene = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
     echo '<div class="charline">'."\n";
     
     // loop on acts
-    foreach ($this->pdo->query("SELECT * FROM act WHERE play = $playcode ORDER BY rowid") as $act) {
+    foreach ($this->pdo->query("SELECT * FROM act WHERE play = $playid ORDER BY rowid") as $act) {
       echo '  <a href="#'.$act['code'].'" class="acthead">'.$act['label']."</a>\n";
       echo '  <div class="act">'."\n";
       $actheight = $playheight * $act['c']/$play['c'];
+      if(!$act['c']){
+        echo "  </div>\n";
+        continue; // probably an interlude
+      }
       // loop on scene
-      foreach ($this->pdo->query("SELECT * FROM scene WHERE play = $playcode AND act = ".$this->pdo->quote($act['code'])) as $scene) {
+      foreach ($this->pdo->query("SELECT * FROM scene WHERE act = ".$act['id']) as $scene) {
         $sceneheight = 3+ ceil($actheight * $scene['c']/$act['c']);
         if (!isset($scene['n'])) $scene['n'] = 0+ preg_replace('/\D/', '', $scene['code']);
         // scene cont
@@ -311,8 +333,8 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
           echo '      <a href="#'.$scene['code'].'" class="cast">'."\n";
           $i = 0;
           // loop on role
-          foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playcode ORDER BY c DESC") as $role) {
-            $qsp->execute(array($scene['code'], $role['code']));
+          foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playid ORDER BY c DESC") as $role) {
+            $qsp->execute(array($scene['id'], $role['code']));
             list($c) = $qsp->fetch();
             $i++;
             if (!$c) continue;
@@ -333,7 +355,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
           $splast = null;
           for ($pixel = 0; $pixel <= $sceneheight; $pixel = $pixel +3) {
             $cn = $scene['cn'] + ceil($scene['c'] * $pixel / $sceneheight);
-            $qcn->execute( array($scene['code'], $cn));
+            $qcn->execute( array($scene['id'], $cn));
             $sp = $qcn->fetch();
             if (!$sp) $sp = $splast;
             if($splast) {
@@ -485,28 +507,35 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 ';
   }
   /**
-   * proprotion de parole par personnage
+   * proportion de parole par personnage
    */
-  public function nodes($play) {
-    $play = $this->pdo->quote($play);
+  public function nodes($playcode, $filter=false) {
+    $playcode = $this->pdo->quote($playcode);
     $data = array();
-    $data[] = array('Id', 'Label', 'c', 'title', 'targets', 'color');
-    foreach ($this->pdo->query("SELECT * FROM role WHERE play = $play ORDER BY c DESC") as $role) {
-      if ($role['sex'] == 1 && $role['age'] == 'junior') $color = "#00FFFF";
-      else if ($role['sex'] == 1 && $role['age'] == 'veteran') $color = "#0000FF";
-      else if ($role['sex'] == 1) $color = "#4080FF";
-      else if ($role['sex'] == 2 && $role['age'] == 'junior') $color = "#FFAAFF";
-      else if ($role['sex'] == 2 && $role['age'] == 'veteran') $color = "#800000";
-      else if ($role['sex'] == 2) $color = "#FF0000";
-      else $color = '#CCCCCC';
-      $data[] = array(
-        $role['code'],
-        $role['label'],
-        $role['c'],
-        ($role['title'])?$role['title']:'',
-        $role['targets'],
-        $color,
+    $rank = 1;
+    foreach ($this->pdo->query("SELECT role.* FROM role, play WHERE role.play = play.id AND play.code = $playcode ORDER BY role.targets DESC") as $role) {
+      if (!$filter);
+      else if (!$role['c']) continue;
+      else if (!$role['targets']) continue;
+      else if (strpos('   '.$role['rend'].' ', ' nograph ') !== false) continue;
+      $class = "";
+      if ($role['sex'] == 2) $class = "female";
+      else if ($role['sex'] == 1) $class = "male";
+      if ($role['status'] == 'exterior') $class .= " exterior";
+      else if ($role['status'] == 'inferior') $class .= " inferior";
+      else if ($role['status'] == 'superior') $class .= " superior";
+      else if ($role['age'] == 'junior') $class .= " junior";
+      else if ($role['age'] == 'veteran') $class .= " veteran";
+      $data[$role['code']] = array(
+        'code' => $role['code'],
+        'label' => $role['label'],
+        'c' => $role['c'],
+        'title' => ($role['title'])?$role['title']:'',
+        'targets' => $role['targets'],
+        'class' => $class,
+        'rank' => $rank,
       );
+      $rank++;
     }
     return $data;
   }
@@ -515,10 +544,9 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
    */
   public function edges($playcode) {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
-    $q = $this->pdo->prepare("SELECT source, target, sum(sp.c) AS ord FROM sp, act WHERE sp.play = ? AND sp.play = act.play AND sp.act = act.code AND act.type = 'act' GROUP BY source, target ORDER BY ord DESC");
-    $q->execute(array($playcode));
+    $q = $this->pdo->prepare("SELECT source, target, sum(sp.c) AS ord FROM sp, act WHERE sp.play = ? AND sp.act = act.id AND act.type = 'act' GROUP BY source, target ORDER BY ord DESC");
+    $q->execute(array($play['id']));
     $data = array();
-    $data[] = array('Source', 'Target', 'Weight', 'max%');
     $max = false;
     $nodes = array();
     while ($sp = $q->fetch()) {
@@ -547,10 +575,9 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         continue;
       }
       $data[] = array(
-        $sp['source'],
-        $sp['target'],
-        $sp['ord'],
-        number_format($sp['ord']/$play['c'], 2),
+        'source' => $sp['source'],
+        'target' => $sp['target'],
+        'c' => $sp['ord'],
       );
     }
     return $data;
@@ -605,6 +632,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $p = $this->_xpath->evaluate("count(//tei:sp/tei:p)");
     if ($l > 2*$p) $play['verse'] = true;
     else if ($p > 2*$l) $play['verse'] = false;
+    $play['verse'] = null;
     return $play;
   }
   /**
@@ -628,6 +656,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       $play['verse'],
       $play['genre'],
     ));
+    $playid = $this->pdo->lastInsertId();
     // roles
     $this->pdo->beginTransaction();
     $q = $this->pdo->prepare("
@@ -669,7 +698,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       // si pas de nom, garder tout de même, risque d’erreur réseau
       if (!$label) $label = $code;
       $q->execute(array(
-        $play['code'],
+        $playid,
         $code,
         $label,
         $title,
@@ -727,9 +756,9 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         if (!$data['ln']) $data['ln'] = null;
         try {
           $insp->execute(array(
-            $play['code'],
-            $act, 
-            $scene, 
+            $playid,
+            $actid, 
+            $sceneid, 
             $data['code'],
             $data['source'],
             $data['target'],
@@ -750,17 +779,18 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       }
       // scènes, parfois non contenues dans un acte (pièces en un acte)
       else if ($data['object'] == 'div2' || $data['type'] == 'scene' ) {
-        $scene = $data['code'];
+        $sceneid = null;
         if (!$data['type']) $data['type'] = null; 
         try {
           $inscene->execute(array(
-            $play['code'],
-            $act,
+            $playid,
+            $actid,
             $data['code'],
             $data['n'],
             $data['label'],
             $data['type'],
           ));
+          $sceneid = $this->pdo->lastInsertId();
         }
         catch (Exception $e) {
           if (STDERR) fwrite(STDERR, "\n\n      NOT UNIQUE scene ? ".$data['code']."\n".$e."\n\n");
@@ -768,17 +798,18 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       }
       // actes
       else if ($data['object'] == 'div1' ) {
-        $scene = null;
-        $act = $data['code'];
+        $sceneid = null;
+        $actid = null;
         if(!$data['type']) $data['type'] = 'act';
         try {
           $inact->execute(array(
-            $play['code'],
+            $playid,
             $data['code'],
             $data['n'],
             $data['label'],
             $data['type'],
           ));
+          $actid = $this->pdo->lastInsertId();
         }
         catch (Exception $e) {
           if (STDERR) fwrite(STDERR, "\n\n      NOT UNIQUE act ? ".$data['code']."\n".$e."\n\n");
@@ -788,37 +819,36 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     }
     $this->pdo->commit();
     // différentes stats prédef
-    $play = $this->pdo->quote($play['code']);
     if (STDERR) fwrite(STDERR, " sp: ".number_format(microtime(true) - $time, 3)."s. ");
     $time = microtime(true);
     $this->pdo->beginTransaction();
-    $this->pdo->exec("UPDATE play SET sp = (SELECT COUNT(*) FROM sp WHERE play = $play) WHERE code = $play;");
-    $this->pdo->exec("UPDATE play SET l = (SELECT SUM(l) FROM sp WHERE play = $play) WHERE code = $play;");
-    $this->pdo->exec("UPDATE play SET w = (SELECT SUM(w) FROM sp WHERE play = $play) WHERE code = $play;");
-    $this->pdo->exec("UPDATE play SET c = (SELECT SUM(c) FROM sp WHERE play = $play) WHERE code = $play;");
-    $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $play) WHERE code = $play;");
+    $this->pdo->exec("UPDATE play SET sp = (SELECT COUNT(*) FROM sp WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET l = (SELECT SUM(l) FROM sp WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET w = (SELECT SUM(w) FROM sp WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET c = (SELECT SUM(c) FROM sp WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $playid) WHERE id = $playid;");
     
-    $this->pdo->exec("UPDATE act SET sp = (SELECT COUNT(*) FROM sp WHERE play = $play AND sp.act = act.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE play = $play AND sp.act = act.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE act SET ln = (SELECT ln FROM sp WHERE play = $play AND sp.act = act.code ORDER BY rowid LIMIT 1) WHERE play = $play;");
-    $this->pdo->exec("UPDATE act SET w = (SELECT SUM(w) FROM sp WHERE play = $play AND sp.act = act.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE act SET wn = (SELECT wn FROM sp WHERE play = $play AND sp.act = act.code ORDER BY rowid LIMIT 1) WHERE play = $play;");
-    $this->pdo->exec("UPDATE act SET c = (SELECT SUM(c) FROM sp WHERE play = $play AND sp.act = act.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE act SET cn = (SELECT cn FROM sp WHERE play = $play AND sp.act = act.code ORDER BY rowid LIMIT 1) WHERE play = $play;");
+    $this->pdo->exec("UPDATE act SET sp = (SELECT COUNT(*) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE act SET ln = (SELECT ln FROM sp WHERE sp.act = act.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE act SET w = (SELECT SUM(w) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE act SET wn = (SELECT wn FROM sp WHERE sp.act = act.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE act SET c = (SELECT SUM(c) FROM sp WHERE sp.act = act.id ) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE act SET cn = (SELECT cn FROM sp WHERE sp.act = act.id  ORDER BY rowid LIMIT 1) WHERE play = $playid;");
     
-    $this->pdo->exec("UPDATE scene SET sp = (SELECT COUNT(*) FROM sp WHERE play = $play AND sp.scene = scene.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE scene SET l = (SELECT SUM(l) FROM sp WHERE play = $play AND sp.scene = scene.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE scene SET ln = (SELECT ln FROM sp WHERE play = $play AND sp.scene = scene.code ORDER BY rowid LIMIT 1) WHERE play = $play;");
-    $this->pdo->exec("UPDATE scene SET w = (SELECT SUM(w) FROM sp WHERE play = $play AND sp.scene = scene.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE scene SET wn = (SELECT wn FROM sp WHERE play = $play AND sp.scene = scene.code ORDER BY rowid LIMIT 1) WHERE play = $play;");
-    $this->pdo->exec("UPDATE scene SET c = (SELECT SUM(c) FROM sp WHERE play = $play AND sp.scene = scene.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE scene SET cn = (SELECT cn FROM sp WHERE play = $play AND sp.scene = scene.code ORDER BY rowid LIMIT 1) WHERE play = $play;");
+    $this->pdo->exec("UPDATE scene SET sp = (SELECT COUNT(*) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE scene SET l = (SELECT SUM(l) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE scene SET ln = (SELECT ln FROM sp WHERE sp.scene = scene.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE scene SET w = (SELECT SUM(w) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE scene SET wn = (SELECT wn FROM sp WHERE sp.scene = scene.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE scene SET c = (SELECT SUM(c) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE scene SET cn = (SELECT cn FROM sp WHERE sp.scene = scene.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
     
-    $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM sp WHERE play = $play AND source = role.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE role SET sp = (SELECT COUNT(*) FROM sp WHERE play = $play AND sp.source = role.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE role SET l = (SELECT SUM(l) FROM sp WHERE play = $play AND sp.source = role.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE role SET w = (SELECT SUM(w) FROM sp WHERE play = $play AND sp.source = role.code) WHERE play = $play;");
-    $this->pdo->exec("UPDATE role SET c = (SELECT SUM(c) FROM sp WHERE play = $play AND sp.source = role.code) WHERE play = $play;");
+    $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM sp WHERE play = $playid AND source = role.code) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET sp = (SELECT COUNT(*) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
     $this->pdo->commit();
     if (STDERR) fwrite(STDERR, " stats: ".number_format(microtime(true) - $time, 3)."s.\n");
   }
