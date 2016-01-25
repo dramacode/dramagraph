@@ -16,8 +16,6 @@ class Dramaturgie_Base {
   private $_dom;
   /** Processeur xpath */
   private $_xpath;
-  /** Processeur xslt */
-  private $_xslt;
   /** Couleurs pour le graphe, la clé est une classe de nœud, les valeurs son 1: nœud, 2: lien */
   public static $colors = array(
     1 => array("#FF4C4C", "rgba(255, 0, 0, 0.5)"),
@@ -52,7 +50,7 @@ class Dramaturgie_Base {
     $this->_dom->load($xmlfile, LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOERROR | LIBXML_NOWARNING);
     $this->_xpath = new DOMXpath($this->_dom);
     $this->_xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
-    $this->_xslt = new XSLTProcessor();
+    
   }
   
  
@@ -80,6 +78,7 @@ class Dramaturgie_Base {
   }
   /**
    * Produire fichier de nœuds et de relations
+   * TODO, à vérifier
    */
   public function gephi($filename) {
     $data = $this->nodes($filename);
@@ -182,50 +181,10 @@ class Dramaturgie_Base {
     if (count($meta)) $bibl .= " (".implode(", ", $meta).")";
     return $bibl;
   }
-  /**
-   * Rythme dramatique, taile moyenne des répliques
-   */
-  public function dramarhythm($playcode) {
-    $playcode = $this->pdo->quote($playcode);
-    $play = $this->pdo->query("SELECT * FROM play WHERE code = $playcode")->fetch();
-    $step = 1000;
-    $act = '';
-    $scene = '';
-    $splast = null;
-    $q = $this->pdo->prepare("SELECT id, * FROM sp WHERE play = $playcode AND cn >= ? ORDER BY play, cn LIMIT 1");
-    echo '
-<style>
-.dramarhythm a { background: #CCCCCC; display: block; float: left; text-decoration: none; width: 15px; white-space: nowrap; }
-</style>';
-    echo '<div class="dramarhythm">'."\n";
-    for ($cn =0; $cn <= $play['c']; $cn = $cn + $step) {
-      $q->execute(array($cn));
-      $sp = $q->fetch();
-      if (!$sp) break;
-      if($splast) {
-        $height = 1+ ($sp['id'] - $splast['id']);
-        echo '<a href="#'.$splast['code'].'" style="height: '.$height.'ex;"> </a>';
-      }
-      $splast = $sp;
-    }
-    echo '</div>'."\n";
-  }
-  public function roletable($playcode) {
-    echo '<table class="sortable">'."\n";
-    echo '  <caption>'.$this->bibl($playcode)."</caption>\n";
-    echo '  <tr><th>Personnages</th><th>Réplques</th><th>Vers</th><th>Mots</th><th>caractère</th></tr>';
-    foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playcode ORDER BY c DESC") as $role) {
-      $dist[$role['code']] = array(
-        'label'=>$role['label'], 
-        'sp' => $role['sp'], 
-        'w' => $role['w'], 
-        'c' => $role['c']
-      );
-    }
-  }
+
   
   /**
-   * Chiffres par rôle
+   * TODO, pour étudier le rapport entre nombre de caractère et nombre de répliques
    */
   public function rolerate($playcode, $max=1200) {
     $playcode = $this->pdo->quote($playcode);
@@ -277,7 +236,10 @@ div.rolerate:after { content:""; display: table; clear: both; }
   /**
    * Panneau vertical de pièce
    */
-  public function charline($playcode, $width=150, $heightref=800) {
+  public function charline($playcode, $width=230, $heightref=600) {
+    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
+    $playid = $play['id'];
+    if (!$play) return false;
     $scenewidth = $width - 75;
     echo '
 <style>
@@ -301,12 +263,11 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 </style>
     ';
     
-    $play = $this->pdo->query("SELECT * FROM play WHERE code = ".$this->pdo->quote($playcode))->fetch();
     // 1 pixel = 1000 caractères
     if (!$heightref) $playheight = '800';
     else if (is_numeric($heightref) && $heightref > 50) $playheight = round($play['c'] / (100000/$heightref));
     else $playheight = '800';
-    $playid = $play['id'];
+    
     
     // requête sur le nombre de caractère d’un rôle dans une scène
     $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE play = $playid AND scene = ? AND source = ?");
@@ -373,77 +334,6 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     echo "</div>\n";
   }
 
-  public function timebars($playcode, $max=null) {
-    
-    echo '
-<style>
-.timebars, .timebars * { box-sizing: border-box; }
-.timebars:after, .timebars:after { content:""; display:table; }
-.timebars:after { clear:both; }
-.timebars { zoom:1; margin-top: 1.5em; }
-.timebars { height: 200px; font-family: sans-serif;  }
-.timebars .act { position: absolute; margin-top: -1.1em;  border-left: 3px #000 solid; padding-left: 1ex; margin-bottom: 1em; white-space: nowrap;}
-.timebars .scene { float: left; height: 100%;}
-.timebars .scene1 {  }
-.timebars .role { background-color: rgba(192, 192, 192, 0.7); border-radius: 3px/0.5em; border-bottom: 1px solid #FFFFFF; color: rgba(0, 0, 0, 0.5); font-stretch: ultra-condensed; font-size: 13px; }
-.timebars .role1 { background-color: rgba(255, 0, 0, 0.7); border-bottom: none; color: rgba(255, 255, 255, 0.7);}
-.timebars .role2 { background-color: rgba(128, 0, 128, 0.7); border-bottom: none; color: rgba(255, 255, 255, 0.7);}
-.timebars .role3 { background-color: rgba(0, 0, 255, 0.7); border-bottom: none; color: rgba(255, 255, 255, 0.7);}
-.timebars .role4 { background-color: rgba(0, 0, 128, 0.7); border-bottom: none; color: rgba(255, 255, 255, 0.7);}
-.timebars .role5 { background-color: rgba(128, 128, 128, 0.7); border-bottom: none; color: rgba(255, 255, 255, 0.7); }
-</style>
-    ';
-    $playcode = $this->pdo->quote($playcode);
-    $play = $this->pdo->query("SELECT * FROM play WHERE code = $playcode")->fetch();
-    // 1 pixel = 1000 caractères
-    if (!$max) $width = 'auto';
-    else if (is_numeric($max) && $max > 50) $width = round($play['c'] / (100000/$max)).'px';
-    else $width = "auto";
-    
-    
-    // requête sur le nombre de caractère d’un rôle dans une scène
-    $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE play = $playcode AND scene = ? AND source = ?");
-
-    echo '
-<div class="timebars" style="width: '.$width.'">
-    ';
-    $actlast = null;
-    $list = array();
-    foreach ($this->pdo->query("SELECT * FROM scene WHERE play = $playcode") as $scene) {
-      $class = '';
-      if ($actlast != $scene['act']) $class .= " scene1";
-      
-      $width = number_format(99*($scene['c']/$play['c']), 1);
-      if (!isset($scene['n'])) $scene['n'] = 0+ preg_replace('/\D/', '', $scene['code']);
-      echo '  <div class="scene'.$class.'" style="width: '.$width.'%;" title="Acte '.$scene['act'].', scène '.$scene['n'].'">'."\n";
-      if ($actlast != $scene['act']) echo '    <b class="act">Acte '.$scene['act'].'</b>';
-      $actlast = $scene['act'];
-      // boucle sur les rôles en ordre d’importance
-      $i = 0;
-      foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playcode ORDER BY c DESC") as $role) {
-        $qsp->execute(array($scene['code'], $role['code']));
-        list($c) = $qsp->fetch();
-        $i++;
-        if (!$c) continue;
-        $height = number_format(100*$c / $scene['c']);
-        echo '<div class="role role'.$i.'"';
-        echo ' style="height: '.$height.'%"';
-        echo ' title="'.$role['label'].', acte '.$scene['act'].', scène '.$scene['n'].', '.round(100*$c / $scene['c']).'%"';
-        echo '>';
-        if ($width > 5.5 && $height > 15 ) { // && !isset($list[$role['code']])
-          echo '<span> '.$role['label'].'</span>';
-          $list[$role['code']] = true;
-        }
-        else echo ' ';
-        echo '</div>';
-      }
-      echo "  </div>\n";
-    }
-    echo '
-</div>
-    ';
-  }
-
   /**
    * Table 
    */
@@ -507,7 +397,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 ';
   }
   /**
-   * proportion de parole par personnage
+   * Liste de nœuds
    */
   public function nodes($playcode, $filter=false) {
     $playcode = $this->pdo->quote($playcode);
@@ -632,11 +522,11 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $p = $this->_xpath->evaluate("count(//tei:sp/tei:p)");
     if ($l > 2*$p) $play['verse'] = true;
     else if ($p > 2*$l) $play['verse'] = false;
-    $play['verse'] = null;
+    else $play['verse'] = null;
     return $play;
   }
   /**
-   * Charger un csv en base
+   * Charger un XML en base
    */
   public function insert($file) {
     $time = microtime(true);
@@ -714,9 +604,10 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $time = microtime(true);
     $xsl = new DOMDocument("1.0", "UTF-8");
     $xsl->load(dirname(__FILE__).'/drama2csv.xsl');
-    $this->_xslt->importStyleSheet($xsl);
-    $this->_xslt->setParameter('', 'filename', $play['code']);
-    $csv = $this->_xslt->transformToXML($this->_dom);
+    $trans = new XSLTProcessor();
+    $trans->importStyleSheet($xsl);
+    $trans->setParameter('', 'filename', $play['code']);
+    $csv = $trans->transformToXML($this->_dom);
     
     // placer la chaîne dans un stream pour profiter du parseur fgetscsv
     $stream = fopen('php://memory', 'w+');
@@ -821,6 +712,17 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     // différentes stats prédef
     if (STDERR) fwrite(STDERR, " sp: ".number_format(microtime(true) - $time, 3)."s. ");
     $time = microtime(true);
+    $this->_sqlstats($playid);
+    if (STDERR) fwrite(STDERR, " stats: ".number_format(microtime(true) - $time, 3)."s.");
+    $time = microtime(true);
+    $this->_insobj($playid, $play['code']);
+    if (STDERR) fwrite(STDERR, " html: ".number_format(microtime(true) - $time, 3)."s.");
+    if (STDERR) fwrite(STDERR, "\n");
+  }
+  /**
+   * Statistiques SQL précalculées
+   */
+  function _sqlstats($playid) {
     $this->pdo->beginTransaction();
     $this->pdo->exec("UPDATE play SET sp = (SELECT COUNT(*) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET l = (SELECT SUM(l) FROM sp WHERE play = $playid) WHERE id = $playid;");
@@ -849,8 +751,57 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
-    $this->pdo->commit();
-    if (STDERR) fwrite(STDERR, " stats: ".number_format(microtime(true) - $time, 3)."s.\n");
+    $this->pdo->commit();    
+  }
+  /**
+   * Insérer de contenus, à ne pas appelr n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
+   */
+  function _insobj($playid, $playcode) {
+    $insert = $this->pdo->prepare("
+    INSERT INTO object (play, playcode, type, code, cont) 
+                VALUES (?,    ?,        ?,    ?,    ?)
+    ");
+    // insérer charline
+    ob_start();
+    $this->charline($playcode);
+    $cont = ob_get_contents();
+    ob_end_clean();
+    $insert->execute(array(
+      $playid,
+      $playcode,
+      'charline',
+      null,
+      $cont,
+    ));
+    // insérer json sigma
+    ob_start();
+    $this->sigma($playcode);
+    $cont = ob_get_contents();
+    ob_end_clean();
+    $insert->execute(array(
+      $playid,
+      $playcode,
+      'sigma',
+      null,
+      $cont,
+    ));
+    
+    // insérer le texte
+    if (file_exists($f=dirname(__FILE__).'/../Teinte/tei2html.xsl')) {
+      $xsl = new DOMDocument("1.0", "UTF-8");
+      $xsl->load($f);
+      $trans = new XSLTProcessor();
+      $trans->importStyleSheet($xsl);
+      $trans->setParameter('', 'root', 'article');
+      $cont = $trans->transformToXML($this->_dom);
+      $insert->execute(array(
+        $playid,
+        $playcode,
+        'article',
+        null,
+        $cont,
+      ));
+    }
   }
   /**
    * Collecter les identifiants dans les <role>

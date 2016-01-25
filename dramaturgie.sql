@@ -1,5 +1,5 @@
 PRAGMA encoding = 'UTF-8';
-PRAGMA page_size = 8192;
+PRAGMA page_size = 8192;  -- blob optimisation https://www.sqlite.org/intern-v-extern-blob.html
 PRAGMA foreign_keys = ON;
 -- The VACUUM command may change the ROWIDs of entries in any tables that do not have an explicit INTEGER PRIMARY KEY
 CREATE TABLE play (
@@ -20,6 +20,18 @@ CREATE TABLE play (
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX play_code ON play(code);
+
+CREATE TABLE object (
+  -- stockage de blobs pour les pièces, par exemple texte complet, tables des matières
+  id       INTEGER, -- rowid auto
+  play     INTEGER REFERENCES play(id),   -- la pièce à laquelle est attachée l’objet
+  playcode INTEGER REFERENCES play(code), -- code de la pièce (raccourci)
+  type     TEXT,    -- type d’objet
+  code     TEXT,    -- ocde, au moins unique pour une pièce
+  cont     BLOB,    -- contenu de l’objet
+  PRIMARY  KEY(id ASC)
+);
+CREATE INDEX object_playcode ON object(playcode, type, code);
 
 CREATE TABLE act (
   -- un acte
@@ -115,6 +127,7 @@ CREATE TRIGGER playDel
   -- si on supprime une pièce, supprimer la cascade qui en dépend
   BEFORE DELETE ON play
   FOR EACH ROW BEGIN
+    DELETE FROM object WHERE object.play = OLD.id;
     DELETE FROM act WHERE act.play = OLD.id;
     DELETE FROM scene WHERE scene.play = OLD.id;
     DELETE FROM role WHERE role.play = OLD.id;
