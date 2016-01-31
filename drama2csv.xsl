@@ -62,6 +62,9 @@ Ramasser des informations chiffrées d’une pièce
     </xsl:variable>
     <xsl:variable name="n">
       <xsl:choose>
+        <xsl:when test="@xml:id">
+          <xsl:value-of select="@xml:id"/>
+        </xsl:when>
         <xsl:when test="@n">
           <xsl:value-of select="@n"/>
         </xsl:when>
@@ -153,6 +156,7 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:with-param name="scene" select="$code"/>
     </xsl:apply-templates>
   </xsl:template>
+  <!-- Réplique -->
   <xsl:template match="tei:sp">
     <xsl:param name="act"/>
     <xsl:param name="scene"/>
@@ -161,10 +165,20 @@ Ramasser des informations chiffrées d’une pièce
         <xsl:when test="@xml:id">
           <xsl:value-of select="@xml:id"/>
         </xsl:when>
-        <xsl:otherwise>
+        <xsl:when test="$scene != ''">
           <xsl:value-of select="$scene"/>
           <xsl:text>-</xsl:text>
           <xsl:number/>
+        </xsl:when>
+        <!-- Réplique directement sous un acte -->
+        <xsl:when test="$act != ''">
+          <xsl:value-of select="$act"/>
+          <xsl:text>-</xsl:text>
+          <xsl:number/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>sp</xsl:text>
+          <xsl:number level="any"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>

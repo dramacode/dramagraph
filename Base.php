@@ -27,6 +27,7 @@ class Dramaturgie_Base {
     "female superior" => array("#FF0000", "rgba(255, 0, 0, 0.5)"),
     "female junior" => array("#FFb0D0", "rgba(255, 128, 192, 0.5)"),
     "female inferior" => array("#D07070", "rgba(192, 96, 96, 0.3)"),
+    "female veteran" => array("#903333", "rgba(128, 0, 0, 0.3)"),
     "male" => array("#4C4CFF", "rgba(0, 0, 255, 0.3)"),
     "male junior" => array("#B0D0FF", "rgba(128, 192, 255, 0.5)"),
     "male veteran" => array("#333390", "rgba(0, 0, 128, 0.3)"),
@@ -50,16 +51,16 @@ class Dramaturgie_Base {
     $this->_dom->load($xmlfile, LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOERROR | LIBXML_NOWARNING);
     $this->_xpath = new DOMXpath($this->_dom);
     $this->_xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
-    
+
   }
-  
- 
+
+
   /** Connexion à la base */
   private function connect($sqlite='basedrama.sqlite') {
     $sql = 'dramaturgie.sql';
     $dsn = "sqlite:" . $sqlite;
     // si la base n’existe pas, la créer
-    if (!file_exists($sqlite)) { 
+    if (!file_exists($sqlite)) {
       if (!file_exists($dir = dirname($sqlite))) {
         mkdir($dir, 0775, true);
         @chmod($dir, 0775);  // let @, if www-data is not owner but allowed to write
@@ -127,23 +128,23 @@ class Dramaturgie_Base {
     echo "\n  ]";
 
     echo ",";
-    
+
     echo "\n  nodes: [\n    ";
-    
-    
+
+
     $count = count($nodes);
     $i = 1;
     foreach ($nodes as $code=>$node) {
       if (!$code) continue;
       if ($i > 1) echo ",\n    ";
       // position initiale en cercle, à 1h30
-      $angle = M_PI/2+ ($count/7.6)*(M_PI*2/$count) * $i; 
+      $angle = M_PI/2+ ($count/7.6)*(M_PI*2/$count) * $i;
       // $angle =  2*M_PI/$count * ($i -1);
       $x =  number_format(6.0*cos($angle), 4);
       $y =  number_format(6.0*sin($angle), 4);
       /*
       // position initiale en ligne
-      // $x = $i ; 
+      // $x = $i ;
       $y = 1;
       // $x = -$i*(1-2*($i%2));
       $x=$i;
@@ -160,7 +161,7 @@ class Dramaturgie_Base {
       $i++;
     }
     echo "\n  ]";
-    
+
     echo "\n};";
   }
   /**
@@ -182,7 +183,7 @@ class Dramaturgie_Base {
     return $bibl;
   }
 
-  
+
   /**
    * TODO, pour étudier le rapport entre nombre de caractère et nombre de répliques
    */
@@ -191,7 +192,7 @@ class Dramaturgie_Base {
     if(! (0+$max)) $max=1000;
     $play = $this->pdo->query("SELECT * FROM play WHERE code = $playcode")->fetch();
     $playwidth = $play['c'] / (100000/$max);
-    
+
     echo '
 <style>
 .rolerate { font-family: sans-serif; font-size: 15px; }
@@ -210,9 +211,9 @@ div.rolerate:after { content:""; display: table; clear: both; }
     $dist = array();
     foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playcode ORDER BY c DESC") as $role) {
       $dist[$role['code']] = array(
-        'label'=>$role['label'], 
-        'sp' => $role['sp'], 
-        'w' => $role['w'], 
+        'label'=>$role['label'],
+        'sp' => $role['sp'],
+        'w' => $role['w'],
         'c' => $role['c']
       );
     }
@@ -232,7 +233,7 @@ div.rolerate:after { content:""; display: table; clear: both; }
       echo '</div>';
     }
   }
-  
+
   /**
    * Panneau vertical de pièce
    */
@@ -262,18 +263,18 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 
 </style>
     ';
-    
+
     // 1 pixel = 1000 caractères
     if (!$heightref) $playheight = '800';
     else if (is_numeric($heightref) && $heightref > 50) $playheight = round($play['c'] / (100000/$heightref));
     else $playheight = '800';
-    
-    
+
+
     // requête sur le nombre de caractère d’un rôle dans une scène
     $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE play = $playid AND scene = ? AND source = ?");
     $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE play = $playid AND scene = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
     echo '<div class="charline">'."\n";
-    
+
     // loop on acts
     foreach ($this->pdo->query("SELECT * FROM act WHERE play = $playid ORDER BY rowid") as $act) {
       echo '  <a href="#'.$act['code'].'" class="acthead">'.$act['label']."</a>\n";
@@ -288,7 +289,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         $sceneheight = 3+ ceil($actheight * $scene['c']/$act['c']);
         if (!isset($scene['n'])) $scene['n'] = 0+ preg_replace('/\D/', '', $scene['code']);
         // scene cont
-        echo '    <div class="scene" style="height: '.($sceneheight +1).'px;" title="Acte '.$scene['act'].', scène '.$scene['n'].'">'."\n";
+        echo '    <div class="scene" style="height: '.($sceneheight +1).'px;" title="Acte '.$act['n'].', scène '.$scene['n'].'">'."\n";
           echo '      <b class="n">'.$scene['n'].'</b>'."\n";
           // role bar
           echo '      <a href="#'.$scene['code'].'" class="cast">'."\n";
@@ -302,7 +303,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
             $rolewidth = number_format($scenewidth * $c / $scene['c']) ;
             echo '<span class="role role'.$i.' '.$role['rend'].'"';
             echo ' style="width: '.$rolewidth.'px"';
-            echo ' title="'.$role['label'].', acte '.$scene['act'].', scène '.$scene['n'].', '.round(100*$c / $scene['c']).'%"';
+            echo ' title="'.$role['label'].', acte '.$act['n'].', scène '.$scene['n'].', '.round(100*$c / $scene['c']).'%"';
             echo '>';
             if ($rolewidth > 35 && $sceneheight > 12 ) { // && !isset($list[$role['code']])
               echo '<span>'.$role['label'].'</span>';
@@ -326,7 +327,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
             $splast = $sp;
           }
           echo "      </div>\n";
- 
+
         echo "    </div>\n";
       }
       echo "  </div>\n";
@@ -335,7 +336,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
   }
 
   /**
-   * Table 
+   * Table
    */
   public function timetable($playcode, $max=null) {
     $playcode = $this->pdo->quote($playcode);
@@ -344,7 +345,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     if (!$max) $width = '';
     if (is_numeric($max) && $max > 50) $width = ' width="'.round($play['c'] / (100000/$max)).'"';
     else $width = ' width="'.$max.'"';
-    
+
     echo '
 <table class="timetable" '.$width.'>
   <caption>'.($this->bibl($play)).'</caption>
@@ -366,7 +367,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     echo "  </tr>
   </thead>
 ";
-    
+
     // requête sur le nombre de caractère d’un rôle dans une scène
     $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE play = $playcode AND scene = ? AND source = ?");
     // Boucler sur les personnages, un par ligne
@@ -441,17 +442,17 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $nodes = array();
     while ($sp = $q->fetch()) {
       if(!$max) $max = $sp['ord'];
-     
+
       $dothreshold = true;
       if ($sp['source']==$sp['target']);
       else if (!isset($nodes[$sp['source']])) {
         $nodes[$sp['source']] = 1;
         $dothreshold = false;
       }
-      else { 
+      else {
         $nodes[$sp['source']]++;
       }
-      
+
       if ($sp['source']==$sp['target']);
       else if (!isset($nodes[$sp['target']])) {
         $nodes[$sp['target']] = 1;
@@ -514,7 +515,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $nl = $this->_xpath->query("/*/tei:teiHeader//tei:term[@type='genre']/@subtype");
     if ($nl->length) $play['genre'] = $nl->item(0)->nodeValue;
     else $play['genre'] = null;
-    
+
     $play['acts'] = $this->_xpath->evaluate("count(/*/tei:text/tei:body//tei:*[@type='act'])");
     if (!$play['acts']) $play['acts'] = $this->_xpath->evaluate("count(/*/tei:text/tei:body/*[tei:div|tei:div2])");
     if (!$play['acts']) $play['acts'] = 1;
@@ -608,7 +609,8 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $trans->importStyleSheet($xsl);
     $trans->setParameter('', 'filename', $play['code']);
     $csv = $trans->transformToXML($this->_dom);
-    
+
+
     // placer la chaîne dans un stream pour profiter du parseur fgetscsv
     $stream = fopen('php://memory', 'w+');
     fwrite($stream, $csv);
@@ -625,7 +627,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     INSERT INTO sp (play, act, scene, code, source, target, l, ln, w, wn, c, cn, text)
             VALUES (?,    ?,   ?,     ?,    ?,      ?,      ?, ?,  ?, ?,  ?, ?,  ?);
     ");
-    // première ligne, nom de colonne, à utiliser comme clé pour la collecte des lignes 
+    // première ligne, nom de colonne, à utiliser comme clé pour la collecte des lignes
     $keys = fgetcsv($stream, 0, "\t");
     // boucle pour charger la base, ne pas oublier de démarrer une transaction
     $this->pdo->beginTransaction();
@@ -634,8 +636,10 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $act = null;
     $scene= null;
     while (($values = fgetcsv($stream, 0, "\t")) !== FALSE) {
+      // print_r(array_merge($values, array_fill(0, count($keys) - count($values), null)));
       // étiqueter les cases avec les noms de colonne de la première ligne, les deux tableaux combinés doivent avoir la même taille
-      $data = array_combine($keys, array_merge($values, array_fill(0, count($keys) - count($values), null)));
+      if (count($keys) > count($values)) $data = array_combine($keys, array_merge($values, array_fill(0, count($keys) - count($values), null)));
+      else $data = array_combine($keys, $values);
       // réplique
       if ($data['object'] == 'sp' ) {
         if (!isset($castlist[$data['source']]) && STDERR) fwrite(STDERR, "@who ERROR ".$data['source']. " [".$data['code']."]\n");
@@ -648,13 +652,13 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         try {
           $insp->execute(array(
             $playid,
-            $actid, 
-            $sceneid, 
+            $actid,
+            $sceneid,
             $data['code'],
             $data['source'],
             $data['target'],
             $data['l'],
-            $data['ln'], 
+            $data['ln'],
             $data['w'], // w
             $wn,
             $data['c'], // c
@@ -671,7 +675,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       // scènes, parfois non contenues dans un acte (pièces en un acte)
       else if ($data['object'] == 'div2' || $data['type'] == 'scene' ) {
         $sceneid = null;
-        if (!$data['type']) $data['type'] = null; 
+        if (!$data['type']) $data['type'] = null;
         try {
           $inscene->execute(array(
             $playid,
@@ -706,7 +710,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
           if (STDERR) fwrite(STDERR, "\n\n      NOT UNIQUE act ? ".$data['code']."\n".$e."\n\n");
         }
       }
-      
+
     }
     $this->pdo->commit();
     // différentes stats prédef
@@ -729,7 +733,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $this->pdo->exec("UPDATE play SET w = (SELECT SUM(w) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET c = (SELECT SUM(c) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $playid) WHERE id = $playid;");
-    
+
     $this->pdo->exec("UPDATE act SET sp = (SELECT COUNT(*) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET ln = (SELECT ln FROM sp WHERE sp.act = act.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
@@ -737,7 +741,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $this->pdo->exec("UPDATE act SET wn = (SELECT wn FROM sp WHERE sp.act = act.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET c = (SELECT SUM(c) FROM sp WHERE sp.act = act.id ) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET cn = (SELECT cn FROM sp WHERE sp.act = act.id  ORDER BY rowid LIMIT 1) WHERE play = $playid;");
-    
+
     $this->pdo->exec("UPDATE scene SET sp = (SELECT COUNT(*) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET l = (SELECT SUM(l) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET ln = (SELECT ln FROM sp WHERE sp.scene = scene.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
@@ -745,20 +749,20 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $this->pdo->exec("UPDATE scene SET wn = (SELECT wn FROM sp WHERE sp.scene = scene.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET c = (SELECT SUM(c) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET cn = (SELECT cn FROM sp WHERE sp.scene = scene.id ORDER BY rowid LIMIT 1) WHERE play = $playid;");
-    
+
     $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM sp WHERE play = $playid AND source = role.code) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET sp = (SELECT COUNT(*) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp, act WHERE sp.act = act.id AND act.play = $playid AND act.type = 'act' AND sp.source = role.code) WHERE play = $playid;");
-    $this->pdo->commit();    
+    $this->pdo->commit();
   }
   /**
    * Insérer de contenus, à ne pas appelr n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
    */
   function _insobj($playid, $playcode) {
     $insert = $this->pdo->prepare("
-    INSERT INTO object (play, playcode, type, code, cont) 
+    INSERT INTO object (play, playcode, type, code, cont)
                 VALUES (?,    ?,        ?,    ?,    ?)
     ");
     // insérer charline
@@ -785,11 +789,11 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       null,
       $cont,
     ));
-    
+
     // insérer le texte
-    if (file_exists($f=dirname(__FILE__).'/../Teinte/tei2html.xsl')) {
+    if (file_exists($dir=dirname(__FILE__).'/../Teinte/')) {
       $xsl = new DOMDocument("1.0", "UTF-8");
-      $xsl->load($f);
+      $xsl->load($dir.'tei2html.xsl');
       $trans = new XSLTProcessor();
       $trans->importStyleSheet($xsl);
       $trans->setParameter('', 'root', 'article');
@@ -801,6 +805,43 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         null,
         $cont,
       ));
+      $xsl->load($dir.'tei2toc.xsl');
+      $trans = new XSLTProcessor();
+      $trans->importStyleSheet($xsl);
+      // complete toc
+      $trans->setParameter('', 'root', 'nav');
+      $cont = $trans->transformToXML($this->_dom);
+      $insert->execute(array(
+        $playid,
+        $playcode,
+        'toc',
+        null,
+        $cont,
+      ));
+      // toc of <front>
+      $trans->setParameter('', 'root', 'front');
+      $cont = $trans->transformToXML($this->_dom);
+      if ($cont) {
+        $insert->execute(array(
+          $playid,
+          $playcode,
+          'toc-front',
+          null,
+          $cont,
+        ));
+      }
+      // toc of <back>
+      $trans->setParameter('', 'root', 'back');
+      $cont = $trans->transformToXML($this->_dom);
+      if ($cont) {
+        $insert->execute(array(
+          $playid,
+          $playcode,
+          'toc-back',
+          null,
+          $cont,
+        ));
+      }
     }
   }
   /**
@@ -823,16 +864,16 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
   }
 
   /**
-   * Command line API 
+   * Command line API
    */
   static function cli() {
     $timeStart = microtime(true);
     $usage = '
     usage    : php -f '.basename(__FILE__).' base.sqlite {action} {arguments}
     where action can be
-    valid  ../*.xml
-    insert ../*.xml
-    gephi playcode 
+    valid  "../*.xml"
+    insert "../*.xml"
+    gephi playcode
 ';
     $timeStart = microtime(true);
     array_shift($_SERVER['argv']); // shift first arg, the script filepath
