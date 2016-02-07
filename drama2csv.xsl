@@ -6,17 +6,25 @@ Ramasser des informations chiffrées d’une pièce
   <!-- CSV -->
   <xsl:output method="text" encoding="UTF-8" indent="yes"/>
   <!-- Lister les rôles en tête, pour des listes par scènes -->
-  <xsl:key name="role" match="tei:front//tei:role" use="@xml:id"/>
+  <xsl:key name="roles" match="tei:role/@xml:id|tei:person/@xml:id" use="'roles'"/>
   <!-- Nom du fichier de pièce procédé -->
   <xsl:param name="filename"/>
   <!-- mode -->
   <xsl:param name="mode"/>
+  <xsl:variable name="who1">ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöùúûüýœ’' </xsl:variable>
+  <xsl:variable name="who2">abcdefghijklmnopqrstuvwxyzaaaaaaceeeeiiiin?ooooouuuuyaaaaaaceeeeiiiinooooouuuuy?---</xsl:variable>
   <!-- constantes -->
   <xsl:variable name="lf" select="'&#10;'"/>
   <xsl:variable name="tab" select="'&#09;'"/>
   <xsl:variable name="apos">'</xsl:variable>
   <xsl:variable name="quot">"</xsl:variable>
-  <xsl:variable name="scene">scene</xsl:variable>
+  <!-- Par défaut, pas de texte -->
+  <xsl:template match="text()"/>
+  <xsl:template match="tei:note"/>
+  <!-- mais passer à travaers tout, notamment pour chercher les configuration (auf dans les notes) -->
+  <xsl:template match="*">
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
   <xsl:template match="/">
     <root>
       <!-- object, type, code, n, l, ln, w, c, source, target, text  -->
@@ -30,24 +38,19 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:value-of select="$tab"/>
       <xsl:text>type</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>l</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:text>ln</xsl:text>
+      <xsl:text>c</xsl:text>
       <xsl:value-of select="$tab"/>
       <xsl:text>w</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>c</xsl:text>
+      <xsl:text>l</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>source</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:text>target</xsl:text>
+      <xsl:text>ln</xsl:text>
       <xsl:value-of select="$tab"/>
       <xsl:text>text</xsl:text>
       <xsl:value-of select="$lf"/>
       <xsl:apply-templates select="/*/tei:text/tei:body/*"/>
     </root>
   </xsl:template>
-  <xsl:template match="*"/>
   <!-- Acte -->
   <xsl:template match="tei:body/tei:div1 | tei:body/tei:div">
     <xsl:variable name="code">
@@ -98,7 +101,30 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
     <xsl:value-of select="$lf"/>
-    <xsl:apply-templates select="tei:div2|tei:div|tei:sp">
+    <!-- Si pas de scène et pas de conf, créer une configuration auto -->
+    <xsl:if test="tei:sp and not(.//tei:listPerson)">
+      <xsl:text>configuration</xsl:text>
+      <xsl:value-of select="$tab"/>
+      <xsl:value-of select="$code"/>
+      <xsl:value-of select="$tab"/>
+      <!-- n -->
+      <xsl:value-of select="$tab"/>
+      <xsl:variable name="txt">
+        <xsl:variable name="context" select="."/>
+        <xsl:for-each select="key('roles', 'roles')">
+          <xsl:variable name="who" select="."/>
+          <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="$who"/>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:value-of select="normalize-space($txt)"/>
+      <xsl:value-of select="$tab"/>
+      <xsl:text>auto</xsl:text>
+      <xsl:value-of select="$lf"/>
+    </xsl:if>
+    <xsl:apply-templates select="*">
       <xsl:with-param name="act" select="$code"/>
     </xsl:apply-templates>
   </xsl:template>
@@ -140,7 +166,6 @@ Ramasser des informations chiffrées d’une pièce
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <!-- object, type, code, n, l, ln, w, c, source, target, text  -->
     <xsl:text>div2</xsl:text>
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="$code"/>
@@ -151,10 +176,137 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
     <xsl:value-of select="$lf"/>
-    <xsl:apply-templates select="tei:sp">
+    <!--
+      Si pas de configuration pour la scène, en créer
+      -->
+    <xsl:if test="not(.//tei:listPerson)">
+      <xsl:text>configuration</xsl:text>
+      <xsl:value-of select="$tab"/>
+      <xsl:value-of select="$code"/>
+      <xsl:value-of select="$tab"/>
+      <!-- n -->
+      <xsl:value-of select="$tab"/>
+      <xsl:variable name="txt">
+        <xsl:variable name="context" select="."/>
+        <xsl:for-each select="key('roles', 'roles')">
+          <xsl:variable name="who" select="."/>
+          <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="$who"/>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:value-of select="normalize-space($txt)"/>
+      <xsl:value-of select="$tab"/>
+      <xsl:text>auto</xsl:text>
+      <xsl:value-of select="$lf"/>
+    </xsl:if>
+    <xsl:apply-templates select="*">
       <xsl:with-param name="act" select="$act"/>
       <xsl:with-param name="scene" select="$code"/>
     </xsl:apply-templates>
+  </xsl:template>
+  
+  <!-- configuration -->
+  <xsl:template match="tei:listPerson">
+    <xsl:text>configuration</xsl:text>
+    <xsl:value-of select="$tab"/>
+    <xsl:choose>
+      <xsl:when test="@xml:id">
+        <xsl:value-of select="@xml:id"/>
+      </xsl:when>
+      <xsl:when test="@type = 'configuration'">
+        <xsl:text>configuration</xsl:text>
+        <xsl:number count="tei:listPerson[@type='configuration']" level="any"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>listperson</xsl:text>
+        <xsl:number count="tei:listPerson" level="any"/>        
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:value-of select="$tab"/>
+    <xsl:choose>
+      <xsl:when test="@n">
+        <xsl:value-of select="@n"/>
+      </xsl:when>
+      <xsl:when test="@type = 'configuration'">
+        <xsl:number count="tei:listPerson[@type='configuration']" level="any"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:number count="tei:listPerson" level="any"/>        
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:value-of select="$tab"/>
+    <xsl:variable name="txt">
+      <xsl:for-each select=".//tei:person">
+        <xsl:text> </xsl:text>
+        <xsl:choose>
+          <xsl:when test="@xml:id">
+            <xsl:value-of select="@xml:id"/>
+          </xsl:when>
+          <xsl:when test="@corresp">
+            <xsl:value-of select="substring-after(@corresp, '#')"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:for-each>  
+    </xsl:variable>
+    <xsl:value-of select="normalize-space($txt)"/>
+    <xsl:value-of select="$lf"/>
+  </xsl:template>
+  <!-- Didascalie -->
+  <xsl:template match="tei:stage">
+    <xsl:variable name="n">
+      <xsl:number level="any"/>
+    </xsl:variable>
+    <xsl:variable name="code">
+      <xsl:choose>
+        <xsl:when test="@xml:id">
+          <xsl:value-of select="@xml:id"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>stage</xsl:text>
+          <xsl:value-of select="$n"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- object, type, code, n, l, ln, w, c, source  -->
+    <xsl:text>stage</xsl:text>
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="$code"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="$n"/>
+    <xsl:value-of select="$tab"/>
+    <!-- label -->
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="@type"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:variable name="txt">
+      <xsl:variable name="raw">
+        <xsl:apply-templates mode="txt"/>
+      </xsl:variable>
+      <xsl:choose>
+        <!-- <stage> is not normalized by mode="txt" -->
+        <xsl:when test="not(tei:p|tei:l)">
+          <xsl:value-of select="normalize-space($raw)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$raw"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:value-of select="string-length($txt)"/>
+    <xsl:value-of select="$tab"/>
+    <!-- words, compter les mots, algo bête, nombre d’espaces et d’apostrophes  -->
+    <xsl:value-of select="1 + string-length($txt) - string-length(translate($txt, concat(' ’', $apos), ''))"/>
+    <!-- no verses waited -->
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:text>"</xsl:text>
+    <xsl:value-of select="translate($txt, $quot, '＂')"/>
+    <xsl:text>"</xsl:text>
+    <xsl:value-of select="$lf"/>
+    <xsl:apply-templates select="*"/>
   </xsl:template>
   <!-- Réplique -->
   <xsl:template match="tei:sp">
@@ -199,9 +351,25 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="$n"/>
     <xsl:value-of select="$tab"/>
-    <!-- head ? -->
+    <xsl:choose>
+      <xsl:when test="@who">
+        <xsl:value-of select="substring-before(concat(@who, ' '), ' ')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="translate(substring-before(concat(normalize-space(tei:speaker), ' '), ' '), $who1, $who2)"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:value-of select="$tab"/>
-    <!-- type ? -->
+    <xsl:value-of select="@type"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:variable name="txt">
+      <xsl:apply-templates select="*" mode="txt"/>
+    </xsl:variable>
+    <!-- chars -->
+    <xsl:value-of select="string-length($txt)"/>
+    <xsl:value-of select="$tab"/>
+    <!-- words, compter les mots, algo bête, nombre d’espaces et d’apostrophes  -->
+    <xsl:value-of select="1 + string-length($txt) - string-length(translate($txt, concat(' ’', $apos), ''))"/>
     <xsl:value-of select="$tab"/>
     <!-- verses -->
     <xsl:variable name="countl" select="count(.//tei:l)"/>
@@ -209,43 +377,30 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:value-of select="$countl"/>
     </xsl:if>
     <xsl:value-of select="$tab"/>
-    <xsl:value-of select="(.//tei:l)[1]/@n"/>
+    <!-- verse index -->
+    <xsl:value-of select="tei:l[@n][1]/@n"/>
     <xsl:value-of select="$tab"/>
-    <xsl:variable name="txt">
-      <xsl:apply-templates select="*" mode="txt"/>
-    </xsl:variable>
-    <!-- words, compter les mots, algo bête, nombre d’espaces et d’apostrophes  -->
-    <xsl:value-of select="1 + string-length($txt) - string-length(translate($txt, concat(' ’', $apos), ''))"/>
-    <xsl:value-of select="$tab"/>
-    <!-- chars -->
-    <xsl:value-of select="string-length($txt)"/>
-    <xsl:value-of select="$tab"/>
-    <!-- source -->
-    <xsl:value-of select="substring-before(concat(@who, ' '), ' ')"/>
-    <xsl:value-of select="$tab"/>
-    <!-- target -->
-    <xsl:choose>
-      <xsl:when test="preceding-sibling::tei:sp">
-        <xsl:value-of select="substring-before(concat(preceding-sibling::tei:sp[1]/@who, ' '), ' ')"/>
-      </xsl:when>
-      <xsl:when test="following-sibling::tei:sp">
-        <xsl:value-of select="substring-before(concat(following-sibling::tei:sp[1]/@who, ' '), ' ')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="substring-before(concat(@who, ' '), ' ')"/>
-      </xsl:otherwise>
-    </xsl:choose>
-    <xsl:value-of select="$tab"/>
-    <!-- text -->
     <xsl:text>"</xsl:text>
     <xsl:value-of select="translate($txt, $quot, '＂')"/>
     <xsl:text>"</xsl:text>
     <xsl:value-of select="$lf"/>
+    <!-- find <stage> and <listPerson> -->
+    <xsl:apply-templates select="*"/>
   </xsl:template>
   <!-- To Count chars -->
-  <xsl:template match="tei:note|tei:stage|tei:speaker" mode="txt"/>
-  <xsl:template match="tei:p|tei:l" mode="txt">
-    <xsl:if test="preceding-sibling::tei:p or preceding-sibling::tei:l">
+  <xsl:template match="tei:note|tei:stage|tei:speaker|tei:listPerson" mode="txt"/>
+  <xsl:template match="tei:quote" mode="txt">
+    <xsl:choose>
+      <xsl:when test="tei:p|tei:lg|tei:l">
+        <xsl:apply-templates select="*" mode="txt"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="txt"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <xsl:template match="tei:p|tei:l|tei:label" mode="txt" name="txt">
+    <xsl:if test="preceding-sibling::tei:p or preceding-sibling::tei:l or preceding-sibling::tei:quote or preceding-sibling::tei:label">
       <xsl:value-of select="$lf"/>
     </xsl:if>
     <xsl:variable name="txt">

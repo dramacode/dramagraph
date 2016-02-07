@@ -13,10 +13,10 @@ CREATE TABLE play (
   scenes  INTEGER, -- nombre de scènes
   verse   BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
   genre   TEXT,    -- comedy|tragedy
-  sp      INTEGER, -- <sp> taille en répliques
-  l       INTEGER, -- <l> taille en vers
-  w       INTEGER, -- <w> (word) taille en mots
   c       INTEGER, -- <c> (char) taille en caractères
+  w       INTEGER, -- <w> (word) taille en mots
+  l       INTEGER, -- <l> taille en vers
+  sp      INTEGER, -- <sp> taille en répliques
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX play_code ON play(code);
@@ -41,13 +41,14 @@ CREATE TABLE act (
   n       INTEGER, -- numéro d’ordre dans la pièce
   label   TEXT,    -- intitulé affichabe
   type    TEXT,    -- type d’acte (prologue, interlude…)
-  sp      INTEGER, -- <sp> taille en répliques
-  l       INTEGER, -- <l> taille en vers
-  ln      INTEGER, -- numéro du premier vers
-  w       INTEGER, -- <w> (word) taille en mots
-  wn      INTEGER, -- numéro du premier mot
-  c       INTEGER, -- <c> (char) taille en caractères
   cn      INTEGER, -- numéro du premier caractère
+  wn      INTEGER, -- numéro du premier mot
+  ln      INTEGER, -- numéro du premier vers
+  spn     INTEGER, -- numéro de répliques
+  c       INTEGER, -- <c> (char) taille en caractères
+  w       INTEGER, -- <w> (word) taille en mots
+  l       INTEGER, -- <l> taille en vers
+  sp      INTEGER, -- <sp> taille en répliques
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX act_code ON act(play, code);
@@ -64,22 +65,59 @@ CREATE TABLE scene (
   n       INTEGER, -- numéro d’ordre dans l’acte
   label   TEXT,    -- intitulé affichabe
   type    TEXT,    -- type de scene (prologue, interlude…)
-  sp      INTEGER, -- <sp> taille en répliques
-  l       INTEGER, -- <l> taille en vers
-  ln      INTEGER, -- numéro du premier vers
-  w       INTEGER, -- <w> (word) taille en mots
-  wn      INTEGER, -- numéro du premier mot
-  c       INTEGER, -- <c> (char) taille en caractères
   cn      INTEGER, -- numéro du premier caractère
+  wn      INTEGER, -- numéro du premier mot
+  ln      INTEGER, -- numéro du premier vers
+  spn     INTEGER, -- numéro de répliques
+  c       INTEGER, -- <c> (char) taille en caractères
+  w       INTEGER, -- <w> (word) taille en mots
+  l       INTEGER, -- <l> taille en vers
+  sp      INTEGER, -- <sp> taille en répliques
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX scene_code ON scene(play, code);
 CREATE INDEX scene_act ON scene(play, act);
 
+CREATE TABLE configuration (
+  -- une configuration est un état de la scène (personnages présents)
+  id      INTEGER, -- rowid auto
+  play    INTEGER REFERENCES play(id), -- code pièce
+  code    TEXT,    -- code de conf (= @xml:id)
+  n       INTEGER, -- numéro d’ordre dans la pièce
+  label   TEXT,    -- liste de codes de personnage
+  cn      INTEGER, -- numéro du premier caractère
+  wn      INTEGER, -- numéro du premier mot
+  ln      INTEGER, -- numéro du premier vers
+  spn     INTEGER, -- numéro de répliques
+  c       INTEGER, -- <c> (char) taille en caractères
+  w       INTEGER, -- <w> (word) taille en mots
+  l       INTEGER, -- <l> taille en vers
+  sp      INTEGER, -- <sp> taille en répliques
+  PRIMARY KEY(id ASC)
+);
+CREATE UNIQUE INDEX configuration_code ON configuration(play, code);
+
+CREATE TABLE stage (
+  -- une didascalie
+  id      INTEGER,  -- rowid auto
+  play    INTEGER REFERENCES play(id), -- code pièce
+  code    TEXT,    -- code de conf (= @xml:id)
+  n       INTEGER, -- numéro d’ordre dans la pièce
+  cn      INTEGER, -- numéro de caractère dans les répliques
+  wn      INTEGER, -- numéro de mots dans les répliques
+  ln      INTEGER, -- numéro de vers courant
+  c       INTEGER, -- nombre de caractères dans la didascalie
+  w       INTEGER, -- nombre de mots dans la didascalie
+  text    TEXT,    -- texte, pour récup ultérieure ?
+  PRIMARY KEY(id ASC)
+);
+CREATE UNIQUE INDEX stage_code ON stage(play, code);
+
+
 CREATE TABLE role (
   -- un rôle
   id       INTEGER,  -- rowid auto
-  play     INTEGER REFERENCES play(id),     -- code pièce
+  play     INTEGER REFERENCES play(id), -- code pièce
   code     TEXT,     -- code personne
   label    TEXT,     -- nom affichable
   title    TEXT,     -- description du rôle (mère de…, amant de…) tel que dans la source
@@ -89,10 +127,14 @@ CREATE TABLE role (
   age      TEXT,     -- (cadet|junior|senior|veteran)
   status   TEXT,     -- pour isoler les confidents, serviteurs, ou pédants
   targets  INTEGER,  -- nombre d’interlocuteurs
-  sp       INTEGER,  -- <sp> taille en répliques
-  l        INTEGER,  -- <l> taille en vers
-  w        INTEGER,  -- <w> taille en mots
-  c        INTEGER,  -- <c> taille en caractères
+  oc        INTEGER,  -- out <c>, mombre de caractères dits
+  ow        INTEGER,  -- out <w>, mombre de mots dits
+  ol        INTEGER,  -- out <l>, nombre de vers dits
+  osp       INTEGER,  -- out <sp>, nombre de répliques dites
+  ic        INTEGER,  -- in <c>, mombre de caractères entendus
+  iw        INTEGER,  -- in <w>, mombre de mots entendus
+  il        INTEGER,  -- in <l>, nombre de vers entendus
+  isp       INTEGER,  -- in <sp>, nombre de répliques entendues
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX role_who ON role(play, code);
@@ -100,27 +142,39 @@ CREATE UNIQUE INDEX role_who ON role(play, code);
 CREATE TABLE sp (
   -- une réplique 
   id INTEGER,           -- rowid auto
-  play         INTEGER REFERENCES play(id),    -- id pièce dans la base
-  act          INTEGER REFERENCES act(id),     -- identifiant d’acte
-  scene        INTEGER REFERENCES scene(id),   -- id de scene
-  code         TEXT,    -- identifiant de réplique dans le fichier
-  source       TEXT,    -- code de personnage
-  target       TEXT,    -- code de personnage
-  l            INTEGER, -- <l> nombre de vers
-  ln           INTEGER, -- numéro du premier vers
-  w            INTEGER, -- <w> nombre de mots
-  wn           INTEGER, -- numéro du premier mot
-  c            INTEGER, -- <c> nombre de caractères
-  cn           INTEGER, -- numéro du premier caractère
-  text         TEXT,    -- texte, pour récup ultérieure ?
+  play          INTEGER REFERENCES play(id),    -- id pièce dans la base
+  act           INTEGER REFERENCES act(id),     -- identifiant d’acte
+  scene         INTEGER REFERENCES scene(id),   -- id de scene
+  configuration INTEGER REFERENCES configuration(id),   -- id de configuration
+  role          INTEGER REFERENCES role(id),   -- personnage qui parle
+  code          TEXT,    -- identifiant de réplique dans le fichier
+  cn            INTEGER, -- numéro du premier caractère
+  wn            INTEGER, -- numéro du premier mot
+  ln            INTEGER, -- numéro du premier vers
+  c             INTEGER, -- <c> nombre de caractères
+  w             INTEGER, -- <w> nombre de mots
+  l             INTEGER, -- <l> nombre de vers
+  text          TEXT,    -- texte, pour récup ultérieure ?
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX sp_path ON sp(play, act, scene, code);
-CREATE INDEX sp_source ON sp(play, source, target);
-CREATE INDEX sp_target ON sp(play, target, source);
 CREATE UNIQUE INDEX sp_cn ON sp(play, cn);
 CREATE UNIQUE INDEX sp_wn ON sp(play, wn);
 CREATE INDEX sp_ln ON sp(play, ln);
+
+CREATE TABLE edge (
+  -- destinataires d’une réplique
+  id INTEGER,           -- rowid auto
+  play INTEGER REFERENCES play(id), -- id pièce dans la base
+  source INTEGER REFERENCES role(id), -- id de role = source
+  target INTEGER REFERENCES role(id), -- id de role = target
+  sp   INTEGER REFERENCES sp(id),   -- id de réplique = source
+  PRIMARY KEY(id ASC)
+);
+CREATE INDEX edge_play ON edge(play);
+CREATE INDEX edge_sp ON edge(sp);
+CREATE INDEX edge_source ON edge(source, target);
+CREATE INDEX edge_target ON edge(target, source);
 
 
 CREATE TRIGGER playDel
@@ -130,6 +184,8 @@ CREATE TRIGGER playDel
     DELETE FROM object WHERE object.play = OLD.id;
     DELETE FROM act WHERE act.play = OLD.id;
     DELETE FROM scene WHERE scene.play = OLD.id;
+    DELETE FROM configuration WHERE configuration.play = OLD.id;
     DELETE FROM role WHERE role.play = OLD.id;
     DELETE FROM sp WHERE sp.play = OLD.id;
+    DELETE FROM edge WHERE edge.play = OLD.id;
 END;
