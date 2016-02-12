@@ -1,5 +1,5 @@
 
-// try javascript autoloader, haven’t found a way to have sigma loaded
+// failed attempt for sigma autoloader
 ;(function() {
   'use strict';
   if ("onhashchange" in window) {
@@ -259,22 +259,8 @@
 
 
   window.Rolenet = function (canvas, graph, workerUrl) {
-    this.canvas = document.getElementById(canvas);
     this.workerUrl = workerUrl;
-    var els = this.canvas.getElementsByClassName('grav');
-    if (els.length) {
-      this.gravBut = els[0];
-      this.gravBut.net = this;
-      this.gravBut.onclick = this.grav;
-    }
-    var els = this.canvas.getElementsByClassName('mix');
-    if (els.length) {
-      this.mixBut = els[0];
-      this.mixBut.net = this;
-      this.mixBut.onclick = this.mix;
-    }
-    var els = this.canvas.getElementsByClassName('shot');
-    if (els.length) this.shotBut = els[0];
+    this.canvas = document.getElementById(canvas);
     this.sigma = new sigma({
       graph: graph,
       renderer: {
@@ -293,25 +279,75 @@
         labelSizeRatio: 1,
         */
         // labelAlignment: 'center', // linkurous only and not compatible with drag node
-        sideMargin: 2,
-        maxNodeSize: 20,
+        sideMargin: 1,
+        maxNodeSize: 30,
+        minNodeSize: 8,
         minEdgeSize: 1,
         maxEdgeSize: 30,
         minArrowSize: 15,
         maxArrowSize: 20,
-        minNodeSize: 10,
         borderSize: 2,
         outerBorderSize: 3, // stroke size of active nodes
         defaultNodeColor: "#FFF",
         defaultNodeBorderColor: '#000',
         defaultNodeOuterBorderColor: 'rgb(236, 81, 72)', // stroke color of active nodes
-        enableEdgeHovering: true,
+        // enableEdgeHovering: true, // bad for memory
+        zoomingRatio: 1.3,
+        mouseWheelEnabled: false,
         edgeHoverColor: 'edge',
         defaultEdgeHoverColor: '#000',
         edgeHoverSizeRatio: 1,
         edgeHoverExtremities: true,
+        doubleClickEnabled: false, // utilisé pour la suppression
       }
     });
+
+    var els = this.canvas.getElementsByClassName('grav');
+    if (els.length) {
+      this.gravBut = els[0];
+      this.gravBut.net = this;
+      this.gravBut.onclick = this.grav;
+    }
+    var els = this.canvas.getElementsByClassName('zoomin');
+    if (els.length) {
+      els[0].net = this;
+      els[0].onclick = function() {
+        var c = this.net.sigma.camera; c.goTo({ratio: c.ratio * c.settings('zoomingRatio')});
+      };
+    }
+    var els = this.canvas.getElementsByClassName('zoomout');
+    if (els.length) {
+      els[0].net = this;
+      els[0].onclick = function() {
+        var c = this.net.sigma.camera; c.goTo({ratio: c.ratio / c.settings('zoomingRatio')});
+      };
+    }
+    var els = this.canvas.getElementsByClassName('mix');
+    if (els.length) {
+      this.mixBut = els[0];
+      this.mixBut.net = this;
+      this.mixBut.onclick = this.mix;
+    }
+    var els = this.canvas.getElementsByClassName('shot');
+    if (els.length) {
+      els[0].net = this;
+      els[0].onclick = function() {
+        this.net.stop(); // stop force
+        this.net.sigma.refresh();
+        var s =  this.net.sigma;
+        var size = prompt("Largeur de l’image (en px)", window.innerWidth);
+        sigma.plugins.image(s, s.renderers[0], {
+          download: true,
+          margin: 50,
+          size: size,
+          clip: true,
+          zoomRatio: 1,
+          labels: false
+        });
+      };
+    }
+
+
     this.sigma.bind('overNode', function(e) {
       // attention, n’écrire qu’une fois
       if (!e.data.node._label && e.data.node.title) {
@@ -319,6 +355,10 @@
         e.data.node.label = e.data.node.label + ', ' + e.data.node.title;
         e.target.render();
       }
+    });
+    this.sigma.bind('doubleClickNode', function(e) {
+      e.data.renderer.graph.dropNode(e.data.node.id);
+      e.target.refresh();
     });
     this.sigma.bind('outNode', function(e) {
       if (e.data.node._label) {
@@ -335,13 +375,17 @@
     if (this.gravBut) this.gravBut.innerHTML = '◼';
     var pars = {
       // slowDown: 1,
-      // adjustSizes: true, // non, ralentit tout
-      // outboundAttractionDistribution: true, // non, inertie, ralentit tout
-      // edgeWeightInfluence: 1, // ralentit tout, impossible de ramener Phèdre à Œnone
-      // barnesHutOptimize: false, // ?
+      // adjustSizes: true, // non, même avec iterationsPerRender
+      linLogMode: true, // oui avec gravité > 1
+      gravity: 1.2, // 
+      // edgeWeightInfluence: 1.1, // bof, même avec iterationsPerRender
+      // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
+      barnesHutOptimize: false, // ?
       // barnesHutTheta: 0.1,  // pas d’effet apparent sur si petit graphe
-      gravity: 0.7, // instable si > 2
-      // linLogMode: true, // non, ralentit trop
+      // scalingRatio: 2, // non
+      // outboundAttractionDistribution: true, // pas avec beaucoup de petits rôles
+      // strongGravityMode: true, // instable, nécessaire avec outboundAttractionDistribution
+      iterationsPerRender : 15, // important
     };
     if (window.Worker) {
       pars.worker = true;

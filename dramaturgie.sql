@@ -41,6 +41,8 @@ CREATE TABLE act (
   n       INTEGER, -- numéro d’ordre dans la pièce
   label   TEXT,    -- intitulé affichabe
   type    TEXT,    -- type d’acte (prologue, interlude…)
+  scenes  INTEGER, -- nombre de scène
+  confs   INTEGER, -- nombre de configurations
   cn      INTEGER, -- numéro du premier caractère
   wn      INTEGER, -- numéro du premier mot
   ln      INTEGER, -- numéro du premier vers
@@ -65,6 +67,7 @@ CREATE TABLE scene (
   n       INTEGER, -- numéro d’ordre dans l’acte
   label   TEXT,    -- intitulé affichabe
   type    TEXT,    -- type de scene (prologue, interlude…)
+  confs   INTEGER, -- nombre de configurations
   cn      INTEGER, -- numéro du premier caractère
   wn      INTEGER, -- numéro du premier mot
   ln      INTEGER, -- numéro du premier vers
@@ -126,18 +129,21 @@ CREATE TABLE role (
   sex      INTEGER,  -- 1: homme, 2: femme, null: ?, 0: asexué, 9: dieu, ISO 5218:2004
   age      TEXT,     -- (cadet|junior|senior|veteran)
   status   TEXT,     -- pour isoler les confidents, serviteurs, ou pédants
-  targets  INTEGER,  -- nombre d’interlocuteurs
-  oc        INTEGER,  -- out <c>, mombre de caractères dits
-  ow        INTEGER,  -- out <w>, mombre de mots dits
-  ol        INTEGER,  -- out <l>, nombre de vers dits
-  osp       INTEGER,  -- out <sp>, nombre de répliques dites
-  ic        INTEGER,  -- in <c>, mombre de caractères entendus
-  iw        INTEGER,  -- in <w>, mombre de mots entendus
-  il        INTEGER,  -- in <l>, nombre de vers entendus
-  isp       INTEGER,  -- in <sp>, nombre de répliques entendues
+  targets  INTEGER,  -- nombre de destinataires
+  sources  INTEGER,  -- nombre d’émetteurs
+  confs    INTEGER,  -- nombre de configurations
+  oc       INTEGER,  -- out <c>, mombre de caractères dits
+  ow       INTEGER,  -- out <w>, mombre de mots dits
+  ol       INTEGER,  -- out <l>, nombre de vers dits
+  osp      INTEGER,  -- out <sp>, nombre de répliques dites
+  ic       INTEGER,  -- in <c>, mombre de caractères entendus
+  iw       INTEGER,  -- in <w>, mombre de mots entendus
+  il       INTEGER,  -- in <l>, nombre de vers entendus
+  isp      INTEGER,  -- in <sp>, nombre de répliques entendues
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX role_who ON role(play, code);
+CREATE INDEX role_oc ON role(play, oc);
 
 CREATE TABLE sp (
   -- une réplique 
@@ -157,9 +163,14 @@ CREATE TABLE sp (
   text          TEXT,    -- texte, pour récup ultérieure ?
   PRIMARY KEY(id ASC)
 );
-CREATE UNIQUE INDEX sp_path ON sp(play, act, scene, code);
+CREATE UNIQUE INDEX sp_code ON sp(play, code);
 CREATE UNIQUE INDEX sp_cn ON sp(play, cn);
 CREATE UNIQUE INDEX sp_wn ON sp(play, wn);
+CREATE INDEX sp_play ON sp(play);
+CREATE INDEX sp_act ON sp(act);
+CREATE INDEX sp_scene ON sp(scene);
+CREATE INDEX sp_configuration ON sp(configuration);
+CREATE INDEX sp_role ON sp(role);
 CREATE INDEX sp_ln ON sp(play, ln);
 
 CREATE TABLE edge (
@@ -188,4 +199,5 @@ CREATE TRIGGER playDel
     DELETE FROM role WHERE role.play = OLD.id;
     DELETE FROM sp WHERE sp.play = OLD.id;
     DELETE FROM edge WHERE edge.play = OLD.id;
+    DELETE FROM stage WHERE stage.play = OLD.id;
 END;

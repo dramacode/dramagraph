@@ -254,9 +254,9 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$lf"/>
   </xsl:template>
   <!-- Didascalie -->
-  <xsl:template match="tei:stage">
+  <xsl:template match="tei:stage | tei:speaker/tei:hi">
     <xsl:variable name="n">
-      <xsl:number level="any"/>
+      <xsl:number count="tei:stage|tei:speaker/tei:hi" level="any"/>
     </xsl:variable>
     <xsl:variable name="code">
       <xsl:choose>
@@ -312,6 +312,8 @@ Ramasser des informations chiffrées d’une pièce
   <xsl:template match="tei:sp">
     <xsl:param name="act"/>
     <xsl:param name="scene"/>
+    <!-- Explore configurations before what is said -->
+    <xsl:apply-templates select="tei:speaker"/>
     <xsl:variable name="code">
       <xsl:choose>
         <xsl:when test="@xml:id">
@@ -385,7 +387,7 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:text>"</xsl:text>
     <xsl:value-of select="$lf"/>
     <!-- find <stage> and <listPerson> -->
-    <xsl:apply-templates select="*"/>
+    <xsl:apply-templates select="*[not(self::tei:speaker)]"/>
   </xsl:template>
   <!-- To Count chars -->
   <xsl:template match="tei:note|tei:stage|tei:speaker|tei:listPerson" mode="txt"/>
