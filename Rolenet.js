@@ -158,7 +158,7 @@
 
     // self loop, no arrow needed
     if (source.id === target.id) {
-      context.strokeStyle = color;
+      context.strokeStyle = "#888";
       context.lineWidth = size / 2;
       context.beginPath();
       context.moveTo(sX, sY);
@@ -261,6 +261,7 @@
   window.Rolenet = function (canvas, graph, workerUrl) {
     this.workerUrl = workerUrl;
     this.canvas = document.getElementById(canvas);
+    this.odata = graph;
     this.sigma = new sigma({
       graph: graph,
       renderer: {
@@ -301,7 +302,17 @@
         doubleClickEnabled: false, // utilisé pour la suppression
       }
     });
-
+    var els = this.canvas.getElementsByClassName('restore');
+    if (els.length) {
+      this.gravBut = els[0];
+      els[0].net = this;
+      els[0].onclick = function() {
+        this.net.stop(); // stop force and restore button
+        this.net.sigma.graph.clear();
+        this.net.sigma.graph.read(this.net.odata);
+        this.net.sigma.refresh();
+      }
+    }
     var els = this.canvas.getElementsByClassName('grav');
     if (els.length) {
       this.gravBut = els[0];
@@ -312,16 +323,18 @@
     if (els.length) {
       els[0].net = this;
       els[0].onclick = function() {
-        var c = this.net.sigma.camera; c.goTo({ratio: c.ratio * c.settings('zoomingRatio')});
+        var c = this.net.sigma.camera; c.goTo({ratio: c.ratio / c.settings('zoomingRatio')});
       };
     }
     var els = this.canvas.getElementsByClassName('zoomout');
     if (els.length) {
       els[0].net = this;
       els[0].onclick = function() {
-        var c = this.net.sigma.camera; c.goTo({ratio: c.ratio / c.settings('zoomingRatio')});
+        var c = this.net.sigma.camera; c.goTo({ratio: c.ratio * c.settings('zoomingRatio')});
       };
     }
+
+
     var els = this.canvas.getElementsByClassName('mix');
     if (els.length) {
       this.mixBut = els[0];
@@ -347,6 +360,24 @@
       };
     }
 
+    // resizer
+    var els = this.canvas.getElementsByClassName('resize');
+    if (els.length) {
+      els[0].net = this;
+      els[0].onmousedown = function(e) {
+        this.net.stop();
+        var html = document.documentElement;
+        html.sigma = this.net.sigma; // give an handle to the sigma instance
+        html.dragO = this.net.canvas;
+        html.dragX = e.clientX;
+        html.dragY = e.clientY;
+        html.dragWidth = parseInt(document.defaultView.getComputedStyle(html.dragO).width, 10);
+        html.dragHeight = parseInt(document.defaultView.getComputedStyle(html.dragO).height, 10);
+        html.addEventListener('mousemove', Rolenet.doDrag, false);
+        html.addEventListener('mouseup', Rolenet.stopDrag, false);
+      };
+    }
+
 
     this.sigma.bind('overNode', function(e) {
       // attention, n’écrire qu’une fois
@@ -356,7 +387,7 @@
         e.target.render();
       }
     });
-    this.sigma.bind('doubleClickNode', function(e) {
+    this.sigma.bind('rightClickNode', function(e) {
       e.data.renderer.graph.dropNode(e.data.node.id);
       e.target.refresh();
     });
@@ -377,7 +408,7 @@
       // slowDown: 1,
       // adjustSizes: true, // non, même avec iterationsPerRender
       linLogMode: true, // oui avec gravité > 1
-      gravity: 1.2, // 
+      gravity: 1.2, //
       // edgeWeightInfluence: 1.1, // bof, même avec iterationsPerRender
       // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
       barnesHutOptimize: false, // ?
@@ -401,17 +432,6 @@
     this.sigma.killForceAtlas2();
     if (this.gravBut) this.gravBut.innerHTML = '►';
   };
-  Rolenet.prototype.shot = function (button, clip) {
-    sigma.plugins.image(this.sigma, this.sigma.renderers[0], {
-      download: true,
-      size: size,
-      margin: 50,
-      background: color,
-      clip: clip,
-      zoomRatio: 1,
-    });
-    return false;
-  };
   Rolenet.prototype.grav = function() {
     if ((this.net.sigma.supervisor || {}).running) {
       this.net.sigma.killForceAtlas2();
@@ -434,4 +454,15 @@
     this.net.start();
     return false;
   };
+  // global static
+  Rolenet.doDrag = function(e) {
+    this.dragO.style.width = (this.dragWidth + e.clientX - this.dragX) + 'px';
+    this.dragO.style.height = (this.dragHeight + e.clientY - this.dragY) + 'px';
+  };
+  Rolenet.stopDrag = function(e) {
+    this.removeEventListener('mousemove', Rolenet.doDrag, false);
+    this.removeEventListener('mouseup', Rolenet.stopDrag, false);
+    this.sigma.refresh();
+  };
+
 })();
