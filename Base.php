@@ -137,7 +137,7 @@ class Dramaturgie_Base {
       if (!$code) continue;
       if ($i > 1) echo ",\n    ";
       // position initiale en cercle, à 1h30
-      $angle = M_PI/0.55 + ($count/7.6)*(M_PI*2/$count) *  $i;
+      $angle =  -M_PI + (M_PI*2/$count) *  ($i-1);
       // $angle =  2*M_PI/$count * ($i -1);
       $x =  number_format(6.0*cos($angle), 4);
       $y =  number_format(6.0*sin($angle), 4);
@@ -459,40 +459,43 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     echo '
 <table class="sortable">
   <tr>
+    <th>N°</th>
     <th>De</th>
     <th>À</th>
     <th>Scènes</th>
-    <th>Signes(s.)</th>
-    <th>Répliques (r.)</th>
-    <th>s./r.</th>
+    <th>Paroles</th>
+    <th>Répliques</th>
+    <th>Rép. moy.</th>
   </tr>
   ';
     $edges = $this->edges($playcode);
     foreach ($edges as $key => $edge) {
       echo "  <tr>\n";
+      echo '    <td>'.$edge['no']."</td>\n";
       echo '    <td>'.$edge['slabel']."</td>\n";
       echo '    <td>'.$edge['tlabel']."</td>\n";
       echo '    <td align="right">'.$edge['confs']."</td>\n";
-      echo '    <td align="right">'.$edge['c']."</td>\n";
+      echo '    <td align="right">'.number_format($edge['c']/80, 0)." l.</td>\n";
       echo '    <td align="right">'.$edge['sp']."</td>\n";
-      echo '    <td align="right">'.round($edge['c']/$edge['sp'])."</td>\n";
+      echo '    <td align="right">'.number_format($edge['c']/($edge['sp']*80), 2)." l.</td>\n";
       echo "  </tr>\n";
     }
 
     echo '</table>';
   }
   public function nodetable ($playcode) {
+    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     echo '
 <table class="sortable">
-  <caption>s. : signes, r. : répliques, </caption>
   <tr>
     <th>Personnage</th>
     <th>Interlocuteurs</th>
-    <th>Scènes</th>
-    <th>s. dits</th>
-    <th>r. dits</th>
-    <th>s./r. dits</th>
-    <th>% s. dits / total</th>
+    <th>Présence</th>
+    <th>Paroles</th>
+
+    <th>Par. % prés.</th>
+    <th>Répliques</th>
+    <th>Rép. moy.</th>
   </tr>
   ';
     $nodes = $this->nodes($playcode);
@@ -500,19 +503,24 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       echo "  <tr>\n";
       echo '    <td>'.$node['label']."</td>\n";
       echo '    <td>'.$node['targets']."</td>\n";
-      echo '    <td>'.$node['confs']."</td>\n";
-      echo '    <td align="right">'.$node['oc']."</td>\n";
-      echo '    <td align="right">'.$node['osp']."</td>\n";
-      if ($node['osp']) echo '    <td align="right">'.round($node['oc']/$node['osp'])."</td>\n";
-      else echo "<td/>";
+      echo '    <td align="right">'.number_format(100 * ($node['oc']+$node['ic'])/$play['c'], 0)." %</td>\n";
+      echo '    <td align="right">'.number_format(100 * $node['oc']/$play['c'], 0)." %</td>\n";
       echo '    <td align="right">'.number_format( 100 * $node['oc']/($node['oc']+$node['ic']) , 0)." %</td>";
+      echo '    <td align="right">'.$node['osp']."</td>\n";
+      if ($node['osp']) echo '    <td align="right">'.number_format($node['oc']/($node['osp']*80), 2)." l.</td>\n";
+      else echo "<td/>";
       // echo '    <td align="right">'.$node['ic']."</td>\n";
       // echo '    <td align="right">'.$node['isp']."</td>\n";
       // echo '    <td align="right">'.round($node['ic']/$node['isp'])."</td>\n";
       echo "  </tr>\n";
     }
-
+    echo '<tfoot>
+<tr><td colspan="7">Le temps de présence est relatif aux signes prononcés.
+<br/> l. : lignes (= 80 signes)</td></tr>
+    </tfoot>
+    ';
     echo '</table>';
+
   }
   /**
    * Évolution de la parole selon les personnages
@@ -521,18 +529,30 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     // load a dic of rowid=>code for roles
     $cast = array();
-    foreach  ($this->pdo->query("SELECT id, code, label FROM role WHERE play = ".$play['id'], PDO::FETCH_ASSOC) as $row) {
+    foreach  ($this->pdo->query("SELECT id, code, label, oc FROM role WHERE play = ".$play['id'], PDO::FETCH_ASSOC) as $row) {
       $cast[$row['id']] = $row;
     }
-    $sql = "SELECT edge.source, edge.target, count(sp) AS sp, sum(sp.c) AS c, count(DISTINCT configuration) AS confs FROM edge, sp WHERE edge.play = ? AND edge.sp = sp.id GROUP BY edge.source, edge.target ORDER BY c DESC";
+    $sql = "SELECT
+      edge.source,
+      edge.target,
+      count(sp) AS sp,
+      sum(sp.c) AS c,
+      count(DISTINCT configuration) AS confs,
+      (SELECT oc FROM role WHERE edge.source=role.id)+(SELECT oc FROM role WHERE edge.target=role.id) AS sort
+    FROM edge, sp
+    WHERE edge.play = ? AND edge.sp = sp.id
+    GROUP BY edge.source, edge.target
+    ORDER BY sort DESC
+    ";
     $q = $this->pdo->prepare($sql);
 
     $q->execute(array($play['id']));
     $data = array();
     $max = false;
     $nodes = array();
-    while ($sp = $q->fetch()) {
-      if(!$max) $max = $sp['c'];
+    $i = 1;
+    while ($row = $q->fetch()) {
+      if(!$max) $max = $row['c'];
       /*
       $dothreshold = false; // no threshold
       if ($sp['source']==$sp['target']);
@@ -558,14 +578,17 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       }
       */
       $data[] = array(
-        'source' => $cast[$sp['source']]['code'],
-        'slabel' => $cast[$sp['source']]['label'],
-        'target' => $cast[$sp['target']]['code'],
-        'tlabel' => $cast[$sp['target']]['label'],
-        'c' => $sp['c'],
-        'sp' => $sp['sp'],
-        'confs' => $sp['confs'],
+        'no' => $i,
+        'sort' => 0+$row['sort'],
+        'source' => $cast[$row['source']]['code'],
+        'slabel' => $cast[$row['source']]['label'],
+        'target' => $cast[$row['target']]['code'],
+        'tlabel' => $cast[$row['target']]['label'],
+        'c' => $row['c'],
+        'sp' => $row['sp'],
+        'confs' => $row['confs'],
       );
+      $i++;
     }
     return $data;
   }
@@ -789,7 +812,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
           // ajouter les destinataires de la réplique, dépend de la conf
           if (!count($conf)); // erreur ?
           // monologue
-          else if (1 == count($conf) && isset($conf[$source])) {
+          else if (1 == count($conf)) {
             $target = $source;
             $intarget->execute(array(
               $playid,
@@ -961,7 +984,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $this->pdo->commit();
   }
   /**
-   * Insérer de contenus, à ne pas appelr n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
+   * Insérer de contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
    */
   function _insobj($playid, $playcode) {
     $insert = $this->pdo->prepare("
@@ -1091,19 +1114,13 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       if (!count($_SERVER['argv'])) exit('
     insert requires a file or a glob expression to insert XML/TEI play file
 ');
-      $file = array_shift($_SERVER['argv']);
-      if (file_exists($file)) {
-        $base->insert($file);
-      }
-      else {
-        $glob = $file;
+      foreach ($_SERVER['argv'] as $glob) {
         foreach(glob($glob) as $file) {
           // spécifique Molière
           if (preg_match('@-livret\.@', $file)) continue;
           $base->insert($file);
         }
       }
-      // TODO, glob
     }
     if ($action == 'gephi') {
       $base->gephi(array_shift($_SERVER['argv']));
