@@ -475,9 +475,9 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       echo '    <td>'.$edge['slabel']."</td>\n";
       echo '    <td>'.$edge['tlabel']."</td>\n";
       echo '    <td align="right">'.$edge['confs']."</td>\n";
-      echo '    <td align="right">'.number_format($edge['c']/80, 0)." l.</td>\n";
+      echo '    <td align="right">'.number_format($edge['c']/60, 0)." l.</td>\n";
       echo '    <td align="right">'.$edge['sp']."</td>\n";
-      echo '    <td align="right">'.number_format($edge['c']/($edge['sp']*80), 2)." l.</td>\n";
+      echo '    <td align="right">'.number_format($edge['c']/($edge['sp']*60), 2, ',', ' ')." l.</td>\n";
       echo "  </tr>\n";
     }
 
@@ -492,7 +492,6 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     <th>Interlocuteurs</th>
     <th>Présence</th>
     <th>Paroles</th>
-
     <th>Par. % prés.</th>
     <th>Répliques</th>
     <th>Rép. moy.</th>
@@ -507,16 +506,16 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       echo '    <td align="right">'.number_format(100 * $node['oc']/$play['c'], 0)." %</td>\n";
       echo '    <td align="right">'.number_format( 100 * $node['oc']/($node['oc']+$node['ic']) , 0)." %</td>";
       echo '    <td align="right">'.$node['osp']."</td>\n";
-      if ($node['osp']) echo '    <td align="right">'.number_format($node['oc']/($node['osp']*80), 2)." l.</td>\n";
-      else echo "<td/>";
+      if ($node['osp']) echo '    <td align="right">'.number_format($node['oc']/($node['osp']*80), 2, ',', ' ')." l.</td>\n";
+      else echo '<td align="right">0</td>'."\n";
       // echo '    <td align="right">'.$node['ic']."</td>\n";
       // echo '    <td align="right">'.$node['isp']."</td>\n";
       // echo '    <td align="right">'.round($node['ic']/$node['isp'])."</td>\n";
       echo "  </tr>\n";
     }
     echo '<tfoot>
-<tr><td colspan="7">Le temps de présence est relatif aux signes prononcés.
-<br/> l. : lignes (= 80 signes)</td></tr>
+<tr><td colspan="7">Le temps de présence est relatif aux signes prononcés dans une même scène (ou configuration).
+<br/> l. : lignes (= 60 signes)</td></tr>
     </tfoot>
     ';
     echo '</table>';
@@ -742,16 +741,16 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
                VALUES (?,    ?,   ?,    ?, ?,     ?,    ?,  ?,  ?);
     ");
     $inconf = $this->pdo->prepare("
-    INSERT INTO configuration (play, code, n, label, cn, wn, ln)
-                       VALUES (?,    ?,   ?,  ?,     ?,  ?,  ?);
+    INSERT INTO configuration (play, act, scene, code, n, label, cn, wn, ln)
+                       VALUES (?,    ?,   ?,     ?,   ?,  ?,     ?,  ?,  ?);
     ");
     $insp = $this->pdo->prepare("
     INSERT INTO sp (play, act, scene, configuration, role, code, cn, wn, ln, c, w, l, text)
             VALUES (?,    ?,   ?,     ?,             ?,    ?,    ?,  ?,  ?,  ?, ?, ?, ?);
     ");
     $instage = $this->pdo->prepare("
-    INSERT INTO stage (play, code, n, cn, wn, ln, c, w, text)
-               VALUES (?,    ?,    ?, ?,  ?,  ?,  ?, ?, ?);
+    INSERT INTO stage (play, act, scene, configuration, code, n, cn, wn, ln, c, w, text)
+               VALUES (?,    ?,   ?,     ?,             ?,    ?, ?,  ?,  ?,  ?, ?, ?);
     ");
     $intarget = $this->pdo->prepare("
     INSERT INTO edge (play, sp, source, target)
@@ -767,6 +766,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
     $act = null;
     $scene= null;
     $conf = array();
+    $confid = null; // peut ne pas commencer tout de suite
     while (($values = fgetcsv($stream, 0, "\t")) !== FALSE) {
       // print_r(array_merge($values, array_fill(0, count($keys) - count($values), null)));
       // étiqueter les cases avec les noms de colonne de la première ligne, les deux tableaux combinés doivent avoir la même taille
@@ -856,6 +856,8 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         try {
             $inconf->execute(array(
             $playid,
+            $actid,
+            $sceneid,
             $data['code'],
             $data['n'],
             $data['label'],
@@ -872,6 +874,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       // scènes, parfois non contenues dans un acte (pièces en un acte)
       else if ($data['object'] == 'div2' || $data['type'] == 'scene' ) {
         $sceneid = null;
+        // ne pas annuler la configuration, peut courir entre les actes et les scènes
         if (!$data['type']) $data['type'] = null;
         try {
           $inscene->execute(array(
@@ -892,6 +895,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
       else if ($data['object'] == 'div1' ) {
         $sceneid = null;
         $actid = null;
+        // ne pas annuler la configuration, peut courir entre les actes et les scènes
         if(!$data['type']) $data['type'] = 'act';
         try {
           $inact->execute(array(
@@ -900,6 +904,9 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
             $data['n'],
             $data['label'],
             $data['type'],
+            $cn,
+            $wn,
+            $ln,
           ));
           $actid = $this->pdo->lastInsertId();
         }
@@ -912,6 +919,9 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
         // (play, code, n, cn, wn, ln, c, w, text)
         $instage->execute(array(
           $playid,
+          $actid,
+          $sceneid,
+          $confid,
           $data['code'],
           $data['n'],
           $cn,

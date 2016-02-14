@@ -36,7 +36,7 @@ CREATE INDEX object_playcode ON object(playcode, type, code);
 CREATE TABLE act (
   -- un acte
   id      INTEGER, -- rowid auto
-  play    INTEGER REFERENCES play(id), -- id pièce
+  play    INTEGER REFERENCES play(id), -- rowid pièce
   code    TEXT,    -- code acte, unique pour la pièce
   n       INTEGER, -- numéro d’ordre dans la pièce
   label   TEXT,    -- intitulé affichabe
@@ -61,8 +61,8 @@ CREATE INDEX act_type ON act(type);
 CREATE TABLE scene (
   -- une scène (référence pour la présence d’un rôle)
   id      INTEGER, -- rowid auto
-  play    INTEGER REFERENCES play(id),    -- id pièce
-  act     INTEGER REFERENCES act(id),    -- id acte
+  play    INTEGER REFERENCES play(id),   -- rowid pièce
+  act     INTEGER REFERENCES act(id),    -- rowid acte
   code    TEXT,    -- code scene, unique pour la pièce
   n       INTEGER, -- numéro d’ordre dans l’acte
   label   TEXT,    -- intitulé affichabe
@@ -79,12 +79,14 @@ CREATE TABLE scene (
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX scene_code ON scene(play, code);
-CREATE INDEX scene_act ON scene(play, act);
+CREATE INDEX scene_act ON scene(act);
 
 CREATE TABLE configuration (
   -- une configuration est un état de la scène (personnages présents)
   id      INTEGER, -- rowid auto
-  play    INTEGER REFERENCES play(id), -- code pièce
+  play    INTEGER REFERENCES play(id),-- id pièce
+  act     INTEGER REFERENCES act(id), -- id acte
+  scene   INTEGER REFERENCES scene(id), -- rowid scène
   code    TEXT,    -- code de conf (= @xml:id)
   n       INTEGER, -- numéro d’ordre dans la pièce
   label   TEXT,    -- liste de codes de personnage
@@ -99,11 +101,15 @@ CREATE TABLE configuration (
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX configuration_code ON configuration(play, code);
+CREATE INDEX configuration_act ON configuration(act);
 
 CREATE TABLE stage (
   -- une didascalie
   id      INTEGER,  -- rowid auto
-  play    INTEGER REFERENCES play(id), -- code pièce
+  play    INTEGER REFERENCES play(id), -- rowid pièce
+  act     INTEGER REFERENCES act(id), -- rowid acte
+  scene   INTEGER REFERENCES scene(id), -- rowid scène
+  configuration  INTEGER REFERENCES configuration(id), -- rowid de configuration
   code    TEXT,    -- code de conf (= @xml:id)
   n       INTEGER, -- numéro d’ordre dans la pièce
   cn      INTEGER, -- numéro de caractère dans les répliques
@@ -115,7 +121,9 @@ CREATE TABLE stage (
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX stage_code ON stage(play, code);
-
+CREATE INDEX stage_act ON stage(act);
+CREATE INDEX stage_scene ON stage(scene);
+CREATE INDEX stage_configuration ON stage(configuration);
 
 CREATE TABLE role (
   -- un rôle
