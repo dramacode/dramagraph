@@ -46,7 +46,9 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:value-of select="$tab"/>
       <xsl:text>ln</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>text</xsl:text>
+      <xsl:text>text</xsl:text>      
+      <xsl:value-of select="$tab"/>
+      <xsl:text>target</xsl:text>
       <xsl:value-of select="$lf"/>
       <xsl:apply-templates select="/*/tei:text/tei:body/*"/>
     </root>
@@ -216,7 +218,7 @@ Ramasser des informations chiffrées d’une pièce
         <xsl:value-of select="@xml:id"/>
       </xsl:when>
       <xsl:when test="@type = 'configuration'">
-        <xsl:text>configuration</xsl:text>
+        <xsl:text>conf</xsl:text>
         <xsl:number count="tei:listPerson[@type='configuration']" level="any"/>
       </xsl:when>
       <xsl:otherwise>
@@ -346,6 +348,20 @@ Ramasser des informations chiffrées d’une pièce
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="who">
+      <xsl:call-template name="who"/>
+    </xsl:variable>
+    <xsl:variable name="who-next">
+      <xsl:for-each select="following-sibling::tei:sp[1]">
+        <xsl:call-template name="who"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="who-prev">
+      <xsl:for-each select="preceding-sibling::tei:sp[1]">
+        <xsl:call-template name="who"/>
+      </xsl:for-each>
+    </xsl:variable>
+    
     <!-- object, type, code, n, l, ln, w, c, source, target, text  -->
     <xsl:text>sp</xsl:text>
     <xsl:value-of select="$tab"/>
@@ -353,14 +369,7 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="$n"/>
     <xsl:value-of select="$tab"/>
-    <xsl:choose>
-      <xsl:when test="@who">
-        <xsl:value-of select="substring-before(concat(@who, ' '), ' ')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="translate(substring-before(concat(normalize-space(tei:speaker), ' '), ' '), $who1, $who2)"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="$who"/>
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
     <xsl:value-of select="$tab"/>
@@ -385,6 +394,16 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:text>"</xsl:text>
     <xsl:value-of select="translate($txt, $quot, '＂')"/>
     <xsl:text>"</xsl:text>
+    <!-- prefered target -->
+    <xsl:value-of select="$tab"/>
+    <xsl:choose>
+      <xsl:when test="$who-next != '' and $who != $who-next">
+        <xsl:value-of select="$who-next"/>
+      </xsl:when>
+      <xsl:when test="$who-prev != '' and $who != $who-prev">
+        <xsl:value-of select="$who-prev"/>
+      </xsl:when>
+    </xsl:choose>
     <xsl:value-of select="$lf"/>
     <!-- find <stage> and <listPerson> -->
     <xsl:apply-templates select="*[not(self::tei:speaker)]"/>
@@ -409,5 +428,15 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:apply-templates mode="txt"/>
     </xsl:variable>
     <xsl:value-of select="normalize-space($txt)"/>
+  </xsl:template>
+  <xsl:template name="who">
+    <xsl:choose>
+      <xsl:when test="@who">
+        <xsl:value-of select="substring-before(concat(@who, ' '), ' ')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="translate(substring-before(concat(normalize-space(tei:speaker), ' '), ' '), $who1, $who2)"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 </xsl:transform>

@@ -103,6 +103,42 @@ CREATE TABLE configuration (
 CREATE UNIQUE INDEX configuration_code ON configuration(play, code);
 CREATE INDEX configuration_act ON configuration(act);
 
+CREATE TABLE role (
+  -- un rôle
+  id       INTEGER,  -- rowid auto
+  play     INTEGER REFERENCES play(id), -- rowid de pièce
+  code     TEXT,     -- code personne
+  label    TEXT,     -- nom affichable
+  title    TEXT,     -- description du rôle (mère de…, amant de…) tel que dans la source
+  note     TEXT,     -- possibilité de description plus étendue
+  rend     TEXT,     -- série de mots clés séparés d’espaces (male|female)? (cadet)
+  sex      INTEGER,  -- 1: homme, 2: femme, null: ?, 0: asexué, 9: dieu, ISO 5218:2004
+  age      TEXT,     -- (cadet|junior|senior|veteran)
+  status   TEXT,     -- pour isoler les confidents, serviteurs, ou pédants
+  targets  INTEGER,  -- nombre de destinataires
+  sources  INTEGER,  -- nombre d’émetteurs
+  confs    INTEGER,  -- nombre de configurations
+  c        INTEGER,  -- out <c>, mombre de caractères dits
+  w        INTEGER,  -- out <w>, mombre de mots dits
+  l        INTEGER,  -- out <l>, nombre de vers dits
+  sp       INTEGER,  -- out <sp>, nombre de répliques dites
+  PRIMARY KEY(id ASC)
+);
+CREATE UNIQUE INDEX role_who ON role(play, code);
+CREATE INDEX role_c ON role(play, c);
+
+CREATE TABLE presence (
+  -- Relation de présence entre une configuration et un rôle
+  id       INTEGER,  -- rowid auto
+  play     INTEGER REFERENCES play(id), -- code pièce
+  configuration INTEGER REFERENCES configuration(id), -- code pièce
+  role     INTEGER REFERENCES role(id), -- code pièce
+  PRIMARY KEY(id ASC)
+);
+CREATE INDEX presence_play ON presence(play);
+CREATE UNIQUE INDEX presence_role ON presence(role, configuration);
+CREATE UNIQUE INDEX presence_configuration ON presence(configuration, role);
+
 CREATE TABLE stage (
   -- une didascalie
   id      INTEGER,  -- rowid auto
@@ -124,34 +160,6 @@ CREATE UNIQUE INDEX stage_code ON stage(play, code);
 CREATE INDEX stage_act ON stage(act);
 CREATE INDEX stage_scene ON stage(scene);
 CREATE INDEX stage_configuration ON stage(configuration);
-
-CREATE TABLE role (
-  -- un rôle
-  id       INTEGER,  -- rowid auto
-  play     INTEGER REFERENCES play(id), -- code pièce
-  code     TEXT,     -- code personne
-  label    TEXT,     -- nom affichable
-  title    TEXT,     -- description du rôle (mère de…, amant de…) tel que dans la source
-  note     TEXT,     -- possibilité de description plus étendue
-  rend     TEXT,     -- série de mots clés séparés d’espaces (male|female)? (cadet)
-  sex      INTEGER,  -- 1: homme, 2: femme, null: ?, 0: asexué, 9: dieu, ISO 5218:2004
-  age      TEXT,     -- (cadet|junior|senior|veteran)
-  status   TEXT,     -- pour isoler les confidents, serviteurs, ou pédants
-  targets  INTEGER,  -- nombre de destinataires
-  sources  INTEGER,  -- nombre d’émetteurs
-  confs    INTEGER,  -- nombre de configurations
-  oc       INTEGER,  -- out <c>, mombre de caractères dits
-  ow       INTEGER,  -- out <w>, mombre de mots dits
-  ol       INTEGER,  -- out <l>, nombre de vers dits
-  osp      INTEGER,  -- out <sp>, nombre de répliques dites
-  ic       INTEGER,  -- in <c>, mombre de caractères entendus
-  iw       INTEGER,  -- in <w>, mombre de mots entendus
-  il       INTEGER,  -- in <l>, nombre de vers entendus
-  isp      INTEGER,  -- in <sp>, nombre de répliques entendues
-  PRIMARY KEY(id ASC)
-);
-CREATE UNIQUE INDEX role_who ON role(play, code);
-CREATE INDEX role_oc ON role(play, oc);
 
 CREATE TABLE sp (
   -- une réplique 
@@ -205,6 +213,7 @@ CREATE TRIGGER playDel
     DELETE FROM scene WHERE scene.play = OLD.id;
     DELETE FROM configuration WHERE configuration.play = OLD.id;
     DELETE FROM role WHERE role.play = OLD.id;
+    DELETE FROM presence WHERE presence.play = OLD.id;
     DELETE FROM sp WHERE sp.play = OLD.id;
     DELETE FROM edge WHERE edge.play = OLD.id;
     DELETE FROM stage WHERE stage.play = OLD.id;

@@ -408,7 +408,7 @@
       // slowDown: 1,
       // adjustSizes: true, // non, même avec iterationsPerRender
       linLogMode: true, // oui avec gravité > 1
-      gravity: 1.2, //
+      gravity: 1, //
       // edgeWeightInfluence: 1.1, // bof, même avec iterationsPerRender
       // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
       barnesHutOptimize: false, // ?
