@@ -174,8 +174,8 @@ class Dramaturgie_Base {
     $wn = 1;
     $cn = 1;
     $ln = null;
-    $act = null;
-    $scene= null;
+    $actid = null;
+    $sceneid = null;
     $conf = array();
     $confid = null; // peut ne pas commencer tout de suite
     while (($values = fgetcsv($stream, 0, "\t")) !== FALSE) {

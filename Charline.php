@@ -9,86 +9,114 @@ class Dramaturgie_Charline {
     $this->pdo = new PDO('sqlite:'.$sqlitefile);
     $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
   }
+
   /**
-   * Structuration
-   */
-   public function pannelcss() {
-     return '
-     <style>
- /* couleur des rôles par genre */
- .charline .role { background-color: rgba(192, 192, 192, 0.7); color: rgba(0, 0, 0, 0.5); }
- .charline .female { background-color: rgba(255, 0, 0, 0.5); color: rgba(255, 255, 255, 1);}
- .charline .female.junior { background-color: rgba(255, 64, 128, 0.3); color: rgba(0, 0, 0, 0.7);}
- .charline .female.inferior { background-color: rgba(192, 96, 128, 0.4); color: rgba(255, 255, 255, 1);}
- .charline .female.veteran { background-color: rgba(128, 0, 0, 0.4); color: rgba(255, 255, 255, 1);}
- .charline .male { background-color: rgba(0, 0, 255, 0.4); color:  rgba(255, 255, 255, 1);}
- .charline .male.junior { background-color: rgba(0, 192, 255, 0.2); color: rgba(0, 0, 0, 0.7);}
- .charline .male.inferior { background-color: rgba(96, 96, 192, 0.3); color: rgba(255, 255, 255, 1);}
- .charline .male.veteran { background-color: rgba(0, 0, 128, 0.4); color:  rgba(255, 255, 255, 1);}
- .charline .male.superior { background-color: rgba(0, 0, 255, 0.6); color:  rgba(255, 255, 255, 1);}
-
-
-.charline { font-family: sans-serif; font-size: 13px; line-height: 1.2em; position: relative; }
-.charline, .charline * { box-sizing: border-box; }
-.charline:after, .charline .act:after, .charline .scene:after, .charline .conf:after, .charline .cast:after, .charline .sps:after { content:""; display:table; clear:both; }
-.charline a { border-bottom: none; text-decoration: none; }
-.charline a:hover { background: transparent; }
-
-b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
-
-.charline div.scene { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.charline div.conf { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.charline .acthead { display: block; text-align: center; padding: 5px  30px 1px 0; clear: both;  }
-.charline a.cast { display: block; height: 100%; float: left; padding-left: 2ex; }
-.charline div.sps { margin-left: 5px; margin-bottom: 1px; float: left; width: 40px; border-right: 1px dotted #CCCCCC; background: #FFFFFF; }
-.charline div.sps a { display: block; line-height: 3px; position: relative; }
-.charline div.sps b { background: #AAAAAA; display: block; }
-.charline .role { float: left; height: 100%; border-left: 1px rgba(255, 255, 255, 0.5) solid; border-radius: 3px/1em; font-stretch: ultra-condensed; }
-.charline .role span { overflow: hidden; padding-left: 1ex; padding-top: 2px;}
-
-     </style>
-     ';
-   }
-   public function rythmcss() {
-     return '
-   <style>
-.dramarythm { font-family: sans-serif; font-size: 14px; border-collapse: collapse; margin-bottom: 10px;  }
-.dramarythm th.year { width: 5ex; padding-left: 1ex; }
-.dramarythm td.act, .dramarythm td.label { padding: 0 5px 0 4px; border-left: 1px solid #000000; }
-.dramarythm td.act {  vertical-align: bottom; }
-.dramarythm table { border-collapse: collapse; }
-.dramarythm table td { padding: 0; vertical-align: bottom; }
-.dramarythm table.act { border-collapse: collapse; }
-.dramarythm table.act td { background: #EEE; height: 45px; }
-.dramarythm table.act td.conf { border-left: 1px solid #FFF; }
-.dramarythm b { background: #888; display: block; width: 3px;}
-/*
-.dramarythm span.conf { display: table-row;  float:left;  background-color: #EEE; border-top: 3px solid #888; border-right: 3px #FFF solid; height: 100%; }
-.dramarythm b { display: table-cell; vertical-align: bottom; width: 3px; background: #888;  bottom: 0; }
-*/
-   </style>';
-
-   }
-  /**
-   *
+   * Ne marche pas encore, juste pour sauvegarde
    */
   public function rythm($playcode, $widthref) {
+    // boucler
+    $qconf = $charline->pdo->prepare("SELECT * FROM configuration WHERE act = ? ORDER BY rowid; ");
+    $qcn = $charline->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
+    $actsp = $charline->pdo->prepare("SELECT * FROM sp WHERE act = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
+    $playwidth = 1000; // longueur de référence pour 100 000 signes
+    $cwidth = $playwidth/100000; // largeur moyenne pour un caractère
+    // boucler sur les pièces
+    foreach ($charline->pdo->query("SELECT * FROM play ORDER BY author, year") as $play) {
+      // prendre les actes
+      $act = array();
 
+      $acti = 0;
+      echo '
+    <table class="dramarythm">
+    '."\n";
+
+      // boucler sur les actes une fois pour les intitulés, puis une deuxième pour remplir
+      echo '  <tr><th rowspan="2" class="year">'.$play['year'].'</th>'."\n";
+      foreach ($charline->pdo->query("SELECT * FROM act WHERE play = ".$play['id']) as $row) {
+        echo '    <td class="label">'.$row['label']."</td>\n";
+      }
+      echo "  </tr>\n";
+      echo "  <tr>\n";
+      foreach ($charline->pdo->query("SELECT * FROM act WHERE play = ".$play['id']) as $act) {
+        if(!$act['c']) continue;
+        echo '    <td class="act">'."\n";
+        echo '      <table class="act"><tr>'."\n";
+        /*
+        $qconf->execute(array($act['id']));
+        $conf1 = true;
+        while ($conf = $qconf->fetch()) {
+          if (!$conf['c']) continue; // conf sans parole
+          // step in chars, relative to desired width (min=1) and size of conf in chars
+          // ~350 or less when conf is short
+          $cstep = $conf['c']/ceil($conf['c']*$cwidth/3);
+          $tdclass = ' class="bleft"';
+          $tot = 0; // see if we all sp
+          // take first $sp
+          $cn = $conf['cn'];
+          $qcn->execute( array($conf['id'], $cn));
+          $splast = $qcn->fetch();
+          $first = 1;
+          while ($cn < $conf['cn']+$conf['c']) {
+            $cn = $cn + $cstep;
+            $qcn->execute( array($conf['id'], $cn));
+            $sp = $qcn->fetch();
+            $dif = $first + $sp['id'] - $splast['id'];
+            if ($dif>15) $dif = 15;
+            $bclass = 'sp'.$dif;
+            echo '<td'.$tdclass.'><b class="'.$bclass.'"> </b></td>';
+            $tdclass='';
+            $tot += $dif;
+            $splast = $sp;
+            $first = 0;
+          }
+        }
+        */
+        // pour tout un acte
+        $cstep = $act['c']/ceil($act['c']*$cwidth)*3.6; // ~300s.
+        $cn = $act['cn'];
+        $actsp->execute( array($act['id'], $cn));
+        $splast = $actsp->fetch();
+        $first = 1;
+        while ($cn < $act['cn']+$act['c']) {
+          $cn = $cn + $cstep;
+          $actsp->execute( array($act['id'], $cn));
+          $sp = $actsp->fetch();
+          $dif = $first + $sp['id'] - $splast['id'];
+          if ($dif>15) $dif = 15;
+          $bclass = 'sp'.$dif;
+          echo '<td><b class="'.$bclass.'"> </b></td>';
+          // $tot += $dif; // vérifié, OK
+          $splast = $sp;
+          $first = 0;
+        }
+        echo '</tr></table>'."\n";
+        echo '</td>'."\n";
+      }
+      echo '  </tr>
+    </table>'."\n";
 
   }
   /**
    * Panneau vertical de pièce
    */
-  public function pannel($playcode, $width=230, $heightref=600) {
-    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
+  public function pannel($p=array()) {
+    $p = array_merge(array(
+      'playcode' => null,
+      'width' => 230,
+      'refheight' => 600,
+      'prehref' => '',
+      'target' => '', // iframe target
+    ), $p);
+    if ($p['target']) $p['target'] = ' target="'.$p['target'].'"';
+    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($p['playcode']))->fetch();
     $playid = $play['id'];
     if (!$play) return false;
-    $confwidth = $width - 75;
+    $confwidth = $p['width'] - 75;
 
 
     // 1 pixel = 1000 caractères
-    if (!$heightref) $playheight = '800';
-    else if (is_numeric($heightref) && $heightref > 50) $playheight = round($play['c'] / (100000/$heightref));
+    if (!$p['refheight']) $playheight = '800';
+    else if (is_numeric($p['refheight']) && $p['refheight'] > 50) $playheight = round($play['c'] / (100000/$p['refheight']));
     else $playheight = '800';
 
 
@@ -100,7 +128,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 
     // loop on acts
     foreach ($this->pdo->query("SELECT * FROM act WHERE play = $playid ORDER BY rowid") as $act) {
-      echo '  <a href="#'.$act['code'].'" class="acthead">'.$act['label']."</a>\n";
+      echo '  <a'.$p['target'].' href="'.$p['prehref'].'#'.$act['code'].'" class="acthead">'.$act['label']."</a>\n";
       if(!$act['c']) continue; // probably an interlude
       echo '  <div class="act">'."\n";
       $actheight = $playheight * $act['c']/$play['c'];
@@ -122,7 +150,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
           }
           //
           // role bar
-          echo '      <a href="#'.$conf['code'].'" class="cast">'."\n";
+          echo '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">'."\n";
           $i = 0;
           // loop on role
           foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playid ORDER BY c DESC") as $role) {
@@ -153,7 +181,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
             $sp = $qcn->fetch();
             if(!$sp) continue;
             if($sp == $splast) {
-              echo '<a href="#'.$splast['code'].'"> </a>';
+              echo '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"> </a>';
               continue;
             }
             if (!$splast) {
@@ -161,7 +189,7 @@ b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
               continue;
             }
             $width = 3*($sp['id'] - $splast['id']);
-            echo '<a href="#'.$splast['code'].'"><b style="width: '.$width.'px"> </b></a>';
+            echo '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.$width.'px"> </b></a>';
             $splast = $sp;
           }
           echo "      </div>\n";

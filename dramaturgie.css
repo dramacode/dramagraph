@@ -1,0 +1,76 @@
+.dramarythm { font-family: sans-serif; font-size: 14px; border-collapse: collapse; margin-bottom: 10px;  }
+.dramarythm th.year { width: 5ex; padding-left: 1ex; }
+.dramarythm td.act, .dramarythm td.label { padding: 0 5px 0 4px; border-left: 1px solid #000000; }
+.dramarythm td.act {  vertical-align: bottom; }
+.dramarythm table { border-collapse: collapse; }
+.dramarythm table td { padding: 0; vertical-align: bottom; }
+.dramarythm table.act { border-collapse: collapse; }
+.dramarythm table.act td { background: #EEE; height: 45px; }
+.dramarythm table.act td.bleft { border-left: 1px #FFF solid; }
+.dramarythm b { background: #888; display: block; width: 3px;}
+.op0 { opacity: 0; }
+.op1 { opacity: 0.1; }
+.op2 { opacity: 0.2; }
+.op3 { opacity: 0.3; }
+.op4 { opacity: 0.4; }
+.op5 { opacity: 0.5; }
+.op6 { opacity: 0.6; }
+.op7 { opacity: 0.7; }
+.op8 { opacity: 0.8; }
+.op9 { opacity: 0.9; }
+.op10 { opacity: 1; }
+b.sp0 { height: 0; }
+b.sp1 { height: 3px; }
+b.sp2 { height: 6px; }
+b.sp3 { height: 9px; }
+b.sp4 { height: 12px; }
+b.sp5 { height: 15px; }
+b.sp6 { height: 18px; }
+b.sp7 { height: 21px; }
+b.sp8 { height: 24px; }
+b.sp9 { height: 27px; }
+b.sp10 { height: 30px; }
+b.sp11 { height: 33px; }
+b.sp12 { height: 36px; }
+b.sp13 { height: 39px; }
+b.sp14 { height: 42px; }
+b.sp15 { height: 45px; }
+b.sp16 { height: 48px; }
+b.sp17 { height: 51px; }
+b.sp18 { height: 54px; }
+b.sp19 { height: 57px; }
+b.sp20 { height: 60px; }
+/*
+.dramarythm span.conf { display: table-row;  float:left;  background-color: #EEE; border-top: 3px solid #888; border-right: 3px #FFF solid; height: 100%; }
+.dramarythm b { display: table-cell; vertical-align: bottom; width: 3px; background: #888;  bottom: 0; }
+*/
+/* couleur des rôles par genre */
+.charline .role { background-color: rgba(192, 192, 192, 0.7); color: rgba(0, 0, 0, 0.5); }
+.charline .female { background-color: rgba(255, 0, 0, 0.5); color: rgba(255, 255, 255, 1);}
+.charline .female.junior { background-color: rgba(255, 64, 128, 0.3); color: rgba(0, 0, 0, 0.7);}
+.charline .female.inferior { background-color: rgba(192, 96, 128, 0.4); color: rgba(255, 255, 255, 1);}
+.charline .female.veteran { background-color: rgba(128, 0, 0, 0.4); color: rgba(255, 255, 255, 1);}
+.charline .male { background-color: rgba(0, 0, 255, 0.4); color:  rgba(255, 255, 255, 1);}
+.charline .male.junior { background-color: rgba(0, 192, 255, 0.2); color: rgba(0, 0, 0, 0.7);}
+.charline .male.inferior { background-color: rgba(96, 96, 192, 0.3); color: rgba(255, 255, 255, 1);}
+.charline .male.veteran { background-color: rgba(0, 0, 128, 0.4); color:  rgba(255, 255, 255, 1);}
+.charline .male.superior { background-color: rgba(0, 0, 255, 0.6); color:  rgba(255, 255, 255, 1);}
+
+
+.charline { font-family: sans-serif; font-size: 13px; line-height: 1.2em; position: relative; }
+.charline, .charline * { box-sizing: border-box; }
+.charline:after, .charline .act:after, .charline .scene:after, .charline .conf:after, .charline .cast:after, .charline .sps:after { content:""; display:table; clear:both; }
+.charline a { border-bottom: none; text-decoration: none; }
+.charline a:hover { background: transparent; }
+
+b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
+
+.charline div.scene { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.charline div.conf { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.charline .acthead { display: block; text-align: center; padding: 5px  30px 1px 0; clear: both;  }
+.charline a.cast { display: block; height: 100%; float: left; padding-left: 2ex; }
+.charline div.sps { margin-left: 5px; margin-bottom: 1px; float: left; width: 40px; border-right: 1px dotted #CCCCCC; background: #FFFFFF; }
+.charline div.sps a { display: block; line-height: 3px; position: relative; }
+.charline div.sps b { background: #AAAAAA; display: block; }
+.charline .role { float: left; height: 100%; border-left: 1px rgba(255, 255, 255, 0.5) solid; border-radius: 3px/1em; font-stretch: ultra-condensed; }
+.charline .role span { overflow: hidden; padding-left: 1ex; padding-top: 2px;}
