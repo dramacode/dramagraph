@@ -94,7 +94,7 @@ class Dramaturgie_Charline {
       }
       echo '  </tr>
     </table>'."\n";
-
+    }
   }
   /**
    * Panneau vertical de pièce
@@ -118,10 +118,11 @@ class Dramaturgie_Charline {
     if (!$p['refheight']) $playheight = '800';
     else if (is_numeric($p['refheight']) && $p['refheight'] > 50) $playheight = round($play['c'] / (100000/$p['refheight']));
     else $playheight = '800';
+    $csize = $playheight/100000; // largeur moyenne pour un caractère
 
 
     // requête sur le nombre de caractères d’un rôle dans une scène
-    $qsp = $this->pdo->prepare("SELECT sum(c) FROM sp WHERE configuration = ? AND role = ?");
+    $qsp = $this->pdo->prepare("SELECT role.*, SUM(sp.c) AS ord FROM sp, role WHERE configuration = ? AND sp.role = role.id GROUP BY role ORDER BY ord DESC");
     $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY cn DESC LIMIT 1");
     $qscene = $this->pdo->prepare("SELECT * FROM scene WHERE id = ?");
     echo '<div class="charline">'."\n";
@@ -139,60 +140,59 @@ class Dramaturgie_Charline {
         if(!$conf['c']) continue; // configuration with no sp, probably in <stage>
         $confheight = 3+ ceil($actheight * $conf['c']/$act['c']);
         if (!isset($conf['n'])) $conf['n'] = 0+ preg_replace('/\D/', '', $conf['code']);
+        // new scene label (if there)
+        if($sceneid != $conf['scene']) {
+          $sceneid = $conf['scene'];
+          $qscene->execute(array($conf['scene']));
+          $scene = $qscene->fetch();
+          if ($scene) echo '      <b class="n">'.$scene['n'].'</b>'."\n";
+        }
         // Configuration content
-        echo '    <div class="conf" style="height: '.($confheight +1).'px;" title="Acte '.$act['n'].', scène '.$conf['n'].'">'."\n";
-          // new scene label (if there)
-          if($sceneid != $conf['scene']) {
-            $sceneid = $conf['scene'];
-            $qscene->execute(array($conf['scene']));
-            $scene = $qscene->fetch();
-            if ($scene) echo '      <b class="n">'.$scene['n'].'</b>'."\n";
+        $title = 'Acte '.$act['n'];
+        if ($scene) $title .= ', scène '.$scene['n'];
+        echo '    <div class="conf" style="height: '.($confheight +1).'px;" title="'.$title.'">'."\n";
+        // role bar
+        echo '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">'."\n";
+        $qsp->execute(array($conf['id']));
+        // loop on role
+        while ($role = $qsp->fetch()) {
+          if (!$role['ord']) continue;
+          $rolewidth = number_format($confwidth * $role['ord'] / $conf['c']) ;
+          echo '<span class="role '.$role['rend'].'"';
+          echo ' style="width: '.$rolewidth.'px"';
+          $title = $role['label'].', acte '.$act['n'];
+          if ($scene) $title .= ', scène '.$scene['n'];
+          echo ' title="'.$title.', '.round(100*$role['ord'] / $conf['c']).'%"';
+          echo '>';
+          if ($rolewidth > 35 && $confheight > 12 ) { // && !isset($list[$role['code']])
+            echo '<span>'.$role['label'].'</span>';
+            $list[$role['code']] = true;
           }
-          //
-          // role bar
-          echo '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">'."\n";
-          $i = 0;
-          // loop on role
-          foreach ($this->pdo->query("SELECT * FROM role WHERE play = $playid ORDER BY c DESC") as $role) {
-            $qsp->execute(array($conf['id'], $role['id']));
-            list($c) = $qsp->fetch();
-            $i++;
-            if (!$c) continue;
-            $rolewidth = number_format($confwidth * $c / $conf['c']) ;
-            echo '<span class="role role'.$i.' '.$role['rend'].'"';
-            echo ' style="width: '.$rolewidth.'px"';
-            $title = $role['label'].', acte '.$act['n'];
-            if ($scene) $title .= ', scène '.$scene['n'];
-            echo ' title="'.$title.', '.round(100*$c / $conf['c']).'%"';
-            echo '>';
-            if ($rolewidth > 35 && $confheight > 12 ) { // && !isset($list[$role['code']])
-              echo '<span>'.$role['label'].'</span>';
-              $list[$role['code']] = true;
-            }
-            else echo ' ';
-            echo '</span>';
-          }
-          echo "      </a>\n";
-          echo '      <div class="sps">';
-          $splast = null;
-          for ($pixel = 0; $pixel <= $confheight; $pixel = $pixel +3) {
-            $cn = $conf['cn'] + ceil($conf['c'] * $pixel / $confheight);
-            $qcn->execute( array($conf['id'], $cn));
-            $sp = $qcn->fetch();
-            if(!$sp) continue;
-            if($sp == $splast) {
-              echo '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"> </a>';
-              continue;
-            }
-            if (!$splast) {
-              $splast = $sp;
-              continue;
-            }
-            $width = 3*($sp['id'] - $splast['id']);
-            echo '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.$width.'px"> </b></a>';
-            $splast = $sp;
-          }
-          echo "      </div>\n";
+          else echo ' ';
+          echo '</span>';
+        }
+        echo "      </a>\n";
+        // rythm
+        echo '      <div class="sps">';
+        // ~350 or less when conf is short
+        $cstep = floor($conf['c'] / floor($confheight / 3));
+        // echo $conf['c'].' - '.$cstep.' '.$confheight.' '.floor($confheight / 3);
+        // take first $sp
+        $cn = $conf['cn'];
+        $qcn->execute( array($conf['id'], $cn));
+        $splast = $qcn->fetch();
+        $first = 1;
+        while ($cn < $conf['cn']+$conf['c']) {
+          $cn = $cn + $cstep +1;
+          $qcn->execute( array($conf['id'], $cn));
+          $sp = $qcn->fetch();
+          $dif = $first + $sp['id'] - $splast['id'];
+          if ($dif>15) $dif = 15;
+          echo '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.($dif*3).'px"> </b></a>';
+          $splast = $sp;
+          $first = 0;
+        }
+        echo "      </div>\n";
 
         echo "    </div>\n";
       }

@@ -479,21 +479,20 @@ class Dramaturgie_Base {
   static function cli() {
     $timeStart = microtime(true);
     $usage = '
-    usage    : php -f '.basename(__FILE__).' base.sqlite {action} {arguments}
-    where action can be
-    valid  "../*.xml"
-    insert "../*.xml"
-    gephi playcode
+    usage    : php -f '.basename(__FILE__).' base.sqlite *.xml
 ';
     $timeStart = microtime(true);
     array_shift($_SERVER['argv']); // shift first arg, the script filepath
     if (!count($_SERVER['argv'])) exit($usage);
     $sqlite = array_shift($_SERVER['argv']);
     $base = new Dramaturgie_Base($sqlite);
+    /*
     if (!count($_SERVER['argv'])) exit('
     action  ? (valid|insert|gephi)
 ');
     $action = array_shift($_SERVER['argv']);
+    */
+    $action = "insert";
     if ($action == 'insert') {
       if (!count($_SERVER['argv'])) exit('
     insert requires a file or a glob expression to insert XML/TEI play file
