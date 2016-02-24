@@ -152,8 +152,8 @@ class Dramaturgie_Base {
                        VALUES (?,    ?,   ?,     ?,   ?,  ?,     ?,  ?,  ?);
     ");
     $inpresence = $this->pdo->prepare("
-    INSERT INTO presence (play, configuration, role)
-                  VALUES (?,    ?,             ?);
+    INSERT INTO presence (play, configuration, role, type)
+                  VALUES (?,    ?,             ?,    ?);
     ");
     $insp = $this->pdo->prepare("
     INSERT INTO sp (play, act, scene, configuration, role, code, cn, wn, ln, c, w, l, text)
@@ -221,6 +221,7 @@ class Dramaturgie_Base {
                 $playid,
                 $confid,
                 $cast[$k]['id'],
+                null
               ));
             }
           }
@@ -230,7 +231,7 @@ class Dramaturgie_Base {
       // réplique
       else if ($data['object'] == 'sp' ) {
         if (!isset($cast[$data['label']]) && STDERR) fwrite(STDERR, "sp/@who not in castlist ".$data['label']. " [".$data['code']."]\n");
-        if (!isset($conf[$data['label']]) && STDERR) fwrite(STDERR, 'sp/@who="'.$data['label'].'" not in configuration $confid ("'.implode('", "', array_keys($conf)).'")  ['.$data['code']."]\n");
+        if (!isset($conf[$data['label']]) && STDERR) fwrite(STDERR, 'sp/@who="'.$data['label'].'" not in configuration '.$confid.' ("'.implode('", "', array_keys($conf)).'")  ['.$data['code']."]\n");
         if (!$data['c']) {
           if (STDERR) fwrite(STDERR, "Empty <sp> [".$data['code']."]\n");
           continue;
@@ -278,6 +279,7 @@ class Dramaturgie_Base {
           }
           //
           else {
+            $targetid = null;
             // destinataire principal de la réplique
             if ($data['target']) {
               $targetid = $cast[$data['target']]['id'];
@@ -341,6 +343,7 @@ class Dramaturgie_Base {
         $actid = null;
         // ne pas annuler la configuration, peut courir entre les actes et les scènes
         if(!$data['type']) $data['type'] = 'act';
+        if($data['type'] == 'acte') $data['type'] = 'act';
         try {
           $inact->execute(array(
             $playid,
@@ -417,7 +420,7 @@ class Dramaturgie_Base {
     $this->pdo->exec("UPDATE configuration SET c = (SELECT SUM(c) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE configuration SET w = (SELECT SUM(w) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE configuration SET l = (SELECT SUM(l) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
-
+    $this->pdo->exec("UPDATE configuration SET roles = (SELECT COUNT(*) FROM presence WHERE presence.configuration = configuration.id) WHERE play = $playid;");
 
 
     $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM edge WHERE edge.source = role.id) WHERE play = $playid;");

@@ -11,90 +11,69 @@ class Dramaturgie_Charline {
   }
 
   /**
-   * Ne marche pas encore, juste pour sauvegarde
+   * Bande rythmique d’une pièce
    */
-  public function rythm($playcode, $widthref) {
-    // boucler
-    $qconf = $charline->pdo->prepare("SELECT * FROM configuration WHERE act = ? ORDER BY rowid; ");
-    $qcn = $charline->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
-    $actsp = $charline->pdo->prepare("SELECT * FROM sp WHERE act = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
-    $playwidth = 1000; // longueur de référence pour 100 000 signes
-    $cwidth = $playwidth/100000; // largeur moyenne pour un caractère
-    // boucler sur les pièces
-    foreach ($charline->pdo->query("SELECT * FROM play ORDER BY author, year") as $play) {
-      // prendre les actes
-      $act = array();
+  public function rythm($p=array()) {
+    $p = array_merge(array(
+      'playcode' => null,
+      'refsize' => 800,
+      'prehref' => '',
+      'target' => '', // iframe target
+    ), $p);
+    if ($p['target']) $p['target'] = ' target="'.$p['target'].'"';
+    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($p['playcode']))->fetch();
+    $playid = $play['id'];
+    if (!$play) return false;
+    $qconf = $this->pdo->prepare("SELECT * FROM configuration WHERE act = ? ORDER BY rowid; ");
+    $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
+    echo '<table class="dramarythm">'."\n";
 
-      $acti = 0;
-      echo '
-    <table class="dramarythm">
-    '."\n";
-
-      // boucler sur les actes une fois pour les intitulés, puis une deuxième pour remplir
-      echo '  <tr><th rowspan="2" class="year">'.$play['year'].'</th>'."\n";
-      foreach ($charline->pdo->query("SELECT * FROM act WHERE play = ".$play['id']) as $row) {
-        echo '    <td class="label">'.$row['label']."</td>\n";
-      }
-      echo "  </tr>\n";
-      echo "  <tr>\n";
-      foreach ($charline->pdo->query("SELECT * FROM act WHERE play = ".$play['id']) as $act) {
-        if(!$act['c']) continue;
-        echo '    <td class="act">'."\n";
-        echo '      <table class="act"><tr>'."\n";
-        /*
-        $qconf->execute(array($act['id']));
-        $conf1 = true;
-        while ($conf = $qconf->fetch()) {
-          if (!$conf['c']) continue; // conf sans parole
-          // step in chars, relative to desired width (min=1) and size of conf in chars
-          // ~350 or less when conf is short
-          $cstep = $conf['c']/ceil($conf['c']*$cwidth/3);
-          $tdclass = ' class="bleft"';
-          $tot = 0; // see if we all sp
-          // take first $sp
-          $cn = $conf['cn'];
-          $qcn->execute( array($conf['id'], $cn));
-          $splast = $qcn->fetch();
-          $first = 1;
-          while ($cn < $conf['cn']+$conf['c']) {
-            $cn = $cn + $cstep;
-            $qcn->execute( array($conf['id'], $cn));
-            $sp = $qcn->fetch();
-            $dif = $first + $sp['id'] - $splast['id'];
-            if ($dif>15) $dif = 15;
-            $bclass = 'sp'.$dif;
-            echo '<td'.$tdclass.'><b class="'.$bclass.'"> </b></td>';
-            $tdclass='';
-            $tot += $dif;
-            $splast = $sp;
-            $first = 0;
-          }
-        }
-        */
-        // pour tout un acte
-        $cstep = $act['c']/ceil($act['c']*$cwidth)*3.6; // ~300s.
-        $cn = $act['cn'];
-        $actsp->execute( array($act['id'], $cn));
-        $splast = $actsp->fetch();
+    // boucler sur les actes une fois pour les intitulés, puis une deuxième pour remplir
+    echo '  <tr>'."\n";
+    foreach ($this->pdo->query("SELECT * FROM act WHERE play = ".$play['id']." ORDER BY rowid") as $act) {
+      $actsize = ceil($act['c']*$p['refsize']/100000);
+      echo '    <td class="label"><div title="'.$act['label'].'" style="width: '.$actsize.'px">'.$act['label']."</div></td>\n";
+    }
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    foreach ($this->pdo->query("SELECT * FROM act WHERE play = ".$play['id']." ORDER BY rowid") as $act) {
+      if(!$act['c']) continue;
+      echo '    <td class="act">'."\n";
+      echo '      <table class="act"><tr>'."\n";
+      $qconf->execute(array($act['id']));
+      $conf1 = true;
+      while ($conf = $qconf->fetch()) {
+        if (!$conf['c']) continue; // conf sans parole
+        $confsize = ceil($conf['c']*$p['refsize']/100000/3)*3;
+        // step in chars, relative to desired width (min=1) and size of conf in chars
+        // ~350 or less when conf is short
+        $cstep = floor($conf['c'] / floor($confsize / 3));
+        $tdclass = ' class="bleft"';
+        $tot = 0; // see if we all sp
+        // take first $sp
+        $cn = $conf['cn'];
+        $qcn->execute( array($conf['id'], $cn));
+        $splast = $qcn->fetch();
         $first = 1;
-        while ($cn < $act['cn']+$act['c']) {
+        while ($cn < $conf['cn']+$conf['c']) {
           $cn = $cn + $cstep;
-          $actsp->execute( array($act['id'], $cn));
-          $sp = $actsp->fetch();
+          $qcn->execute( array($conf['id'], $cn));
+          $sp = $qcn->fetch();
           $dif = $first + $sp['id'] - $splast['id'];
           if ($dif>15) $dif = 15;
           $bclass = 'sp'.$dif;
-          echo '<td><b class="'.$bclass.'"> </b></td>';
-          // $tot += $dif; // vérifié, OK
+          echo '<td'.$tdclass.'><b class="'.$bclass.'"> </b></td>';
+          $tdclass='';
+          $tot += $dif;
           $splast = $sp;
           $first = 0;
         }
-        echo '</tr></table>'."\n";
-        echo '</td>'."\n";
       }
-      echo '  </tr>
-    </table>'."\n";
+
+      echo '</tr></table>'."\n";
+      echo '</td>'."\n";
     }
+    echo '</tr></table>'."\n";
   }
   /**
    * Panneau vertical de pièce
@@ -138,7 +117,7 @@ class Dramaturgie_Charline {
       // loop on configurations
       foreach ($this->pdo->query("SELECT * FROM configuration WHERE act = ".$act['id']) as $conf) {
         if(!$conf['c']) continue; // configuration with no sp, probably in <stage>
-        $confheight = 3+ ceil($actheight * $conf['c']/$act['c']);
+        $confsize = 3+ ceil($actheight * $conf['c']/$act['c']);
         if (!isset($conf['n'])) $conf['n'] = 0+ preg_replace('/\D/', '', $conf['code']);
         // new scene label (if there)
         if($sceneid != $conf['scene']) {
@@ -150,7 +129,7 @@ class Dramaturgie_Charline {
         // Configuration content
         $title = 'Acte '.$act['n'];
         if ($scene) $title .= ', scène '.$scene['n'];
-        echo '    <div class="conf" style="height: '.($confheight +1).'px;" title="'.$title.'">'."\n";
+        echo '    <div class="conf" style="height: '.($confsize +1).'px;" title="'.$title.'">'."\n";
         // role bar
         echo '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">'."\n";
         $qsp->execute(array($conf['id']));
@@ -164,7 +143,7 @@ class Dramaturgie_Charline {
           if ($scene) $title .= ', scène '.$scene['n'];
           echo ' title="'.$title.', '.round(100*$role['ord'] / $conf['c']).'%"';
           echo '>';
-          if ($rolewidth > 35 && $confheight > 12 ) { // && !isset($list[$role['code']])
+          if ($rolewidth > 35 && $confsize > 12 ) { // && !isset($list[$role['code']])
             echo '<span>'.$role['label'].'</span>';
             $list[$role['code']] = true;
           }
@@ -174,9 +153,8 @@ class Dramaturgie_Charline {
         echo "      </a>\n";
         // rythm
         echo '      <div class="sps">';
-        // ~350 or less when conf is short
-        $cstep = floor($conf['c'] / floor($confheight / 3));
-        // echo $conf['c'].' - '.$cstep.' '.$confheight.' '.floor($confheight / 3);
+        // courir par 3 pixels, ne pas oublier floor, si la hauteur n’est pas multiple de 3
+        $cstep = floor($conf['c'] / floor($confsize / 3));
         // take first $sp
         $cn = $conf['cn'];
         $qcn->execute( array($conf['id'], $cn));

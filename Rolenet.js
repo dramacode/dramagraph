@@ -274,6 +274,8 @@
         edgeColor: "default",
         drawLabels: true,
         defaultLabelSize: 18,
+        labelThreshold: 0,
+        labelSize:"fixed",
         // font: 'arial',
         /* marche mais trop grand avec les commentaires
         labelSize: "proportional",
@@ -282,7 +284,7 @@
         // labelAlignment: 'center', // linkurous only and not compatible with drag node
         sideMargin: 1,
         maxNodeSize: 30,
-        minNodeSize: 8,
+        minNodeSize: 2,
         minEdgeSize: 1,
         maxEdgeSize: 30,
         minArrowSize: 15,
@@ -406,17 +408,17 @@
     if (this.gravBut) this.gravBut.innerHTML = '◼';
     var pars = {
       // slowDown: 1,
-      // adjustSizes: true, // non, même avec iterationsPerRender
-      linLogMode: true, // oui avec gravité > 1
-      gravity: 1, //
-      // edgeWeightInfluence: 1.1, // bof, même avec iterationsPerRender
+      // adjustSizes: true, // avec iterationsPerRender, resserre trop le réseau
+      // linLogMode: true, // oui avec gravité > 1
+      gravity: 0.8, // <1 pour le Tartuffe
+      // edgeWeightInfluence: 0.1, // demande iterationsPerRender, désorganise
       // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
-      barnesHutOptimize: false, // ?
+      // barnesHutOptimize: true, // tartuffe instable
       // barnesHutTheta: 0.1,  // pas d’effet apparent sur si petit graphe
-      // scalingRatio: 2, // non
+      // scalingRatio: 2, // non, pas compris
       // outboundAttractionDistribution: true, // pas avec beaucoup de petits rôles
       // strongGravityMode: true, // instable, nécessaire avec outboundAttractionDistribution
-      iterationsPerRender : 15, // important
+      iterationsPerRender : 20, // important
     };
     if (window.Worker) {
       pars.worker = true;

@@ -31,18 +31,40 @@ class Dramaturgie_Rolenet {
     $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
   }
   /**
+   * Html for canvas
+   */
+  public function canvas($id='graph') {
+    $html = '
+    <div id="'.$id.'" oncontextmenu="return false">
+      <div class="sans-serif" style="position: absolute; bottom: 0; left: 1ex; font-size: 70%; ">Clic droit sur un nœud pour le supprimer</div>
+      <div style="position: absolute; bottom: 0; right: 2px; z-index: 2; ">
+        <button class="but restore" type="button" title="Recharger">O</button>
+        <button class="shot but" style="background: #FFFFFF" type="button" title="Prendre une photo">📷</button>
+        <button class="zoomin but" style="cursor: zoom-in; " type="button" title="Grossir">+</button>
+        <button class="zoomout but" style="cursor: zoom-out; " type="button" title="Diminuer">-</button>
+        <button class="mix but" type="button" title="Mélanger le graphe">♻</button>
+        <button class="grav but" type="button" title="Démarrer ou arrêter la gravité">►</button>
+        <span class="resize interface" style="cursor: se-resize; font-size: 1.3em; " title="Redimensionner la feuille">⬊</span>
+      </div>
+    </div>
+    ';
+    return $html;
+  }
+
+  /**
    * Json compatible avec la librairie sigma.js
    */
   public function sigma($playcode) {
-    $nodes = $this->nodes($playcode);
-    $edges = $this->edges($playcode);
-    echo "{ ";
-    echo "\n  edges: [\n    ";
+    $nodes = $this->nodes($playcode, 'act');
+    $edges = $this->edges($playcode, 'act');
+    $html = array();
+    $html[] = "{ ";
+    $html[] = "edges: [";
     for ($i=0; $i < count($edges); $i++) {
       $edge = $edges[$i];
       if (!isset($nodes[$edge['source']])) continue;
       if (!isset($nodes[$edge['target']])) continue;
-      if ($i) echo ",\n    ";
+      if ($i) $html[] = ",\n    ";
       $source = $nodes[$edge['source']];
       $col = "";
       if (isset(self::$colors[$source['class']])) {
@@ -52,21 +74,21 @@ class Dramaturgie_Rolenet {
         $col = ', color: "'.self::$colors[$source['rank']][1].'"';
       }
 
-      echo '{id:"e'.$i.'", source:"'.$edge['source'].'", target:"'.$edge['target'].'", size:"'.$edge['c'].'"'.$col.', type:"drama"}';
+      $html[] = '{id:"e'.$i.'", source:"'.$edge['source'].'", target:"'.$edge['target'].'", size:"'.$edge['c'].'"'.$col.', type:"drama"}';
 
     }
-    echo "\n  ]";
+    $html[] = "\n  ]";
 
-    echo ",";
+    $html[] = ",";
 
-    echo "\n  nodes: [\n    ";
+    $html[] = "\n  nodes: [\n    ";
 
 
     $count = count($nodes);
     $i = 1;
     foreach ($nodes as $code=>$node) {
       if (!$code) continue;
-      if ($i > 1) echo ",\n    ";
+      if ($i > 1) $html[] = ",\n    ";
       // position initiale en cercle, à 1h30
       $angle =  -M_PI - (M_PI*2/$count) *  ($i-1);
       // $angle =  2*M_PI/$count * ($i -1);
@@ -90,12 +112,13 @@ class Dramaturgie_Rolenet {
       */
       // $json_options = JSON_UNESCAPED_UNICODE; // incompatible 5.3
       $json_options = null;
-      echo "{id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"}';
+      $html[] = "{id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"}';
       $i++;
     }
-    echo "\n  ]";
+    $html[] = "\n  ]";
 
-    echo "\n};\n";
+    $html[] = "\n};\n";
+    return implode("\n", $html);
   }
 
   /**
@@ -193,16 +216,21 @@ class Dramaturgie_Rolenet {
 
   }
   /**
-   * Liste de nœuds
+   * Liste de nœuds, pour le graphe, on filtre selon le type d'acte
    */
-  public function nodes($playcode) {
-    $playcode = $this->pdo->quote($playcode);
+  public function nodes($playcode, $acttype=null) {
+    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     $data = array();
     $rank = 1;
     $qpres = $this->pdo->prepare("SELECT sum(c) FROM configuration, presence WHERE presence.role = ? AND presence.configuration = configuration.id; ");
-    foreach ($this->pdo->query("SELECT role.* FROM role, play WHERE role.play = play.id AND play.code = $playcode ORDER BY role.c DESC") as $role) {
+    $qact = $this->pdo->prepare("SELECT act.* FROM presence, configuration, act WHERE act.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.act = act.id ");
+    foreach ($this->pdo->query("SELECT role.* FROM role WHERE role.play = ".$play['id']." ORDER BY role.c DESC") as $role) {
       // role invisible dans les configurations
       if (!$role['sources']) continue;
+      if ($acttype) {
+        $qact->execute(array($acttype, $role['id']));
+        if (!$qact->fetch()) continue;
+      }
       $class = "";
       if ($role['sex'] == 2) $class = "female";
       else if ($role['sex'] == 1) $class = "male";
@@ -234,7 +262,7 @@ class Dramaturgie_Rolenet {
   /**
    * Relations paroles entre les rôles
    */
-  public function edges($playcode) {
+  public function edges($playcode, $acttype = null) {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     // load a dic of rowid=>code for roles
     $cast = array();
@@ -259,8 +287,11 @@ class Dramaturgie_Rolenet {
     $data = array();
     $max = false;
     $nodes = array();
-    $i = 1;
+    $i = 1; // more
     while ($row = $q->fetch()) {
+      if(!isset($cast[$row['source']])) continue; // sortie de la liste des rôles
+      if(!isset($cast[$row['target']])) continue; // sortie de la liste des rôles
+
       if(!$max) $max = $row['c'];
       /*
       $dothreshold = false; // no threshold
@@ -286,6 +317,7 @@ class Dramaturgie_Rolenet {
         continue;
       }
       */
+      $i++;
       $data[] = array(
         'no' => $i,
         'sort' => 0+$row['sort'],
@@ -297,7 +329,6 @@ class Dramaturgie_Rolenet {
         'sp' => $row['sp'],
         'confs' => $row['confs'],
       );
-      $i++;
     }
     return $data;
   }

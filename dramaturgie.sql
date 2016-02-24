@@ -90,6 +90,7 @@ CREATE TABLE configuration (
   code    TEXT,    -- code de conf (= @xml:id)
   n       INTEGER, -- numéro d’ordre dans la pièce
   label   TEXT,    -- liste de codes de personnage
+  roles   INTEGER, -- nombre de rôles parlants
   cn      INTEGER, -- numéro du premier caractère
   wn      INTEGER, -- numéro du premier mot
   ln      INTEGER, -- numéro du premier vers
@@ -130,9 +131,10 @@ CREATE INDEX role_c ON role(play, c);
 CREATE TABLE presence (
   -- Relation de présence entre une configuration et un rôle
   id       INTEGER,  -- rowid auto
-  play     INTEGER REFERENCES play(id), -- code pièce
-  configuration INTEGER REFERENCES configuration(id), -- code pièce
-  role     INTEGER REFERENCES role(id), -- code pièce
+  play     INTEGER REFERENCES play(id), -- id de pièce
+  configuration INTEGER REFERENCES configuration(id), -- id de configuration
+  role     INTEGER REFERENCES role(id), -- id de rôle
+  type     TEXT,  -- type de présence (mort, inconscient…)
   PRIMARY KEY(id ASC)
 );
 CREATE INDEX presence_play ON presence(play);
