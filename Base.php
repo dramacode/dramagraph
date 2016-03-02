@@ -12,12 +12,14 @@ else if (php_sapi_name() == "cli") {
 class Dramaturgie_Base {
   /** Lien à une base SQLite, unique */
   public $pdo;
-
+  /** fichier de la base sqlite */
+  public $sqlitefile;
 
   /**
    * Connexion à une base sqlite
    */
   public function __construct($sqlitefile=null) {
+    $this->sqlitefile = $sqlitefile;
     if ($sqlitefile) $this->connect($sqlitefile);
   }
   /**
@@ -442,32 +444,17 @@ class Dramaturgie_Base {
     INSERT INTO object (play, playcode, type, code, cont)
                 VALUES (?,    ?,        ?,    ?,    ?)
     ");
-    /*
-    // insérer charline
-    ob_start();
-    $this->charline($playcode);
-    $cont = ob_get_contents();
-    ob_end_clean();
-    $insert->execute(array(
-      $playid,
-      $playcode,
-      'charline',
-      null,
-      $cont,
-    ));
-    // insérer json sigma
-    ob_start();
-    $this->sigma($playcode);
-    $cont = ob_get_contents();
-    ob_end_clean();
-    $insert->execute(array(
-      $playid,
-      $playcode,
-      'sigma',
-      null,
-      $cont,
-    ));
-    */
+    $charline = new Dramaturgie_Charline($this->sqlitefile);
+    $cont = $charline->pannel(array('playcode'=>$playcode));
+    $insert->execute(array($playid, $playcode, 'charline', null, $cont));
+    unset($charline);
+    $rolenet = new Dramaturgie_Rolenet($this->sqlitefile);
+    $cont = $rolenet->sigma($playcode);
+    $insert->execute(array($playid, $playcode, 'sigma', null, $cont));
+    $cont = $rolenet->nodetable($playcode);
+    $insert->execute(array($playid, $playcode, 'nodetable', null, $cont));
+    $cont = $rolenet->canvas("graph");
+    $insert->execute(array($playid, $playcode, 'canvas', null, $cont));
     // insérer des transformations du fichier
     $teinte = new Teinte_Doc($file);
     $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));

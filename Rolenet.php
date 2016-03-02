@@ -179,7 +179,8 @@ class Dramaturgie_Rolenet {
    */
   public function nodetable ($playcode) {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
-    echo '
+    $html = array();
+    $html[] = '
 <table class="sortable">
   <tr>
     <th>Personnage</th>
@@ -193,27 +194,26 @@ class Dramaturgie_Rolenet {
   ';
     $nodes = $this->nodes($playcode);
     foreach ($nodes as $key => $node) {
-      echo "  <tr>\n";
-      echo '    <td>'.$node['label']."</td>\n";
-      echo '    <td>'.$node['targets']."</td>\n";
-      echo '    <td align="right">'.number_format(100 * $node['presence']/$play['c'], 0)." %</td>\n";
-      echo '    <td align="right">'.number_format(100 * $node['c']/$play['c'], 0)." %</td>\n";
-      echo '    <td align="right">'.number_format( 100 * $node['c']/$node['presence'] , 0)." %</td>";
-      echo '    <td align="right">'.$node['sp']."</td>\n";
-      if ($node['sp']) echo '    <td align="right">'.number_format($node['c']/($node['sp']*80), 2, ',', ' ')." l.</td>\n";
-      else echo '<td align="right">0</td>'."\n";
+      $html[] = "  <tr>";
+      $html[] = '    <td>'.$node['label']."</td>";
+      $html[] = '    <td>'.$node['targets']."</td>";
+      $html[] = '    <td align="right">'.number_format(100 * $node['presence']/$play['c'], 0)." %</td>";
+      $html[] = '    <td align="right">'.number_format(100 * $node['c']/$play['c'], 0)." %</td>";
+      $html[] = '    <td align="right">'.number_format( 100 * $node['c']/$node['presence'] , 0)." %</td>";
+      $html[] = '    <td align="right">'.$node['sp']."</td>";
+      if ($node['sp']) $html[] = '    <td align="right">'.number_format($node['c']/($node['sp']*80), 2, ',', ' ')." l.</td>";
+      else $html[] = '<td align="right">0</td>';
       // echo '    <td align="right">'.$node['ic']."</td>\n";
       // echo '    <td align="right">'.$node['isp']."</td>\n";
       // echo '    <td align="right">'.round($node['ic']/$node['isp'])."</td>\n";
-      echo "  </tr>\n";
+      $html[] = "  </tr>";
     }
-    echo '<tfoot>
+    $html[] = '<tfoot>
 <tr><td colspan="7">Le temps de présence est proprotionnel aux signes prononcés dans une scène.
 <br/> l. : lignes (= 60 signes)</td></tr>
-    </tfoot>
-    ';
-    echo '</table>';
-
+    </tfoot>';
+    $html[] = '</table>';
+    return implode("\n", $html);
   }
   /**
    * Liste de nœuds, pour le graphe, on filtre selon le type d'acte

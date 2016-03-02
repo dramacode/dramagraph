@@ -82,7 +82,7 @@ class Dramaturgie_Charline {
     $p = array_merge(array(
       'playcode' => null,
       'width' => 230,
-      'refheight' => 600,
+      'refsize' => 600,
       'prehref' => '',
       'target' => '', // iframe target
     ), $p);
@@ -94,23 +94,24 @@ class Dramaturgie_Charline {
 
 
     // 1 pixel = 1000 caractères
-    if (!$p['refheight']) $playheight = '800';
-    else if (is_numeric($p['refheight']) && $p['refheight'] > 50) $playheight = round($play['c'] / (100000/$p['refheight']));
+    if (!$p['refsize']) $playheight = '800';
+    else if (is_numeric($p['refsize']) && $p['refsize'] > 50) $playheight = round($play['c'] / (100000/$p['refsize']));
     else $playheight = '800';
     $csize = $playheight/100000; // largeur moyenne pour un caractère
 
+    $html = array();
 
     // requête sur le nombre de caractères d’un rôle dans une scène
     $qsp = $this->pdo->prepare("SELECT role.*, SUM(sp.c) AS ord FROM sp, role WHERE configuration = ? AND sp.role = role.id GROUP BY role ORDER BY ord DESC");
     $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY cn DESC LIMIT 1");
     $qscene = $this->pdo->prepare("SELECT * FROM scene WHERE id = ?");
-    echo '<div class="charline">'."\n";
+    $html[] = '<div class="charline">';
 
     // loop on acts
     foreach ($this->pdo->query("SELECT * FROM act WHERE play = $playid ORDER BY rowid") as $act) {
-      echo '  <a'.$p['target'].' href="'.$p['prehref'].'#'.$act['code'].'" class="acthead">'.$act['label']."</a>\n";
+      $html[] = '  <a'.$p['target'].' href="'.$p['prehref'].'#'.$act['code'].'" class="acthead">'.$act['label']."</a>";
       if(!$act['c']) continue; // probably an interlude
-      echo '  <div class="act">'."\n";
+      $html[] =  '  <div class="act">';
       $actheight = $playheight * $act['c']/$play['c'];
       $sceneid = null;
       $scene = null;
@@ -124,35 +125,36 @@ class Dramaturgie_Charline {
           $sceneid = $conf['scene'];
           $qscene->execute(array($conf['scene']));
           $scene = $qscene->fetch();
-          if ($scene) echo '      <b class="n">'.$scene['n'].'</b>'."\n";
+          if ($scene) $html[] = '      <b class="n">'.$scene['n'].'</b>';
         }
         // Configuration content
         $title = 'Acte '.$act['n'];
         if ($scene) $title .= ', scène '.$scene['n'];
-        echo '    <div class="conf" style="height: '.($confsize +1).'px;" title="'.$title.'">'."\n";
+        $html[] =  '    <div class="conf" style="height: '.($confsize +1).'px;" title="'.$title.'">';
         // role bar
-        echo '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">'."\n";
+        $html[] =  '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">';
         $qsp->execute(array($conf['id']));
         // loop on role
         while ($role = $qsp->fetch()) {
           if (!$role['ord']) continue;
           $rolewidth = number_format($confwidth * $role['ord'] / $conf['c']) ;
-          echo '<span class="role '.$role['rend'].'"';
-          echo ' style="width: '.$rolewidth.'px"';
+          $span = '<span class="role '.$role['rend'].'"';
+          $span .= ' style="width: '.$rolewidth.'px"';
           $title = $role['label'].', acte '.$act['n'];
           if ($scene) $title .= ', scène '.$scene['n'];
-          echo ' title="'.$title.', '.round(100*$role['ord'] / $conf['c']).'%"';
-          echo '>';
+          $span .= ' title="'.$title.', '.round(100*$role['ord'] / $conf['c']).'%"';
+          $span .= '>';
           if ($rolewidth > 35 && $confsize > 12 ) { // && !isset($list[$role['code']])
-            echo '<span>'.$role['label'].'</span>';
+            $span .= '<span>'.$role['label'].'</span>';
             $list[$role['code']] = true;
           }
-          else echo ' ';
-          echo '</span>';
+          else $span .= ' ';
+          $span .= '</span>';
+          $html[] = $span;
         }
-        echo "      </a>\n";
+        $html[] = "      </a>";
         // rythm
-        echo '      <div class="sps">';
+        $html[] = '      <div class="sps">';
         // courir par 3 pixels, ne pas oublier floor, si la hauteur n’est pas multiple de 3
         $cstep = floor($conf['c'] / floor($confsize / 3));
         // take first $sp
@@ -166,17 +168,18 @@ class Dramaturgie_Charline {
           $sp = $qcn->fetch();
           $dif = $first + $sp['id'] - $splast['id'];
           if ($dif>15) $dif = 15;
-          echo '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.($dif*3).'px"> </b></a>';
+          $html[] = '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.($dif*3).'px"> </b></a>';
           $splast = $sp;
           $first = 0;
         }
-        echo "      </div>\n";
+        $html[] = "      </div>";
 
-        echo "    </div>\n";
+        $html[] = "    </div>";
       }
-      echo "  </div>\n";
+      $html[] = "  </div>";
     }
-    echo "</div>\n";
+    $html[] = "</div>";
+    return implode("\n", $html);
   }
 
 }

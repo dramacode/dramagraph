@@ -453,7 +453,7 @@
       this.net.sigma.graph.nodes()[i].y = Math.random()*10;
     }
     this.net.sigma.refresh();
-    this.net.start();
+    // this.net.start();
     return false;
   };
   // global static
