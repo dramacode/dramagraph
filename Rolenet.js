@@ -1,5 +1,5 @@
 
-// failed attempt for sigma autoloader
+// sigma autoloader FAILED
 ;(function() {
   'use strict';
   if ("onhashchange" in window) {
@@ -49,9 +49,11 @@
    * @param  {configurable}             settings The settings function.
    */
   sigma.canvas.nodes.drama = function(node, context, settings) {
+
     var prefix = settings('prefix') || '';
 
-    context.fillStyle = node.color || settings('defaultNodeColor');
+    if (settings('bw')) context.fillStyle = settings('defaultNodeColor');
+    else context.fillStyle = node.color || settings('defaultNodeColor');
     context.beginPath();
     context.arc(
       node[prefix + 'x'],
@@ -158,7 +160,8 @@
 
     // self loop, no arrow needed
     if (source.id === target.id) {
-      context.strokeStyle = "#888";
+      if (settings('bw')) context.strokeStyle = settings('defaultEdgeColor');
+      else context.strokeStyle = color;
       context.lineWidth = size / 2;
       context.beginPath();
       context.moveTo(sX, sY);
@@ -215,7 +218,8 @@
       context.strokeStyle = '#BBB';
       context.stroke();
       context.closePath();
-      context.fillStyle = 'rgba(128, 128, 128, 0.1)';
+      if (settings('bw')) context.fillStyle = settings('defaultEdgeColor');
+      else context.fillStyle = color;
       context.fill();
 
       context.globalCompositeOperation='source-over';
@@ -269,7 +273,7 @@
         type: 'canvas'
       },
       settings: {
-        defaultEdgeColor: "rgba(230, 240, 240, 0.8)",
+        defaultEdgeColor: 'rgba(128, 128, 128, 0.1)',
         defaultNodeColor: "rgba(230, 230, 230, 0.7)",
         edgeColor: "default",
         drawLabels: true,
@@ -320,6 +324,22 @@
       this.gravBut = els[0];
       this.gravBut.net = this;
       this.gravBut.onclick = this.grav;
+    }
+    var els = this.canvas.getElementsByClassName('colors');
+    if (els.length) {
+      els[0].net = this;
+      els[0].onclick = function() {
+        var bw = this.net.sigma.settings('bw');
+        if (!bw) {
+          this.innerHTML = '🌈';
+          this.net.sigma.settings('bw', true);
+        }
+        else {
+          this.innerHTML = '◐';
+          this.net.sigma.settings('bw', false);
+        }
+        this.net.sigma.refresh();
+      };
     }
     var els = this.canvas.getElementsByClassName('zoomin');
     if (els.length) {

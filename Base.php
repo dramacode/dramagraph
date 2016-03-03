@@ -405,6 +405,7 @@ class Dramaturgie_Base {
     $this->pdo->exec("UPDATE play SET w = (SELECT SUM(w) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET c = (SELECT SUM(c) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET roles = (SELECT COUNT(*) FROM role WHERE play = $playid) WHERE id = $playid;");
 
     $this->pdo->exec("UPDATE act SET sp = (SELECT COUNT(*) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
@@ -435,6 +436,9 @@ class Dramaturgie_Base {
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
 
     $this->pdo->commit();
+    // need play.c
+    $this->pdo->exec("UPDATE play SET presavg = (SELECT 1.0*SUM(roles * c)/play.c FROM configuration WHERE play = $playid) WHERE id = $playid;");
+
   }
   /**
    * Insérer de contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)

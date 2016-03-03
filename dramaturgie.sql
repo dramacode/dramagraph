@@ -4,19 +4,21 @@ PRAGMA foreign_keys = ON;
 -- The VACUUM command may change the ROWIDs of entries in any tables that do not have an explicit INTEGER PRIMARY KEY
 CREATE TABLE play (
   -- une pièce
-  id      INTEGER, -- rowid auto
-  code    TEXT,    -- nom de fichier sans extension, unique pour la base
-  author  TEXT,    -- auteur
-  title   TEXT,    -- titre
-  year    INTEGER, -- année, reprise du nom de fichier, ou dans le XML
-  acts    INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
-  scenes  INTEGER, -- nombre de scènes
-  verse   BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
-  genre   TEXT,    -- comedy|tragedy
-  c       INTEGER, -- <c> (char) taille en caractères
-  w       INTEGER, -- <w> (word) taille en mots
-  l       INTEGER, -- <l> taille en vers
-  sp      INTEGER, -- <sp> taille en répliques
+  id       INTEGER, -- rowid auto
+  code     TEXT,    -- nom de fichier sans extension, unique pour la base
+  author   TEXT,    -- auteur
+  title    TEXT,    -- titre
+  year     INTEGER, -- année, reprise du nom de fichier, ou dans le XML
+  roles    INTEGER, -- nombre de rôles en tout
+  presavg  REAL,    -- nombre moyen de personnages sur scene 
+  acts     INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
+  scenes   INTEGER, -- nombre de scènes
+  verse    BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
+  genre    TEXT,    -- comedy|tragedy
+  c        INTEGER, -- <c> (char) taille en caractères
+  w        INTEGER, -- <w> (word) taille en mots
+  l        INTEGER, -- <l> taille en vers
+  sp       INTEGER, -- <sp> taille en répliques
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX play_code ON play(code);

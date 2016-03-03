@@ -38,10 +38,11 @@ class Dramaturgie_Rolenet {
     <div id="'.$id.'" oncontextmenu="return false">
       <div class="sans-serif" style="position: absolute; bottom: 0; left: 1ex; font-size: 70%; ">Clic droit sur un nœud pour le supprimer</div>
       <div style="position: absolute; bottom: 0; right: 2px; z-index: 2; ">
-        <button class="but restore" type="button" title="Recharger">O</button>
-        <button class="shot but" style="background: #FFFFFF" type="button" title="Prendre une photo">📷</button>
+        <button class="colors but" title="Gris ou couleurs">◐</button>
+        <button class="shot but" type="button" title="Prendre une photo">📷</button>
         <button class="zoomin but" style="cursor: zoom-in; " type="button" title="Grossir">+</button>
         <button class="zoomout but" style="cursor: zoom-out; " type="button" title="Diminuer">-</button>
+        <button class="but restore" type="button" title="Recharger">O</button>
         <button class="mix but" type="button" title="Mélanger le graphe">♻</button>
         <button class="grav but" type="button" title="Démarrer ou arrêter la gravité">►</button>
         <span class="resize interface" style="cursor: se-resize; font-size: 1.3em; " title="Redimensionner la feuille">⬊</span>
@@ -102,14 +103,13 @@ class Dramaturgie_Rolenet {
       $x=$i;
       */
       $col = "";
-      /*
+
       if (isset(self::$colors[$node['class']])) {
         $col = ', color: "'.self::$colors[$node['class']][0].'"';
       }
       else if (isset(self::$colors['role'.$i])) {
         $col = ', color: "'.self::$colors[$node['class']][0].'"';
       }
-      */
       // $json_options = JSON_UNESCAPED_UNICODE; // incompatible 5.3
       $json_options = null;
       $html[] = "{id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"}';
@@ -192,16 +192,21 @@ class Dramaturgie_Rolenet {
     <th>Rép. moy.</th>
   </tr>
   ';
+    $html[] = '  <tr>';
+    $html[] = '    <td/>';
+    $html[] = '    <td>moy. '.$play['presavg'].' pers.</td>';
+    $html[] = '    ';
+    $html[] = '  </tr>';
     $nodes = $this->nodes($playcode);
     foreach ($nodes as $key => $node) {
       $html[] = "  <tr>";
       $html[] = '    <td>'.$node['label']."</td>";
-      $html[] = '    <td>'.$node['targets']."</td>";
+      $html[] = '    <td align="right">'.$node['targets']."</td>";
       $html[] = '    <td align="right">'.number_format(100 * $node['presence']/$play['c'], 0)." %</td>";
       $html[] = '    <td align="right">'.number_format(100 * $node['c']/$play['c'], 0)." %</td>";
       $html[] = '    <td align="right">'.number_format( 100 * $node['c']/$node['presence'] , 0)." %</td>";
       $html[] = '    <td align="right">'.$node['sp']."</td>";
-      if ($node['sp']) $html[] = '    <td align="right">'.number_format($node['c']/($node['sp']*80), 2, ',', ' ')." l.</td>";
+      if ($node['sp']) $html[] = '    <td align="right">'.number_format($node['c']/($node['sp']*60), 2, ',', ' ')." l.</td>";
       else $html[] = '<td align="right">0</td>';
       // echo '    <td align="right">'.$node['ic']."</td>\n";
       // echo '    <td align="right">'.$node['isp']."</td>\n";
