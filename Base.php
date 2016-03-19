@@ -112,12 +112,13 @@ class Dramaturgie_Base {
     $cast = $doc->cast();
     $this->pdo->beginTransaction();
     $q = $this->pdo->prepare("
-    INSERT INTO role (play, code, label, title, note, rend, sex, age, status)
-              VALUES (?,    ?,    ?,     ?,     ?,    ?,    ?,   ?,   ?);
+    INSERT INTO role (play, ord, code, label, title, note, rend, sex, age, status)
+              VALUES (?,    ?,   ?,    ?,     ?,     ?,    ?,    ?,   ?,   ?);
     ");
     foreach ($cast as $role) {
       $q->execute(array(
         $playid,
+        $role['ord'],
         $role['code'],
         $role['label'],
         $role['title'],
@@ -211,10 +212,16 @@ class Dramaturgie_Base {
         }
         // record the availabe roles for this configuration
         if ($data['label']) {
+          $oldconf = $conf;
           // space separated who codes
           $conf = array_flip(explode(' ', $data['label']));
           // test if unknow role, if known add it as a presence
           foreach ($conf as $k=>$v) {
+            // an entry
+            if (!isset($oldconf[$k])) {
+              if (!isset($cast[$k]['entries']) || !$cast[$k]['entries']) $cast[$k]['entries'] = 1;
+              else $cast[$k]['entries']++;
+            }
             if (STDERR && !isset($cast[$k])) {
               fwrite(STDERR, 'person/@corresp="'.$k. '" unknown role ['.$data['code']."]\n");
             }
@@ -383,6 +390,11 @@ class Dramaturgie_Base {
       }
 
     }
+    $q = $this->pdo->prepare("UPDATE role SET entries = ? WHERE id = ?");
+    foreach ($cast as $role) {
+      if (!isset($role['entries'])) continue; // role muet non détecté
+      $q->execute(array($role['entries'], $role['id']));
+    }
     $this->pdo->commit();
     // différentes stats prédef
     if (STDERR) fwrite(STDERR, " sp: ".number_format(microtime(true) - $time, 3)."s. ");
@@ -406,6 +418,7 @@ class Dramaturgie_Base {
     $this->pdo->exec("UPDATE play SET c = (SELECT SUM(c) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET roles = (SELECT COUNT(*) FROM role WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET entries = (SELECT SUM(entries) FROM role WHERE play = $playid) WHERE id = $playid;");
 
     $this->pdo->exec("UPDATE act SET sp = (SELECT COUNT(*) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
@@ -434,20 +447,22 @@ class Dramaturgie_Base {
     $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
-
+    $this->pdo->exec("UPDATE role SET presence = (SELECT SUM(c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id) WHERE play = $playid ");
+    // vu, des faux rôles
+    $this->pdo->exec("DELETE FROM role WHERE play = $playid AND presence IS NULL");
+    $this->pdo->exec("UPDATE play SET presence = (SELECT SUM(roles * c) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->commit();
-    // need play.c
-    $this->pdo->exec("UPDATE play SET presavg = (SELECT 1.0*SUM(roles * c)/play.c FROM configuration WHERE play = $playid) WHERE id = $playid;");
-
+    // if play.c is needed now, do it after commit
   }
   /**
-   * Insérer de contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
+   * Insérer des contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
    */
   function _insobj($file, $playid, $playcode) {
     $insert = $this->pdo->prepare("
     INSERT INTO object (play, playcode, type, code, cont)
                 VALUES (?,    ?,        ?,    ?,    ?)
     ");
+    $this->pdo->beginTransaction();
     $charline = new Dramaturgie_Charline($this->sqlitefile);
     $cont = $charline->pannel(array('playcode'=>$playcode));
     $insert->execute(array($playid, $playcode, 'charline', null, $cont));
@@ -455,8 +470,8 @@ class Dramaturgie_Base {
     $rolenet = new Dramaturgie_Rolenet($this->sqlitefile);
     $cont = $rolenet->sigma($playcode);
     $insert->execute(array($playid, $playcode, 'sigma', null, $cont));
-    $cont = $rolenet->nodetable($playcode);
-    $insert->execute(array($playid, $playcode, 'nodetable', null, $cont));
+    $cont = $rolenet->roletable($playcode);
+    $insert->execute(array($playid, $playcode, 'roletable', null, $cont));
     $cont = $rolenet->canvas("graph");
     $insert->execute(array($playid, $playcode, 'canvas', null, $cont));
     // insérer des transformations du fichier
@@ -465,6 +480,8 @@ class Dramaturgie_Base {
     $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc('nav') ));
     $insert->execute(array( $playid, $playcode, 'tocfront', null, $teinte->toc('front') ));
     $insert->execute(array( $playid, $playcode, 'tocback', null, $teinte->toc('back') ));
+
+    $this->pdo->commit();
   }
 
   /**
@@ -498,6 +515,7 @@ class Dramaturgie_Base {
           $base->insert($file);
         }
       }
+      $base->pdo->exec("VACUUM");
     }
     if ($action == 'gephi') {
       $base->gephi(array_shift($_SERVER['argv']));

@@ -10,7 +10,8 @@ CREATE TABLE play (
   title    TEXT,    -- titre
   year     INTEGER, -- année, reprise du nom de fichier, ou dans le XML
   roles    INTEGER, -- nombre de rôles en tout
-  presavg  REAL,    -- nombre moyen de personnages sur scene 
+  entries  INTEGER, -- nombre total d’entrées, pour moyennes
+  presence INTEGER, -- presence totale de tous les personnage en nombre de signes
   acts     INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
   scenes   INTEGER, -- nombre de scènes
   verse    BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
@@ -110,6 +111,7 @@ CREATE TABLE role (
   -- un rôle
   id       INTEGER,  -- rowid auto
   play     INTEGER REFERENCES play(id), -- rowid de pièce
+  ord      INTEGER,  -- ordre dans la distribution
   code     TEXT,     -- code personne
   label    TEXT,     -- nom affichable
   title    TEXT,     -- description du rôle (mère de…, amant de…) tel que dans la source
@@ -121,6 +123,8 @@ CREATE TABLE role (
   targets  INTEGER,  -- nombre de destinataires
   sources  INTEGER,  -- nombre d’émetteurs
   confs    INTEGER,  -- nombre de configurations
+  presence INTEGER,  -- temps de présence (en caractères)
+  entries  INTEGER,  -- nombre d’entrées en scène
   c        INTEGER,  -- out <c>, mombre de caractères dits
   w        INTEGER,  -- out <w>, mombre de mots dits
   l        INTEGER,  -- out <l>, nombre de vers dits
@@ -128,7 +132,9 @@ CREATE TABLE role (
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX role_who ON role(play, code);
-CREATE INDEX role_c ON role(play, c);
+CREATE UNIQUE INDEX role_ord ON role(play, ord);
+CREATE INDEX role_c ON role(c);
+CREATE INDEX role_presence ON role(presence);
 
 CREATE TABLE presence (
   -- Relation de présence entre une configuration et un rôle

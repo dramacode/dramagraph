@@ -67,8 +67,10 @@ class Dramaturgie_Doc {
   function cast() {
     $nodes = $this->xpath->query("//tei:role[@xml:id]|//tei:person[@xml:id]");
     $cast = array();
+    $i = 1;
     foreach ($nodes as $n) {
       $role = array();
+      $role['ord'] = $i;
       $role['code'] = $n->getAttribute ('xml:id');
       if (!$role['code']) continue;
 
@@ -108,6 +110,7 @@ class Dramaturgie_Doc {
       }
       $role['note'] = null;
       $cast[$role['code']] = $role;
+      $i++;
     }
     return $cast;
   }

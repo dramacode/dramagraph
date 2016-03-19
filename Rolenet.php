@@ -36,7 +36,7 @@ class Dramaturgie_Rolenet {
   public function canvas($id='graph') {
     $html = '
     <div id="'.$id.'" oncontextmenu="return false">
-      <div class="sans-serif" style="position: absolute; bottom: 0; left: 1ex; font-size: 70%; ">Clic droit sur un nœud pour le supprimer</div>
+      <div class="sans-serif" style="position: absolute; top: 0; left: 1ex; font-size: 70%; ">Clic droit sur un nœud pour le supprimer</div>
       <div style="position: absolute; bottom: 0; right: 2px; z-index: 2; ">
         <button class="colors but" title="Gris ou couleurs">◐</button>
         <button class="shot but" type="button" title="Prendre une photo">📷</button>
@@ -147,7 +147,8 @@ class Dramaturgie_Rolenet {
    * Table des relations
    */
   public function edgetable ($playcode) {
-    echo '
+    $html = array();
+    $html[] = '
 <table class="sortable">
   <tr>
     <th>N°</th>
@@ -161,62 +162,67 @@ class Dramaturgie_Rolenet {
   ';
     $edges = $this->edges($playcode);
     foreach ($edges as $key => $edge) {
-      echo "  <tr>\n";
-      echo '    <td>'.$edge['no']."</td>\n";
-      echo '    <td>'.$edge['slabel']."</td>\n";
-      echo '    <td>'.$edge['tlabel']."</td>\n";
-      echo '    <td align="right">'.$edge['confs']."</td>\n";
-      echo '    <td align="right">'.number_format($edge['c']/60, 0)." l.</td>\n";
-      echo '    <td align="right">'.$edge['sp']."</td>\n";
-      echo '    <td align="right">'.number_format($edge['c']/($edge['sp']*60), 2, ',', ' ')." l.</td>\n";
-      echo "  </tr>\n";
+      $html[] = "  <tr>";
+      $html[] = '    <td>'.$edge['no']."</td>";
+      $html[] = '    <td>'.$edge['slabel']."</td>";
+      $html[] = '    <td>'.$edge['tlabel']."</td>";
+      $html[] = '    <td align="right">'.$edge['confs']."</td>";
+      $html[] = '    <td align="right">'.ceil($edge['c']/60)." l.</td>";
+      $html[] = '    <td align="right">'.$edge['sp']."</td>";
+      $html[] = '    <td align="right">'.number_format($edge['c']/($edge['sp']*60), 2, ',', ' ')." l.</td>";
+      $html[] = "  </tr>";
     }
 
-    echo '</table>';
+    $html[] = '</table>';
+    return implode("\n", $html);
   }
   /**
    * Table des rôles
    */
-  public function nodetable ($playcode) {
+  public function roletable ($playcode) {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     $html = array();
     $html[] = '
 <table class="sortable">
   <tr>
-    <th>Personnage</th>
-    <th>Interlocuteurs</th>
-    <th>Présence</th>
-    <th>Paroles</th>
-    <th>Par. % prés.</th>
-    <th>Répliques</th>
-    <th>Rép. moy.</th>
+    <th title="Nom du personnage dans l’ordre de la distribution.">Personnage</th>
+    <th title="Nombre de rôles interagissant avec le personnage.">Interl.</th>
+    <th title="Part du texte de la pièce (en signes) où le personnage est présent.">Présence</th>
+    <th>Entrées</th>
+    <th title="Part du texte de la pièce, prononcée par le personnage (en signes).">Paroles</th>
+    <th title="Part du texte que le personnage prononce, durant son temps de présence (en signes).">Par. % prés.</th>
+    <th title="Nombre de répliques du personnages.">Répl.</th>
+    <th title="Taille moyenne des répliques du personnage, en lignes (60 signes).">Répl. moy.</th>
   </tr>
   ';
     $html[] = '  <tr>';
-    $html[] = '    <td/>';
-    $html[] = '    <td>moy. '.$play['presavg'].' pers.</td>';
-    $html[] = '    ';
+    $html[] = '    <td data-sort="0">[TOUS]</td>';
+    $html[] = '    <td align="right">'.number_format($play['presence']/$play['c'], 1, ',', ' ').'</td>';
+    $html[] = '    <td align="right">100 %</td>';
+    $html[] = '    <td align="right">'.number_format($play['entries']/$play['roles'], 1, ',', ' ').'</td>';
+    $html[] = '    <td align="right">'.number_format($play['c']/60, 0, ',', ' ').' l.</td>';
+    $html[] = '    <td align="right">'.ceil(100 * $play['c']/$play['presence'])." %</td>";
+    $html[] = '    <td align="right">'.$play['sp'].'</td>';
+    $html[] = '    <td align="right">'.number_format($play['c']/($play['sp']*60), 2, ',', ' ').' l.</td>';
     $html[] = '  </tr>';
-    $nodes = $this->nodes($playcode);
-    foreach ($nodes as $key => $node) {
+    $i = 1;
+    foreach ($this->pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY ord") as $role) {
       $html[] = "  <tr>";
-      $html[] = '    <td>'.$node['label']."</td>";
-      $html[] = '    <td align="right">'.$node['targets']."</td>";
-      $html[] = '    <td align="right">'.number_format(100 * $node['presence']/$play['c'], 0)." %</td>";
-      $html[] = '    <td align="right">'.number_format(100 * $node['c']/$play['c'], 0)." %</td>";
-      $html[] = '    <td align="right">'.number_format( 100 * $node['c']/$node['presence'] , 0)." %</td>";
-      $html[] = '    <td align="right">'.$node['sp']."</td>";
-      if ($node['sp']) $html[] = '    <td align="right">'.number_format($node['c']/($node['sp']*60), 2, ',', ' ')." l.</td>";
+      $html[] = '    <td data-sort="'.$i.'">'.$role['label']."</td>";
+      $html[] = '    <td align="right">'.$role['targets']."</td>";
+      $html[] = '    <td align="right">'.ceil(100 * $role['presence']/$play['c'])." %</td>";
+      $html[] = '    <td align="right">'.$role['entries'].'</td>';
+      $html[] = '    <td align="right">'.ceil(100 * $role['c']/$play['c'])." %</td>";
+      $html[] = '    <td align="right">'.ceil( 100 * $role['c']/$role['presence'])." %</td>";
+      $html[] = '    <td align="right">'.$role['sp']."</td>";
+      if ($role['sp']) $html[] = '    <td align="right">'.number_format($role['c']/($role['sp']*60), 2, ',', ' ')." l.</td>";
       else $html[] = '<td align="right">0</td>';
       // echo '    <td align="right">'.$node['ic']."</td>\n";
       // echo '    <td align="right">'.$node['isp']."</td>\n";
       // echo '    <td align="right">'.round($node['ic']/$node['isp'])."</td>\n";
       $html[] = "  </tr>";
+      $i++;
     }
-    $html[] = '<tfoot>
-<tr><td colspan="7">Le temps de présence est proprotionnel aux signes prononcés dans une scène.
-<br/> l. : lignes (= 60 signes)</td></tr>
-    </tfoot>';
     $html[] = '</table>';
     return implode("\n", $html);
   }
@@ -227,9 +233,9 @@ class Dramaturgie_Rolenet {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     $data = array();
     $rank = 1;
-    $qpres = $this->pdo->prepare("SELECT sum(c) FROM configuration, presence WHERE presence.role = ? AND presence.configuration = configuration.id; ");
+
     $qact = $this->pdo->prepare("SELECT act.* FROM presence, configuration, act WHERE act.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.act = act.id ");
-    foreach ($this->pdo->query("SELECT role.* FROM role WHERE role.play = ".$play['id']." ORDER BY role.c DESC") as $role) {
+    foreach ($this->pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY role.c DESC") as $role) {
       // role invisible dans les configurations
       if (!$role['sources']) continue;
       if ($acttype) {
@@ -244,22 +250,9 @@ class Dramaturgie_Rolenet {
       else if ($role['status'] == 'superior') $class .= " superior";
       else if ($role['age'] == 'junior') $class .= " junior";
       else if ($role['age'] == 'veteran') $class .= " veteran";
-
-      $qpres->execute(array($role['id']));
-      list($presence) = $qpres->fetch();
-      $data[$role['code']] = array(
-        'id' => $role['id'],
-        'code' => $role['code'],
-        'label' => $role['label'],
-        'title' => ($role['title'])?$role['title']:'',
-        'targets' => $role['targets'],
-        'confs' => $role['confs'],
-        'class' => $class,
-        'rank' => $rank,
-        'c' => $role['c'],
-        'sp' => $role['sp'],
-        'presence' => $presence,
-      );
+      $role['class'] = $class;
+      $role['rank'] = $rank;
+      $data[$role['code']] = $role;
       $rank++;
     }
     return $data;
