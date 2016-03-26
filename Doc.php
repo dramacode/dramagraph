@@ -38,12 +38,20 @@ class Dramaturgie_Doc {
     if ($nl->length) $play['author'] = $nl->item(0)->textContent;
     else $play['author'] = null;
     $nl = $this->xpath->query("/*/tei:teiHeader/tei:profileDesc/tei:creation/tei:date");
-    if ($nl->length) {
-      $play['year'] = $nl->item(0)->getAttribute ('when');
-      if(!$play['year']) $play['year'] = $nl->item(0)->nodeValue;
-      $play['year'] = substr(trim($play['year']), 0, 4);
+    // loop on dates
+    $play['created'] = null;
+    $play['issued'] = null;
+    foreach ($nl as $date) {
+      $value = $date->getAttribute ('when');
+      if (!$value) $value = $date->nodeValue;
+      $value = substr(trim($value), 0, 4);
+      if (!is_numeric($value)) continue;
+      if ($date->getAttribute ('type') == "created" && !$play['created']) $play['created'] = $value;
+      else if ($date->getAttribute ('type') == "issued" && !$play['issued']) $play['issued'] = $value;
+      $value = null;
     }
-    else $play['year'] = null;
+    // dates with no attribute
+    if (!$play['created'] && isset($value) && is_numeric($value)) $play['created'] = $value;
     $nl = $this->xpath->query("/*/tei:teiHeader//tei:title");
     if ($nl->length) $play['title'] = $nl->item(0)->textContent;
     else $play['title'] = null;

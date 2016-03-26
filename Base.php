@@ -56,7 +56,8 @@ class Dramaturgie_Base {
     }
     $bibl = $play['author'].', '.$play['title'];
     $meta = array();
-    if ($play['year']) $meta[] = $play['year'];
+    if ($play['created']) $meta[] = $play['created'];
+    if ($play['issued']) $meta[] = $play['issued'];
     if ($play['genre'] == 'tragedy') $meta[] = 'tragédie';
     else if ($play['genre'] == 'comedy') $meta[] = 'comédie';
     if ($play['acts']) $meta[] = $play['acts'].(($play['acts']>2)?" actes":" acte");
@@ -76,7 +77,7 @@ class Dramaturgie_Base {
       echo '
   <tr>
     <td class="author">'.$play['author'].'</td>
-    <td class="year">'.$play['year'].'</td>
+    <td class="year">'.$play['issued'].'</td>
     <td class="title"><a href="'.basename($file).'">'.$play['title'].'</a></td>
     <td class="genre">'.$play['genre'].'</td>
     <td class="verse">'.(($play['verse'])?"vers":"prose").'</td>
@@ -95,14 +96,15 @@ class Dramaturgie_Base {
     $play = $doc->meta();
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, author, title, year, acts, verse, genre)
-              VALUES (?,    ?,      ?,     ?,    ?,    ?,     ?);
+    INSERT INTO play (code, author, title, created, issued, acts, verse, genre)
+              VALUES (?,    ?,      ?,     ?,       ?,      ?,    ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
       $play['author'],
       $play['title'],
-      $play['year'],
+      $play['created'],
+      $play['issued'],
       $play['acts'],
       $play['verse'],
       $play['genre'],

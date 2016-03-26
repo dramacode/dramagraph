@@ -8,7 +8,8 @@ CREATE TABLE play (
   code     TEXT,    -- nom de fichier sans extension, unique pour la base
   author   TEXT,    -- auteur
   title    TEXT,    -- titre
-  year     INTEGER, -- année, reprise du nom de fichier, ou dans le XML
+  created  INTEGER, -- année de création
+  issued   INTEGER, -- année de publication
   roles    INTEGER, -- nombre de rôles en tout
   entries  INTEGER, -- nombre total d’entrées, pour moyennes
   presence INTEGER, -- presence totale de tous les personnage en nombre de signes
