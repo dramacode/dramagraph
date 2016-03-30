@@ -89,18 +89,22 @@ class Dramaturgie_Base {
   /**
    * Charger un XML en base
    */
-  public function insert($file) {
+  public function insert($url, $identifier = null) {
     $time = microtime(true);
-    if (STDERR) fwrite(STDERR, $file);
-    $doc = new Dramaturgie_Doc($file);
+    if (strpos($url, "http") === 0) $source = $url;
+    else $url = null;
+    if (STDERR) fwrite(STDERR, $url);
+    $doc = new Dramaturgie_Doc($url);
     $play = $doc->meta();
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, author, title, created, issued, acts, verse, genre)
-              VALUES (?,    ?,      ?,     ?,       ?,      ?,    ?,     ?);
+    INSERT INTO play (code, source, identifier, author, title, created, issued, acts, verse, genre)
+              VALUES (?,    ?,      ?,          ?,      ?,     ?,       ?,      ?,    ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
+      $source,
+      $identifier,
       $play['author'],
       $play['title'],
       $play['created'],
@@ -405,10 +409,11 @@ class Dramaturgie_Base {
     if (STDERR) fwrite(STDERR, " stats: ".number_format(microtime(true) - $time, 3)."s.");
     $time = microtime(true);
 
-    $this->_insobj($file, $playid, $play['code']);
+    $this->_insobj($doc->getDom(), $playid, $play['code']);
     if (STDERR) fwrite(STDERR, " html: ".number_format(microtime(true) - $time, 3)."s.");
     if (STDERR) fwrite(STDERR, "\n");
   }
+
   /**
    * Statistiques SQL précalculées
    */
@@ -459,7 +464,7 @@ class Dramaturgie_Base {
   /**
    * Insérer des contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
    */
-  function _insobj($file, $playid, $playcode) {
+  function _insobj($dom, $playid, $playcode) {
     $insert = $this->pdo->prepare("
     INSERT INTO object (play, playcode, type, code, cont)
                 VALUES (?,    ?,        ?,    ?,    ?)
@@ -477,7 +482,7 @@ class Dramaturgie_Base {
     $cont = $rolenet->canvas("graph");
     $insert->execute(array($playid, $playcode, 'canvas', null, $cont));
     // insérer des transformations du fichier
-    $teinte = new Teinte_Doc($file);
+    $teinte = new Teinte_Doc($dom);
     $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));
     $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc('nav') ));
     $insert->execute(array( $playid, $playcode, 'tocfront', null, $teinte->toc('front') ));
@@ -493,6 +498,7 @@ class Dramaturgie_Base {
     $timeStart = microtime(true);
     $usage = '
     usage    : php -f '.basename(__FILE__).' base.sqlite *.xml
+    usage    : php -f '.basename(__FILE__).' base.sqlite uri-list.txt
 ';
     $timeStart = microtime(true);
     array_shift($_SERVER['argv']); // shift first arg, the script filepath
@@ -512,9 +518,23 @@ class Dramaturgie_Base {
 ');
       foreach ($_SERVER['argv'] as $glob) {
         foreach(glob($glob) as $file) {
+          $ext = pathinfo ($file, PATHINFO_EXTENSION);
+          // seems a list of uri
+          if ($ext == 'csv' || $ext == "txt") {
+            $handle = fopen($file, "r");
+            // first libne ?
+            while (($line = fgets($handle)) !== false) {
+              $fields = preg_split("@\s*,\s+|\t@", $line);
+              if (count($fields) < 1) continue;
+              else if (count($fields) == 1) $base->insert($fields[0]);
+              else $base->insert($fields[0], $fields[1]);
+            }
+            fclose($handle);
+            // first
+          }
           // spécifique Molière
-          if (preg_match('@-livret\.@', $file)) continue;
-          $base->insert($file);
+          else if (preg_match('@-livret\.@', $file)) continue;
+          else $base->insert($file);
         }
       }
       $base->pdo->exec("VACUUM");

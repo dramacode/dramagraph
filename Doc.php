@@ -16,17 +16,26 @@ class Dramaturgie_Doc {
   /**
    * Charger un fichier XML
    */
-  public function __construct($file) {
+  public function __construct($file, $cont=null) {
     $this->Teinte = dirname(__FILE__).'/../Teinte/';
 
     $this->dom = new DOMDocument();
     $this->dom->preserveWhiteSpace = false;
     $this->dom->formatOutput=true;
     $this->dom->substituteEntities=true;
-    $this->dom->load($file, LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOERROR | LIBXML_NOWARNING);
+    $options = LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOWARNING;
+    if ($cont) $this->dom->loadXML($cont, $options);
+    else $this->dom->load($file, $options);
     $this->xpath = new DOMXpath($this->dom);
     $this->xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
     $this->file = $file;
+  }
+  /**
+   * Reuse DOM
+   */
+  public function getDom()
+  {
+      return $this->dom;
   }
   /**
    * Métadonnées de pièce

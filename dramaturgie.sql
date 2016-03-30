@@ -4,23 +4,25 @@ PRAGMA foreign_keys = ON;
 -- The VACUUM command may change the ROWIDs of entries in any tables that do not have an explicit INTEGER PRIMARY KEY
 CREATE TABLE play (
   -- une pièce
-  id       INTEGER, -- rowid auto
-  code     TEXT,    -- nom de fichier sans extension, unique pour la base
-  author   TEXT,    -- auteur
-  title    TEXT,    -- titre
-  created  INTEGER, -- année de création
-  issued   INTEGER, -- année de publication
-  roles    INTEGER, -- nombre de rôles en tout
-  entries  INTEGER, -- nombre total d’entrées, pour moyennes
-  presence INTEGER, -- presence totale de tous les personnage en nombre de signes
-  acts     INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
-  scenes   INTEGER, -- nombre de scènes
-  verse    BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
-  genre    TEXT,    -- comedy|tragedy
-  c        INTEGER, -- <c> (char) taille en caractères
-  w        INTEGER, -- <w> (word) taille en mots
-  l        INTEGER, -- <l> taille en vers
-  sp       INTEGER, -- <sp> taille en répliques
+  id         INTEGER, -- rowid auto
+  code       TEXT,    -- nom de fichier sans extension, unique pour la base
+  source     TEXT,    -- URL de la source XML
+  identifier TEXT,    -- URL du site de référence
+  author     TEXT,    -- auteur
+  title      TEXT,    -- titre
+  created    INTEGER, -- année de création
+  issued     INTEGER, -- année de publication
+  roles      INTEGER, -- nombre de rôles en tout
+  entries    INTEGER, -- nombre total d’entrées, pour moyennes
+  presence   INTEGER, -- presence totale de tous les personnage en nombre de signes
+  acts       INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
+  scenes     INTEGER, -- nombre de scènes
+  verse      BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
+  genre      TEXT,    -- comedy|tragedy
+  c          INTEGER, -- <c> (char) taille en caractères
+  w          INTEGER, -- <w> (word) taille en mots
+  l          INTEGER, -- <l> taille en vers
+  sp         INTEGER, -- <sp> taille en répliques
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX play_code ON play(code);
