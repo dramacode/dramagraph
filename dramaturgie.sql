@@ -6,7 +6,7 @@ CREATE TABLE play (
   -- une pièce
   id         INTEGER, -- rowid auto
   code       TEXT,    -- nom de fichier sans extension, unique pour la base
-  source     TEXT,    -- URL de la source XML
+  publisher  TEXT,    -- URL de la source XML
   identifier TEXT,    -- URL du site de référence
   author     TEXT,    -- auteur
   title      TEXT,    -- titre

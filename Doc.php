@@ -9,16 +9,13 @@ class Dramaturgie_Doc {
   private $xpath;
   /** Chemin original du fichier */
   public $file;
-  /** Dossier où trouver le paquer Teine */
-  public $Teinte;
-  /** Précharger des xsl une seule fois */
-  static $xsl = array();
+  /** Précharger des transformations courantes */
+  static $trans = array();
   /**
    * Charger un fichier XML
    */
-  public function __construct($file, $cont=null) {
-    $this->Teinte = dirname(__FILE__).'/../Teinte/';
-
+  public function __construct($file, $cont=null)
+  {
     $this->dom = new DOMDocument();
     $this->dom->preserveWhiteSpace = false;
     $this->dom->formatOutput=true;
@@ -26,62 +23,124 @@ class Dramaturgie_Doc {
     $options = LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOWARNING;
     if ($cont) $this->dom->loadXML($cont, $options);
     else $this->dom->load($file, $options);
-    $this->xpath = new DOMXpath($this->dom);
-    $this->xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
     $this->file = $file;
   }
   /**
+   * Set and return an XPath processor
+   */
+   public function xpath()
+   {
+     if ($this->xpath) return $this->xpath;
+     $this->xpath = new DOMXpath($this->dom);
+     $this->xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
+     return $this->xpath;
+   }
+  /**
+   * Wash notes and paratext
+   */
+   public function naked()
+   {
+     if (!isset(self::$trans['naked']) ) {
+       $xsl = new DOMDocument("1.0", "UTF-8");
+       $xsl->load(dirname(__FILE__).'/naked.xsl');
+       self::$trans['naked'] = new XSLTProcessor();
+       self::$trans['naked']->importStyleSheet($xsl);
+     }
+     $this->dom = self::$trans['naked']->transformToDoc($this->dom);
+     $this->xpath = null;
+     return $this->dom;
+   }
+
+  /**
    * Reuse DOM
    */
-  public function getDom()
+  public function dom()
   {
       return $this->dom;
   }
   /**
    * Métadonnées de pièce
    */
-  public function meta() {
-    $play = array();
-    $play['code'] = pathinfo($this->file, PATHINFO_FILENAME);
+  public function meta()
+  {
+    $this->xpath();
+    $meta = array();
+    $meta['code'] = pathinfo($this->file, PATHINFO_FILENAME);
+
     $nl = $this->xpath->query("/*/tei:teiHeader//tei:author");
-    if ($nl->length) $play['author'] = $nl->item(0)->textContent;
-    else $play['author'] = null;
+    if (!$nl->length)
+      $meta['author'] = null;
+    else if ($nl->item(0)->hasAttribute("key"))
+      $meta['author'] = $nl->item(0)->getAttribute("key");
+    else
+      $meta['author'] = $nl->item(0)->textContent;
+    if (($pos = strpos($meta['author'], '('))) $meta['author'] = trim(substr($meta['author'], 0, $pos));
+
     $nl = $this->xpath->query("/*/tei:teiHeader/tei:profileDesc/tei:creation/tei:date");
     // loop on dates
-    $play['created'] = null;
-    $play['issued'] = null;
+    $meta['created'] = null;
+    $meta['issued'] = null;
+    $meta['date'] = null;
     foreach ($nl as $date) {
-      $value = $date->getAttribute ('when');
+      $value = $date->getAttribute('when');
       if (!$value) $value = $date->nodeValue;
       $value = substr(trim($value), 0, 4);
-      if (!is_numeric($value)) continue;
-      if ($date->getAttribute ('type') == "created" && !$play['created']) $play['created'] = $value;
-      else if ($date->getAttribute ('type') == "issued" && !$play['issued']) $play['issued'] = $value;
-      $value = null;
+      if (!is_numeric($value)) {
+        $value = null;
+        continue;
+      }
+      if (!$meta['date']) $meta['date'] = $value;
+      if ($date->getAttribute ('type') == "created" && !$meta['created']) $meta['created'] = $value;
+      else if ($date->getAttribute ('type') == "issued" && !$meta['issued']) $meta['issued'] = $value;
     }
-    // dates with no attribute
-    if (!$play['created'] && isset($value) && is_numeric($value)) $play['created'] = $value;
-    $nl = $this->xpath->query("/*/tei:teiHeader//tei:title");
-    if ($nl->length) $play['title'] = $nl->item(0)->textContent;
-    else $play['title'] = null;
-    $nl = $this->xpath->query("/*/tei:teiHeader//tei:term[@type='genre']/@subtype");
-    if ($nl->length) $play['genre'] = $nl->item(0)->nodeValue;
-    else $play['genre'] = null;
+    if (!$meta['issued'] && isset($value) && is_numeric($value)) $meta['issued'] = $value;
 
-    $play['acts'] = $this->xpath->evaluate("count(/*/tei:text/tei:body//tei:*[@type='act'])");
-    if (!$play['acts']) $play['acts'] = $this->xpath->evaluate("count(/*/tei:text/tei:body/*[tei:div|tei:div2])");
-    if (!$play['acts']) $play['acts'] = 1;
+
+
+    $nl = $this->xpath->query("/*/tei:teiHeader//tei:title");
+    if ($nl->length) $meta['title'] = $nl->item(0)->textContent;
+    else $meta['title'] = null;
+    $nl = $this->xpath->query("/*/tei:teiHeader//tei:term[@type='genre']/@subtype");
+    if ($nl->length) $meta['genre'] = $nl->item(0)->nodeValue;
+    else $meta['genre'] = null;
+
+    $meta['acts'] = $this->xpath->evaluate("count(/*/tei:text/tei:body//tei:*[@type='act'])");
+    if (!$meta['acts']) $meta['acts'] = $this->xpath->evaluate("count(/*/tei:text/tei:body/*[tei:div|tei:div2])");
+    if (!$meta['acts']) $meta['acts'] = 1;
     $l = $this->xpath->evaluate("count(//tei:sp/tei:l)");
     $p = $this->xpath->evaluate("count(//tei:sp/tei:p)");
-    if ($l > 2*$p) $play['verse'] = true;
-    else if ($p > 2*$l) $play['verse'] = false;
-    else $play['verse'] = null;
-    return $play;
+    if ($l > 2*$p) $meta['verse'] = true;
+    else if ($p > 2*$l) $meta['verse'] = false;
+    else $meta['verse'] = null;
+    return $meta;
+  }
+  /**
+   *
+   */
+  function elValue( $el )
+  {
+    $text = array();
+    $nl = $this->xpath->query(".//text()[not(ancestor::tei:note)]", $el);
+    foreach ( $nl as $n ) {
+      $text[] = $n->wholeText;
+    }
+    return implode('', $text);
+    /*
+    // suppress notes from a clone of this node
+    libxml_use_internal_errors();
+    $clone = $n->cloneNode( true );
+    foreach ( $clone->childNodes as $n2 ) {
+      if ( $n2->nodeName == "note" ) $clone->removeChild( $n2 );
+    }
+    libxml_use_internal_errors(true);
+    */
   }
   /**
    * Liste des rôles
    */
-  function cast() {
+  function cast()
+  {
+    $this->xpath();
     $nodes = $this->xpath->query("//tei:role[@xml:id]|//tei:person[@xml:id]");
     $cast = array();
     $i = 1;
@@ -92,7 +151,9 @@ class Dramaturgie_Doc {
       if (!$role['code']) continue;
 
       $role['label'] = $n->getAttribute ('n');
-      if (!$role['label']) $role['label'] = $n->nodeValue;
+      if (!$role['label']) {
+        $role['label'] = rtrim( $this->elValue($n), ' ,');
+      }
       if (!$role['label']) $role['label'] = $role['code'];
 
       $nl = @$n->parentNode->getElementsByTagName("roleDesc");
@@ -135,8 +196,11 @@ class Dramaturgie_Doc {
    * Collecter les identifiants dans les <role>
    * Alerter sur les identifiants inconnus
    */
-  public function valid() {
-    $nodes = $this->xpath->query("//tei:role/@xml:id");
+  public function valid()
+  {
+    $this->xpath();
+    // TODO configurations
+    $nodes = $this->xpath->query("//tei:role/@xml:id|//tei:person[@xml:id]");
     $castlist = array();
     foreach ($nodes as $n) {
       $castlist[$n->nodeValue] = true;
@@ -151,15 +215,16 @@ class Dramaturgie_Doc {
   /**
    * Retourner un csv d’objets
    */
-  function csv() {
-    if (!isset(self::$xsl['drama2csv']) ) {
-      self::$xsl['drama2csv'] = new DOMDocument("1.0", "UTF-8");
-      self::$xsl['drama2csv']->load(dirname(__FILE__).'/drama2csv.xsl');
+  function csv()
+  {
+    if (!isset(self::$trans['drama2csv']) ) {
+      $xsl = new DOMDocument("1.0", "UTF-8");
+      $xsl->load(dirname(__FILE__).'/drama2csv.xsl');
+      self::$trans['drama2csv'] = new XSLTProcessor();
+      self::$trans['drama2csv']->importStyleSheet($xsl);
     }
-    $trans = new XSLTProcessor();
-    $trans->importStyleSheet(self::$xsl['drama2csv']);
     // $trans->setParameter('', 'filename', $play['code']); // ?
-    return $trans->transformToXML($this->dom);
+    return self::$trans['drama2csv']->transformToXML($this->dom);
   }
 
 }

@@ -2,7 +2,7 @@
 <!-- 
 Ramasser des informations chiffrées d’une pièce 
 -->
-<xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.1" xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="tei">
+<xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="tei">
   <!-- CSV -->
   <xsl:output method="text" encoding="UTF-8" indent="yes"/>
   <!-- Lister les rôles en tête, pour des listes par scènes -->
@@ -60,8 +60,11 @@ Ramasser des informations chiffrées d’une pièce
         <xsl:when test="@xml:id">
           <xsl:value-of select="@xml:id"/>
         </xsl:when>
+        <xsl:when test="@type='act'">
+          <xsl:number format="I" count="tei:div[@type='act']|tei:div1[@type='act']"/>
+        </xsl:when>
         <xsl:otherwise>
-          <xsl:number format="I"/>
+          <xsl:number format="A" count="tei:div[not(@type='act') and not(@xml:id)]|tei:div1[not(@type='act') and not(@xml:id)]"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>

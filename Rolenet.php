@@ -188,7 +188,6 @@ class Dramaturgie_Rolenet {
     <th title="Nom du personnage dans l’ordre de la distribution.">Personnage</th>
     <th title="Nombre de rôles interagissant avec le personnage.">Interl.</th>
     <th title="Part du texte de la pièce (en signes) où le personnage est présent.">Présence</th>
-    <th>Entrées</th>
     <th title="Part du texte de la pièce, prononcée par le personnage (en signes).">Paroles</th>
     <th title="Part du texte que le personnage prononce, durant son temps de présence (en signes).">Par. % prés.</th>
     <th title="Nombre de répliques du personnages.">Répl.</th>
@@ -199,7 +198,7 @@ class Dramaturgie_Rolenet {
     $html[] = '    <td data-sort="0">[TOUS]</td>';
     $html[] = '    <td align="right">'.number_format($play['presence']/$play['c'], 1, ',', ' ').'</td>';
     $html[] = '    <td align="right">100 %</td>';
-    $html[] = '    <td align="right">'.number_format($play['entries']/$play['roles'], 1, ',', ' ').'</td>';
+    // $html[] = '    <td align="right">'.number_format($play['entries']/$play['roles'], 1, ',', ' ').'</td>';
     $html[] = '    <td align="right">'.number_format($play['c']/60, 0, ',', ' ').' l.</td>';
     $html[] = '    <td align="right">'.ceil(100 * $play['c']/$play['presence'])." %</td>";
     $html[] = '    <td align="right">'.$play['sp'].'</td>';

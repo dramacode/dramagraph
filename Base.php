@@ -89,22 +89,29 @@ class Dramaturgie_Base {
   /**
    * Charger un XML en base
    */
-  public function insert($url, $identifier = null) {
+  public function insert($p) {
     $time = microtime(true);
-    if (strpos($url, "http") === 0) $source = $url;
-    else $url = null;
-    if (STDERR) fwrite(STDERR, $url);
-    $doc = new Dramaturgie_Doc($url);
+    if (is_string($p)) {
+      $p = array( 'source'=>$p );
+    }
+    if ( !isset( $p['publisher'] ) ) $p['publisher'] = null;
+    if ( !isset( $p['identifier'] ) ) $p['identifier'] = null;
+
+    if (STDERR) fwrite(STDERR, $p['source'] );
+    $doc = new Dramaturgie_Doc( $p['source'] );
+
+    // default is naked, do better for bibdramatique site
+    $doc->naked();
     $play = $doc->meta();
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, source, identifier, author, title, created, issued, acts, verse, genre)
-              VALUES (?,    ?,      ?,          ?,      ?,     ?,       ?,      ?,    ?,     ?);
+    INSERT INTO play (code, publisher, identifier,  author, title, created, issued, acts, verse, genre)
+              VALUES (?,    ?,         ?,           ?,      ?,     ?,       ?,      ?,    ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
-      $source,
-      $identifier,
+      $p['publisher'],
+      $p['identifier'],
       $play['author'],
       $play['title'],
       $play['created'],
@@ -409,7 +416,7 @@ class Dramaturgie_Base {
     if (STDERR) fwrite(STDERR, " stats: ".number_format(microtime(true) - $time, 3)."s.");
     $time = microtime(true);
 
-    $this->_insobj($doc->getDom(), $playid, $play['code']);
+    $this->_insobj($doc->dom(), $playid, $play['code']);
     if (STDERR) fwrite(STDERR, " html: ".number_format(microtime(true) - $time, 3)."s.");
     if (STDERR) fwrite(STDERR, "\n");
   }
@@ -522,12 +529,13 @@ class Dramaturgie_Base {
           // seems a list of uri
           if ($ext == 'csv' || $ext == "txt") {
             $handle = fopen($file, "r");
-            // first libne ?
-            while (($line = fgets($handle)) !== false) {
-              $fields = preg_split("@\s*,\s+|\t@", $line);
-              if (count($fields) < 1) continue;
-              else if (count($fields) == 1) $base->insert($fields[0]);
-              else $base->insert($fields[0], $fields[1]);
+            $keys = fgetcsv($handle, 0, "\t");
+            while (($values = fgetcsv($handle, 0, "\t")) !== FALSE) {
+              if ( count( $values ) < 1) continue;
+              if ( count( $keys ) > count( $values ) ) // less values than keys, fill for a good combine
+                $values = array_merge( $values, array_fill( 0, count( $keys ) - count( $values ), null ) ) ;
+              $row = array_combine($keys, $values);
+              $base->insert($row);
             }
             fclose($handle);
             // first
