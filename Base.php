@@ -7,9 +7,9 @@ include('../Teinte/Doc.php'); // dépendance déclarée
 
 if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
 else if (php_sapi_name() == "cli") {
-  Dramaturgie_Base::cli();
+  Dramagraph_Base::cli();
 }
-class Dramaturgie_Base {
+class Dramagraph_Base {
   /** Lien à une base SQLite, unique */
   public $pdo;
   /** fichier de la base sqlite */
@@ -26,7 +26,7 @@ class Dramaturgie_Base {
    * Connexion à la base
    */
   private function connect($sqlite) {
-    $sql = 'dramaturgie.sql';
+    $sql = 'dramagraph.sql';
     $dsn = "sqlite:" . $sqlite;
     // si la base n’existe pas, la créer
     if (!file_exists($sqlite)) {
@@ -68,24 +68,107 @@ class Dramaturgie_Base {
 
 
   /**
-   * Lister les fichiers XML d’un répertoire pour en proposer une table avec quelques métadonnées
+   * Table bibliographique des pièces en base
    */
-  public function dirtable($dir) {
-    $dir = rtrim($dir, ' /\\').'/';
-    foreach(glob($dir.'*.xml') as $file) {
-      $play = $this->play($file);
-      echo '
-  <tr>
-    <td class="author">'.$play['author'].'</td>
-    <td class="year">'.$play['issued'].'</td>
-    <td class="title"><a href="'.basename($file).'">'.$play['title'].'</a></td>
-    <td class="genre">'.$play['genre'].'</td>
-    <td class="verse">'.(($play['verse'])?"vers":"prose").'</td>
-    <td class="acts">'.$play['acts'].'</td>
-  </tr>
-';
+  public function bibliotable( $cols = null, $linkf = "%s" )
+  {
+    if ( !$cols && !is_array($cols) ) {
+      $cols = array(
+        'author',
+        'created',
+        'issued',
+        'title',
+        'c',
+        'sp',
+        'spavg',
+        'role',
+        'roleavg',
+        'publisher'
+      );
     }
+    echo '      <table class="sortable">'."\n";
+    echo '        <tr>'."\n";
+    foreach ($cols as $key) {
+      if ( 'author' == $key)
+        echo '          <th>Auteur</th>'."\n";
+      else if ( 'created' == $key)
+        echo '          <th title="Date de création">Créé</th>'."\n";
+      else if ( 'issued' == $key)
+        echo '          <th title="Date de publication">Publié</th>'."\n";
+      else if ( 'title' == $key)
+        echo '          <th>Titre</th>'."\n";
+      else if ( 'c' == $key)
+        echo '          <th title="Quantité de texte prononcé en lignes (60 signes).">Paroles</th>'."\n";
+      else if ( 'sp' == $key)
+        echo '          <th title="Nombre de répliques.">Répliques</th>'."\n";
+      else if ( 'spavg' == $key)
+        echo '          <th title="Taille moyenne d’une réplique, en lignes (60 signes).">Rép. moy.</th>'."\n";
+      else if ( 'role' == $key)
+        echo '          <th title="Nombre de personnages déclarés dans la distribution.">Pers.</th>'."\n";
+      else if ( 'roleavg' == $key)
+        echo '          <th title="Nombre moyen de personnages sur scène.">Prés. moy.</th>'."\n";
+      else if ( 'publisher' == $key)
+        echo '          <th>Éditeur</th>'."\n";
+    }
+    echo '        </tr>'."\n";
+    foreach ($this->pdo->query("SELECT * FROM play ORDER BY author, issued") as $row) {
+      echo '        <tr>'."\n";
+      foreach ($cols as $key) {
+        if ( 'author' == $key)
+          echo '          <td>'.$row['author'].'</td>'."\n";
+        else if ( 'created' == $key)
+          echo '          <td>'.$row['created'].'</td>'."\n";
+        else if ( 'issued' == $key)
+          echo '          <td>'.$row['issued'].'</td>'."\n";
+        else if ( 'title' == $key) {
+          $href = sprintf( $linkf, $row['code'] );
+          echo '          <td>'.'<a href="'.$href.'">'.$row['title']."</a></td>\n";
+        }
+        else if ( 'c' == $key)
+          echo '          <td align="right">'.number_format($row['c']/60, 0, ',', ' ').' l.</td>';
+        else if ( 'sp' == $key)
+          echo '          <td align="right">'.$row['sp'].'</td>';
+        else if ( 'spavg' == $key)
+          echo '          <td align="right">'.number_format($row['c']/$row['sp']/60, 2, ',', ' ').' l.</td>';
+        else if ( 'role' == $key)
+          echo '          <td align="right">'.$row['roles'].'</td>';
+        else if ( 'roleavg' == $key)
+          echo '          <td align="right">'.number_format($row['presence']/$row['c'], 1, ',', ' ').' pers.</td>';
+        else if ( 'publisher' == $key) {
+          if ($row['identifier']) echo '          <td><a href="'.$row['identifier'].'">'.$row['publisher'].'</a></td>'."\n";
+          else echo '          <td>'.$row['publisher'].'</td>'."\n";
+        }
+      }
+      echo '        </tr>'."\n";
+    }
+    echo '</table>'."\n";
   }
+
+   /**
+    * Liste de pièce comme un <select>
+    */
+   public function biblioselect( $playcode=null, $id="dramagraph" )
+   {
+     $html = array();
+     $html[] = '       <select name="play" onchange="this.form.submit()">';
+     $html[] = '         <option> </option>';
+     foreach ($this->pdo->query("SELECT * FROM play ORDER BY author, created") as $row) {
+       if ($row['code'] == $playcode) $selected=' selected="selected"';
+       else $selected = "";
+       if ($row['created'] && $row['issued']) $date = " (".$row['created'].", ".$row['issued'].") ";
+       else if ($row['created']) $date = " (".$row['created'].") ";
+       else if ($row['issued']) $date = " (".$row['issued'].") ";
+       else $date = ' ; ';
+       $title = $row['title'];
+       if ($pos = strpos($title, ' ou ') ) $title = trim( substr( $title, 0, $pos) );
+       else if ($pos = strpos($title, ',') ) $title = trim( substr( $title, 0, $pos) );
+       else if ($pos = strpos($title, '.') ) $title = trim( substr( $title, 0, $pos) );
+       $html[] = '         <option value="'.$row['code'].'"'.$selected.'>'.$row['author'].$date.$title."</option>";
+     }
+     $html[] = '       </select>';
+     return implode("\n", $html);
+   }
+
   /**
    * Charger un XML en base
    */
@@ -98,15 +181,15 @@ class Dramaturgie_Base {
     if ( !isset( $p['identifier'] ) ) $p['identifier'] = null;
 
     if (STDERR) fwrite(STDERR, $p['source'] );
-    $doc = new Dramaturgie_Doc( $p['source'] );
+    $doc = new Dramagraph_Doc( $p['source'] );
 
     // default is naked, do better for bibdramatique site
     $doc->naked();
     $play = $doc->meta();
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, publisher, identifier,  author, title, created, issued, acts, verse, genre)
-              VALUES (?,    ?,         ?,           ?,      ?,     ?,       ?,      ?,    ?,     ?);
+    INSERT INTO play (code, publisher, identifier,  author, title, date, created, issued, acts, verse, genre)
+              VALUES (?,    ?,         ?,           ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
@@ -114,6 +197,7 @@ class Dramaturgie_Base {
       $p['identifier'],
       $play['author'],
       $play['title'],
+      $play['date'],
       $play['created'],
       $play['issued'],
       $play['acts'],
@@ -477,11 +561,11 @@ class Dramaturgie_Base {
                 VALUES (?,    ?,        ?,    ?,    ?)
     ");
     $this->pdo->beginTransaction();
-    $charline = new Dramaturgie_Charline($this->sqlitefile);
+    $charline = new Dramagraph_Charline($this->sqlitefile);
     $cont = $charline->pannel(array('playcode'=>$playcode));
     $insert->execute(array($playid, $playcode, 'charline', null, $cont));
     unset($charline);
-    $rolenet = new Dramaturgie_Rolenet($this->sqlitefile);
+    $rolenet = new Dramagraph_Rolenet($this->sqlitefile);
     $cont = $rolenet->sigma($playcode);
     $insert->execute(array($playid, $playcode, 'sigma', null, $cont));
     $cont = $rolenet->roletable($playcode);
@@ -511,7 +595,7 @@ class Dramaturgie_Base {
     array_shift($_SERVER['argv']); // shift first arg, the script filepath
     if (!count($_SERVER['argv'])) exit($usage);
     $sqlite = array_shift($_SERVER['argv']);
-    $base = new Dramaturgie_Base($sqlite);
+    $base = new Dramagraph_Base($sqlite);
     /*
     if (!count($_SERVER['argv'])) exit('
     action  ? (valid|insert|gephi)

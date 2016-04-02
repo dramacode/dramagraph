@@ -1,6 +1,6 @@
 <?php
 
-class Dramaturgie_Charline {
+class Dramagraph_Charline {
   /** Lien à une base SQLite */
   public $pdo;
 

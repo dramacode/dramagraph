@@ -10,6 +10,7 @@ CREATE TABLE play (
   identifier TEXT,    -- URL du site de référence
   author     TEXT,    -- auteur
   title      TEXT,    -- titre
+  date       INTEGER, -- année pertinente
   created    INTEGER, -- année de création
   issued     INTEGER, -- année de publication
   roles      INTEGER, -- nombre de rôles en tout

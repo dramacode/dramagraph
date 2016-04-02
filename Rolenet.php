@@ -2,7 +2,7 @@
 /**
  * Visualisation relatives au réseaux de parole
  */
-class Dramaturgie_Rolenet {
+class Dramagraph_Rolenet {
   /** Lien à une base SQLite, unique */
   public $pdo;
   /** Couleurs pour le graphe, la clé est une classe de nœud, les valeurs son 1: nœud, 2: lien */
@@ -24,19 +24,37 @@ class Dramaturgie_Rolenet {
     "male inferior" => array("#C0C0FF", "rgba(96, 96, 192, 0.3)"),
     "male exterior" => array("#A0A0A0", "rgba(96, 96, 192, 0.3)"),
   );
-  /** Se lier à la base */
-  public function __construct($sqlitefile) {
+  /**
+   * Se lier à la base
+   */
+  public function __construct($sqlitefile)
+  {
     // ? pouvois passer un pdo ?
     $this->pdo = new PDO('sqlite:'.$sqlitefile);
     $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
   }
+
+  /**
+   *
+   */
+  public function graph( $playcode, $dramahref )
+  {
+    echo $this->canvas( $playcode );
+    echo'<script> var data =';
+    echo $this->sigma( $playcode );
+    // http://dramacode.github.io/Dramagraph/
+    echo ' var graph = new Rolenet("'.$playcode.'", data, "'.$dramahref.'sigma/worker.js"); //';
+    echo "</script>\n";
+  }
+
   /**
    * Html for canvas
    */
-  public function canvas($id='graph') {
+  public function canvas($id='graph')
+  {
     $html = '
-    <div id="'.$id.'" oncontextmenu="return false">
-      <div class="sans-serif" style="position: absolute; top: 0; left: 1ex; font-size: 70%; ">Clic droit sur un nœud pour le supprimer</div>
+    <div id="'.$id.'" class="graph" oncontextmenu="return false">
+      <div class="sans-serif" style="position: absolute; top: 0; left: 1ex; font-size: 70%; ">Cliquer un nœud pour le glisser-déposer. Clic droit pour le supprimer</div>
       <div style="position: absolute; bottom: 0; right: 2px; z-index: 2; ">
         <button class="colors but" title="Gris ou couleurs">◐</button>
         <button class="shot but" type="button" title="Prendre une photo">📷</button>
@@ -60,12 +78,11 @@ class Dramaturgie_Rolenet {
     $edges = $this->edges($playcode, 'act');
     $html = array();
     $html[] = "{ ";
-    $html[] = "edges: [";
+    $html[] = "  edges: [";
     for ($i=0; $i < count($edges); $i++) {
       $edge = $edges[$i];
       if (!isset($nodes[$edge['source']])) continue;
       if (!isset($nodes[$edge['target']])) continue;
-      if ($i) $html[] = ",\n    ";
       $source = $nodes[$edge['source']];
       $col = "";
       if (isset(self::$colors[$source['class']])) {
@@ -75,21 +92,17 @@ class Dramaturgie_Rolenet {
         $col = ', color: "'.self::$colors[$source['rank']][1].'"';
       }
 
-      $html[] = '{id:"e'.$i.'", source:"'.$edge['source'].'", target:"'.$edge['target'].'", size:"'.$edge['c'].'"'.$col.', type:"drama"}';
+      $html[] = '    {id:"e'.$i.'", source:"'.$edge['source'].'", target:"'.$edge['target'].'", size:"'.$edge['c'].'"'.$col.', type:"drama"},';
 
     }
-    $html[] = "\n  ]";
-
-    $html[] = ",";
-
-    $html[] = "\n  nodes: [\n    ";
+    $html[] = "  ],";
+    $html[] = "  nodes: [";
 
 
     $count = count($nodes);
     $i = 1;
     foreach ($nodes as $code=>$node) {
       if (!$code) continue;
-      if ($i > 1) $html[] = ",\n    ";
       // position initiale en cercle, à 1h30
       $angle =  -M_PI - (M_PI*2/$count) *  ($i-1);
       // $angle =  2*M_PI/$count * ($i -1);
@@ -112,12 +125,12 @@ class Dramaturgie_Rolenet {
       }
       // $json_options = JSON_UNESCAPED_UNICODE; // incompatible 5.3
       $json_options = null;
-      $html[] = "{id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"}';
+      $html[] = "    {id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"},';
       $i++;
     }
-    $html[] = "\n  ]";
+    $html[] = "  ]";
 
-    $html[] = "\n};\n";
+    $html[] = "};";
     return implode("\n", $html);
   }
 
@@ -146,7 +159,8 @@ class Dramaturgie_Rolenet {
   /**
    * Table des relations
    */
-  public function edgetable ($playcode) {
+  public function edgetable ($playcode)
+  {
     $html = array();
     $html[] = '
 <table class="sortable">
@@ -179,7 +193,8 @@ class Dramaturgie_Rolenet {
   /**
    * Table des rôles
    */
-  public function roletable ($playcode) {
+  public function roletable ($playcode)
+  {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     $html = array();
     $html[] = '
@@ -210,7 +225,7 @@ class Dramaturgie_Rolenet {
       $html[] = '    <td data-sort="'.$i.'">'.$role['label']."</td>";
       $html[] = '    <td align="right">'.$role['targets']."</td>";
       $html[] = '    <td align="right">'.ceil(100 * $role['presence']/$play['c'])." %</td>";
-      $html[] = '    <td align="right">'.$role['entries'].'</td>';
+      // $html[] = '    <td align="right">'.$role['entries'].'</td>';
       $html[] = '    <td align="right">'.ceil(100 * $role['c']/$play['c'])." %</td>";
       $html[] = '    <td align="right">'.ceil( 100 * $role['c']/$role['presence'])." %</td>";
       $html[] = '    <td align="right">'.$role['sp']."</td>";
@@ -228,7 +243,8 @@ class Dramaturgie_Rolenet {
   /**
    * Liste de nœuds, pour le graphe, on filtre selon le type d'acte
    */
-  public function nodes($playcode, $acttype=null) {
+  public function nodes($playcode, $acttype=null)
+  {
     $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
     $data = array();
     $rank = 1;

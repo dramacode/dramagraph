@@ -102,7 +102,7 @@
     var width = Math.round(context.measureText(node.label).width);
     var height = parseInt(context.font, 10);
     // bg color
-    context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    context.fillStyle = 'rgba(255, 255, 255, 0.6)';
     context.fillRect(x-2, y - fontSize + 3, width+4, height);
     // text color
     context.fillStyle = (settings('labelColor') === 'node') ?
@@ -263,6 +263,7 @@
 
 
   window.Rolenet = function (canvas, graph, workerUrl) {
+
     this.workerUrl = workerUrl;
     this.canvas = document.getElementById(canvas);
     this.odata = graph;
@@ -448,7 +449,7 @@
     }
     this.sigma.startForceAtlas2(pars);
     var dramanet = this;
-    setTimeout(function() { dramanet.stop();}, 5000)
+    setTimeout(function() { dramanet.stop();}, 3000)
   };
   Rolenet.prototype.stop = function() {
     this.sigma.killForceAtlas2();

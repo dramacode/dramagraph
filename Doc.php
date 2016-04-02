@@ -2,7 +2,7 @@
 /**
  * Porte tout ce qui dépend du fichier XML
  */
-class Dramaturgie_Doc {
+class Dramagraph_Doc {
   /** Document XML */
   private $dom;
   /** Processeur xpath */
