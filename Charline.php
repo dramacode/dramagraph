@@ -1,19 +1,11 @@
 <?php
 
 class Dramagraph_Charline {
-  /** Lien à une base SQLite */
-  public $pdo;
-
-  public function __construct($sqlitefile) {
-    // ? pouvois passer un pdo ?
-    $this->pdo = new PDO('sqlite:'.$sqlitefile);
-    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-  }
 
   /**
    * Bande rythmique d’une pièce
    */
-  public function rythm($p=array()) {
+  public static function rythm($pdo, $p=array()) {
     $p = array_merge(array(
       'playcode' => null,
       'refsize' => 800,
@@ -21,22 +13,22 @@ class Dramagraph_Charline {
       'target' => '', // iframe target
     ), $p);
     if ($p['target']) $p['target'] = ' target="'.$p['target'].'"';
-    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($p['playcode']))->fetch();
+    $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($p['playcode']))->fetch();
     $playid = $play['id'];
     if (!$play) return false;
-    $qconf = $this->pdo->prepare("SELECT * FROM configuration WHERE act = ? ORDER BY rowid; ");
-    $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
+    $qconf = $pdo->prepare("SELECT * FROM configuration WHERE act = ? ORDER BY rowid; ");
+    $qcn = $pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY play, cn DESC LIMIT 1");
     echo '<table class="dramarythm">'."\n";
 
     // boucler sur les actes une fois pour les intitulés, puis une deuxième pour remplir
     echo '  <tr>'."\n";
-    foreach ($this->pdo->query("SELECT * FROM act WHERE play = ".$play['id']." ORDER BY rowid") as $act) {
+    foreach ($pdo->query("SELECT * FROM act WHERE play = ".$play['id']." ORDER BY rowid") as $act) {
       $actsize = ceil($act['c']*$p['refsize']/100000);
       echo '    <td class="label"><div title="'.$act['label'].'" style="width: '.$actsize.'px">'.$act['label']."</div></td>\n";
     }
     echo "  </tr>\n";
     echo "  <tr>\n";
-    foreach ($this->pdo->query("SELECT * FROM act WHERE play = ".$play['id']." ORDER BY rowid") as $act) {
+    foreach ($pdo->query("SELECT * FROM act WHERE play = ".$play['id']." ORDER BY rowid") as $act) {
       if(!$act['c']) continue;
       echo '    <td class="act">'."\n";
       echo '      <table class="act"><tr>'."\n";
@@ -78,7 +70,7 @@ class Dramagraph_Charline {
   /**
    * Panneau vertical de pièce
    */
-  public function pannel($p=array()) {
+  public static function pannel($pdo, $p=array()) {
     $p = array_merge(array(
       'playcode' => null,
       'width' => 230,
@@ -87,7 +79,7 @@ class Dramagraph_Charline {
       'target' => '', // iframe target
     ), $p);
     if ($p['target']) $p['target'] = ' target="'.$p['target'].'"';
-    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($p['playcode']))->fetch();
+    $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($p['playcode']))->fetch();
     $playid = $play['id'];
     if (!$play) return false;
     $confwidth = $p['width'] - 75;
@@ -102,13 +94,13 @@ class Dramagraph_Charline {
     $html = array();
 
     // requête sur le nombre de caractères d’un rôle dans une scène
-    $qsp = $this->pdo->prepare("SELECT role.*, SUM(sp.c) AS ord FROM sp, role WHERE configuration = ? AND sp.role = role.id GROUP BY role ORDER BY ord DESC");
-    $qcn = $this->pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY cn DESC LIMIT 1");
-    $qscene = $this->pdo->prepare("SELECT * FROM scene WHERE id = ?");
+    $qsp = $pdo->prepare("SELECT role.*, SUM(sp.c) AS ord FROM sp, role WHERE configuration = ? AND sp.role = role.id GROUP BY role ORDER BY ord DESC");
+    $qcn = $pdo->prepare("SELECT * FROM sp WHERE configuration = ? AND cn <= ? ORDER BY cn DESC LIMIT 1");
+    $qscene = $pdo->prepare("SELECT * FROM scene WHERE id = ?");
     $html[] = '<div class="charline">';
 
     // loop on acts
-    foreach ($this->pdo->query("SELECT * FROM act WHERE play = $playid ORDER BY rowid") as $act) {
+    foreach ($pdo->query("SELECT * FROM act WHERE play = $playid ORDER BY rowid") as $act) {
       $html[] = '  <a'.$p['target'].' href="'.$p['prehref'].'#'.$act['code'].'" class="acthead">'.$act['label']."</a>";
       if(!$act['c']) continue; // probably an interlude
       $html[] =  '  <div class="act">';
@@ -116,7 +108,7 @@ class Dramagraph_Charline {
       $sceneid = null;
       $scene = null;
       // loop on configurations
-      foreach ($this->pdo->query("SELECT * FROM configuration WHERE act = ".$act['id']) as $conf) {
+      foreach ($pdo->query("SELECT * FROM configuration WHERE act = ".$act['id']) as $conf) {
         if(!$conf['c']) continue; // configuration with no sp, probably in <stage>
         $confsize = 3+ ceil($actheight * $conf['c']/$act['c']);
         if (!isset($conf['n'])) $conf['n'] = 0+ preg_replace('/\D/', '', $conf['code']);

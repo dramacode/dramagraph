@@ -1,0 +1,1953 @@
+object	code	n	label	type	c	w	l	ln	text	target
+div1	I	I	ACTE I	act
+div2	I01	1	Scene premiere	scene
+configuration	I01		constantin artaban	auto
+stage	stage2	2			19	2			"Constantin, Artaban"
+sp	I01-1	1	constantin		392	74	8	1	"Ce repos me plaist bien qui vient de mes travaux,
+Je n’ay plus d’ennemis, n’ayant plus de Rivaux ;
+J’ay dèstruit ces Tyrans* qui pensoient tout destruire
+Et gagné tout d’un coup la Victoire et l’Empire.
+Mais ce n’est qu’à ce bras que je dois cet honneur,
+La Fortune n’a point de part à mon bon-heur* ;
+Ce qu’on nomme Faveur, n’est que ma recompense,
+Et le Ciel seulement seconde ma vaillance."	artaban
+sp	I01-2	2	artaban		674	109	14	9	"Nul ne peut desirer plus de prosperitez,
+Mais vous en avez moins que vous n’en meritez ;
+De toutes neantmoins la plus considerable
+Est que cet heureux sort n’a rien de variable ;
+Cette guerre nous cause une eternelle Paix ;
+Et vainquant une fois, vous vainquez pour jamais.
+Rome, et tous ses Estats mettent leur avantage
+Non plus à commander, mais à vous faire hommage.
+D’ailleurs l’Imperatrice agit si prudemment,
+Que deux partis divers n’ont qu’un seul mouvement,
+Vos enfans de deux lits la tiennent pour leur mere,
+Et dans leur difference, ils n’ont rien de contraire.
+Mais Crispe à son advis vous representant mieux,
+Comme il est le plus grand, est plus cher à ses yeux."	constantin
+sp	I01-3	3	constantin		559	94	12	23	"Aussi l’unique bien*que mon ame desire,
+C’est de voir ma maison* en paix comme l’Empire,
+Un Prince peut tomber, quand le dernier Appuy
+Qui le doit soûtenir, s’éleve contre luy.
+Il arrive souvent qu’un double mariage
+S’il provient de l’amour, produit bien de la rage ;
+Et c’est un grand malheur quand on voit des parens,
+Qui se traitent bien moins en amis qu’en tyrans*.
+Mais Fauste aymant mon fils autant qu’il la revere,
+Constantin desormais ne peut qu’estre heureux pere ;
+Il ne peut au dehors craindre aucun Ennemy.
+Se voyant au dedans puissamment affermy."	artaban
+stage	stage3	3			12	2			"Emile entre."
+div2	I02	2	Scene II	scene
+configuration	I02		constantin artaban emile	auto
+stage	stage4	4			26	3			"Constantin, Artaban, Emile"
+sp	I02-1	1	constantin		18	3	1	35	"Emile que dis-tu ?"	emile
+sp	I02-2	2	emile		197	34	5	36	"Qu’une de vos Provinces
+D’un de vos Lieutenans a fait un de ses Princes,
+Sur le bord du Danube un peuple revolté,
+Veut opposer sa force à vôtre Majesté ?
+Il arme puissamment pour attaquer l’Empire."	constantin
+sp	I02-3	3	constantin		305	53	7	40	"Il me faut travailler mesme quand je respire ;
+Je m’ennuyois déja de me voir en repos,
+La peine et la sueur me rendent plud dispos,
+Ce peuple soulevé ne desire combatre,
+Que pour avoir l’honneur que je songe à l’abatre,
+Je me vay disposer à domter son orgueil,
+Et sa vaine grandeur sera son vray cercueil."	artaban
+sp	I02-4	4	artaban		45	7	1	47	"Vostre fils doit gagner cette belle Couronne."	constantin
+sp	I02-5	5	constantin		44	8	1	48	"Assemblez le Conseil avant que j’en ordonne."	artaban
+div2	I03	3	Scene III	scene
+configuration	I03		helene-mere crispe	auto
+stage	stage5	5			34	6			"Helene, mere de l’Empereur. Crispe"
+sp	I03-1	1	helene-mere		47	12	1	49	"C’est un objet bien rare à mes yeux de te voir."	crispe
+sp	I03-2	2	crispe		239	42	5	50	"Je choque* mon desir autant que mon devoir,
+Je m’accuse, Madame, entendant vôtre plainte ;
+Mais je ne peche point agissant par contrainte :
+Car Fauste me retient si long temps pres de soy,
+Qu’il ne m’en reste plus ny pour vous ny pour moy."	helene-mere
+sp	I03-3	3	helene-mere		872	146	18	55	"Je t’excuse en effet, et ne me plains pas d’elle,
+C’est la Foy* seulement qui la trouve rebelle ;
+Son esprit, et son corps sont parfaits à ce point,
+Que s’ils pouvoient changer, ils ne le seroient point.
+Mais ces excellens dons ne sont que dommageables,
+Si la Religion ne les rend venerables;
+Tasche doncques, mon fils, de luy gagner le cœur,
+Afin que par tes soins* Dieu mesme en soit vainqueur.
+Tu luy dois témoigner de la reconnoissance,
+Et ne luy peux donner que cette recompense.
+T’aimant comme elle fait, elle aura mesmes vœux,
+Et voudra recevoir la Foy*, si tu le veux.
+Croy que ton accortise aura beaucoup de force ;
+Qui resiste à l’effort, par fois cede à l’amorce*.
+Suis avecque grand soin* ses moindres sentimens,
+Et qu’en tout ses humeurs reglent tes mouvemens ;
+Il te la faut gagner par de si bons offices,
+Qu’en fin tous tes advis soient toutes ses delices*."	crispe
+sp	I03-4	4	crispe		466	81	10	73	"Il le faut avoüer, elle m’oblige* tant,
+Qu’à peine l’Empereur en sçauroit faire autant ;
+Elle n’est pas marastre*, elle m’est plus que Mere,
+Tout son plaisir consiste à me pouvoir complaire*;
+Mais je puis bien aussi l’obliger* à mon tour,
+En luy donnant la Foy* pour prix de son amour.
+Je vois un naturel si haut* et si sensible,
+Que de tous les grands biens il paroist susceptible ;
+Et l’on peut bien juger par ses affections,
+Que la mesme vertu forme ses passions."	helene-mere
+sp	I03-5	5	helene-mere		186	28	4	83	"L’Empereur agira puissamment envers elle,
+Son pouvoir neantmoins a besoin de ton zele ;
+Puis donc que nous avons mesme dessein* que luy,
+Pour l’achever bien tost, commençons aujourd’huy."	crispe
+div2	I04	4	Scene IV	scene
+configuration	I04		fauste procle	auto
+stage	stage6	6			22	3			"Fauste, Flavie, Procle"
+sp	I04-1	1	fauste		289	55	6	87	"Procle, ne te feins* point ; c’est de la jeune Helene
+Que ton ame reçoit et sa joye, et sa peine :
+N’en fais pas un secret, tout le monde le dit ;
+Ton cœur a de l’amour, mais j’ay bien du credit* ;
+Et secondant tes vœux, j’entreprendray l’affaire,
+Si comme tu cheris je te connois sincere."	procle
+sp	I04-2	2	procle		311	56	6	93	"Madame, dés qu’on sent l’ardeur d’un si grand feu*,
+Pour bien couvert* qu’il soit, il paroist quelque peu,
+j’ay caché jusqu’icy le transport* de mon ame,
+Apprehendant qu’il eust moins d’effet, que de blâme ;
+Mais je ne crains plus rien ayant un tel secours,
+Et tousjours vous verrez mon cœur dans mes discours*."	fauste
+sp	I04-3	3	fauste		191	33	4	99	"Descouvre* moy si Crispe aime quelque Princesse,
+Et si faisant le froid, il n’a point de Maistresse ?
+Il n’est pas sans amour, ayant tant de beauté,
+Ny toy sans le sçavoir dedans la privauté."	procle
+sp	I04-4	4	procle		596	100	12	103	"Je sçay bien ses desirs ; mais toutefois, Madame,
+Dans une belle humeur, il est du tout sans flame :
+Ouy son ame est sans feu* quand Mars ne l’esmeut pas ;
+Et Venus luy déplaist, bien qu’il ait ses appas*.
+Tous ses ressentimens* ne sont que pour vous mesme,
+Je l’honore, dit-il, bien plus qu’elle ne m’aime ;
+Que mon pere est heureux possedant un objet,
+Qui derechef luy rend tout le monde sujet !
+Puis que dans tous mes biens sa grandeur s’interesse,
+Il faut que tous mes vœux soient pour cette Princesse ;
+Il m’entretient ainsi de vos perfections,
+Qui font tous ses respects, et ses affections."	fauste
+sp	I04-5	5	fauste		397	67	8	115	"Ce discours* me plaist bien, et ce Prince m’oblige*,
+Mais croy qu’en m’obligeant*, neantmoins il m’afflige*;
+Son Amour me seroit plus cher que son respect,
+L’un me soulageroit, où l’autre m’est suspect,
+Ces grands abaissemens qu’on voit en des personnes,
+Couvrent plus seurement les desirs des Couronnes ;
+Le veritable hommage est rendu par le cœur,
+S’il a moins d’apparence, il a plus de douceur."	procle
+sp	I04-6	6	procle		44	8	1	123	"Madame, il vous cherit comme sa propre mere."	fauste
+sp	I04-7	7	fauste		48	12	1	124	"Je voudrois qu’il m’aimât à l’esgal de son pere."	procle
+sp	I04-8	8	procle		97	19	2	125	"Madame, asseurez vous qu’il ne luy peut ceder,
+Qu’au seul droict qu’un espoux a de vous posseder."	fauste
+sp	I04-9	9	fauste		377	70	8	127	"Je prise* son amour qui m’est si desirable,
+Mais quand il est plus franc, il est plus agreable ;
+Qu’il soit moins serieux conversant avec moy,
+Et si j’ay du pouvoir, je luy fais cette loy*.
+Qu’il ne regarde pas l’esclat d’un Diadéme,
+Voyant le feu* d’un cœur qui l’adore, et qui l’aime ;
+Quel danger trouve-t’il dans la proximité,
+D’avoir moins de reserve, et plus de liberté ?"	procle
+sp	I04-10	10	procle		79	17	2	135	"Si vous ne voyez pas son ame toute nuë,
+C’est que sa passion cede à sa retenuë."	fauste
+sp	I04-11	11	fauste		480	91	10	137	"Cette vertu visible a beaucoup de pouvoir,
+Mais n’a jamais de droit qui s’oppose au devoir.
+Au reste va t’en dire à ce Prince adorable*,
+Qu’il est autant aimé comme il peut estre aimable*;
+Ajouste de ma part qu’une Dame aujourd’huy
+Dans un bon entretien m’a fort parlé de luy ;
+Qu’elle est de noble sang autant que je puis l’estre,
+Qu’on voit la Beauté mesme, en la voyant parestre,
+Que la Vaillance en fin doit ceder à l’Amour,
+La peine est pour le Camp, le plaisir pour la Cour."	procle
+sp	I04-12	12	procle		47	10	1	147	"C’est vôtre Confidente, on a fort parlé d’elle."	fauste
+sp	I04-13	13	fauste		74	14	2	148	"Non ; mais je vois par là qu’elle m’est infidele* ;
+Ayme-t’elle si haut* ?"	procle
+sp	I04-14	14	procle		23	4	1		"Vous sçavez son secret."	fauste
+sp	I04-15	15	fauste		245	44	5	150	"Puis qu’elle me le cache, il doit estre indiscret ;
+Celle dont je parlois est de meilleure race,
+Elle a bien moins d’orgueil, mais elle a plus de grace ;
+S’il la pouvoit aymer, il me feroit plaisir,
+Car mes vœux sont de voir accomplir son desir."	procle
+sp	I04-16	16	procle		86	14	2	155	"Madame, si son cœur mes discours* ne rejette,
+Vous serez obeïe, et l’autre satisfaite."	fauste
+stage	stage7	7			17	3			"Procle se retire."
+sp	I04-17	17	fauste		183	29	4	157	"Flavie, tu sçais bien où visoit ce discours*,
+Spurine adorant Crispe implore mon secours,
+Va la donc avertir, sans parler d’autre chose ;
+Que j’agis puissamment, et qu’elle se repose."	procle
+stage	stage8	8			17	3			"Flavie se retire."
+div2	I05	5	Scene V	scene
+configuration	I05		fauste	auto
+stage	stage9	9			5	1			"seule"
+sp	I05-1	1	fauste		2202	379	54		"Qui pourroit croire que c’est moy
+Que la perfection de Crispe desespere ?
+J’aime plus ce Fils que son Pere ?
+Le Droict me le defend, l’Amour m’en fait la loy*,
+Injuste Droict, suis-je blasmable
+D’aimer plus en effet l’objet le plus aimable* ?La Nature ne le veut pas ;
+C’est elle neantmoins qui m’en donne l’envie ;
+Elle m’oste, et me rend la vie,
+Me faisant trop aymer et craindre ses appas*;
+Doux sang que tu sembles barbare*,
+Nous unissant tous deux d’un nœud qui nous separe !Crispe, que n’es-tu plustost né ?
+Ou pourquoy naissois-tu pour m’empescher de vivre ?
+Je te dois fuir, je te dois suivre ;
+Si l’un m’est defendu, l’autre m’est ordonné ;
+Donc si mon feu* te semble infame,
+Accuse tes beautez aussi bien que ma flame ;Taschons pourtant de le cherir
+Non pas comme un époux, mais comme son image ;
+S’il est beau, je dois estre sage,
+Et pour vouloir aimer, faut-il vouloir perir ?
+D’ailleurs, l’Image estant plus belle,
+Dois-je avoir, ô mes yeux, un moindre amour pour elle ?
+Fauste est marastre* seulement,
+Elle peut donc l’aimer autrement qu’une mere,
+S’il est la moitié de son Pere,
+En l’aimant, je cheris mon époux doublement ;
+Quoy donc ? luy seray-je infidele*,
+Si pour le mieux aimer, je redouble mon zele ?Mais c’est trahir un Empereur,
+Pour servir un Tyran* qui n’est qu’abominable ;
+Au pere pourray-je estre aymable*,
+Et le fils me peut-il cherir que dans l’horreur ?
+Mon cœur tien ta flamme* couverte*,
+Voulant en gagner deux, je ferois double perte.C’est le Conseil de la raison,
+Mais mon aveuglement n’en peut pas voir la force ;
+Le devoir m’est moins que l’amorce*;
+Et cherissant mon mal je hais ma guerison :
+J’ay de l’amour, j’ay de la honte,
+L’une me fait rougir, mais l’autre me surmonte.Tous les Dieux pour m’encourager
+Sans offenser les Loix, font de ces alliances;
+Loin de toutes ces differences
+Frere et sœur, mere et fils s’espousent sans danger.
+Pour moy je n’ayme pas de frere,
+Et ne poursuis qu’un fils dont je ne suis pas mere.Quel remede aura cet Amour
+Si je n’en puis parler, et ne puis pas m’en taire ?
+Il m’empesche d’estre sincere,
+Et me doit étouffer s’il n’est produit au jour ;
+Que Crispe l’apprenne luy mesme,
+Et se voyant aimé qu’il me tuë, ou qu’il m’aime."	
+div2	I06	6	Scene VI	scene
+configuration	I06		fauste helene-fille	auto
+stage	stage10	10			35	6			"Fauste, Helene fille de l’Empereur."
+sp	I06-1	1	helene-fille		89	16	2	215	"Madame, l’Empereur éloigne de nos yeux,
+Ce Prince qui faisoit et sa gloire, et nos voeux."	fauste
+sp	I06-2	2	fauste		18	2	1	217	"Est-il disgracié ?"	helene-fille
+sp	I06-3	3	helene-fille		67	12	2	218	"Sa grande renommée
+L’a fait choisir d’abord* pour conduire l’armée."	fauste
+sp	I06-4	4	fauste		131	20	3	219	"Je crains beaucoup pour luy ; le sort* est dangereux,
+Mais souvent aux plus grands* il est plus malheureux ;
+Et Crispe le veut-il ?"	helene-fille
+sp	I06-5	5	helene-fille		75	13	2	222	"Comme il aime la gloire,
+Il fuit tous les plaisirs pour suivre la victoire."	fauste
+sp	I06-6	6	fauste		299	54	6	223	"On croit vaincre souvent que l’on se voit vaincu,
+Et par fois les plus forts n’ont pas le plus vescu ;
+Si Crispe est genereux, la mort porte des armes,
+Qui n’espargnent non plus, la valeur que les charmes;
+Donc pour l’en preserver il le faut retenir ;
+On recherche un malheur qu’on tarde à prevenir."	helene-fille
+sp	I06-7	7	helene-fille		190	34	4	229	"L’Empereur là dessus n’escoute point sa mere ;
+Madame, c’est en vain qu’elle a fait sa priere ;
+Mais vous estant son cœur, et reglant ses desirs,
+De grace conformez son ordre à nos plaisirs."	fauste
+sp	I06-8	8	fauste		93	15	2	233	"Je m’y veux employer, l’affaire est importante,
+Et mon ressentiment* la fait juger pressante."	helene-fille
+div2	I07	7	Scene VII	scene
+configuration	I07		adelaide artaban	auto
+stage	stage11	11			17	2			"Artaban, Adelaïde"
+sp	I07-1	1	adelaide		287	56	6	235	"Je sçay que l’Empereur vous a dit son dessein*;
+Il ne s’esclorra pas s’il n’est que dans mon sein*.
+Est-il vray que son fils doit quitter sa presence,
+Et qu’un si doux sujet sort par la violence ?
+Ce Prince a-t’il peché pour estre ainsi banny,
+Et n’a-t’il de renom que pour estre terny ?"	artaban
+sp	I07-2	2	artaban		296	51	6	241	"C’est pour mieux l’honorer que l’Empereur l’envoye ;
+Vous faites vos douleurs de ce qui fait sa joye.
+Un Grand* doit souhaiter de prendre ses esbats,
+Moins dedans une Cour, que parmy les Combats ;
+Choquant* l’amour d’un fils pour aider son courage,
+Un pere si vaillant se monstre aussi fort sage."	adelaide
+sp	I07-3	3	adelaide		205	40	4	247	"Mais que sera la Cour sans un si beau Soleil,
+Et qu’y peut-on plus voir s’il nous cache son œil ?
+Ce Prince estoit le Dieu des Seigneurs et des Dames,
+Et d’éloigner son corps, c’est leur ravir* leurs ames."	artaban
+sp	I07-4	4	artaban		195	35	4	251	"La mollesse n’est pas bonne pour un Vainqueur,
+Qui ne doit trouver rien de doux que la rigueur,
+Madame, il vaut bien mieux n’estre aimé de personne,
+Que de gagner un cœur, et perdre une Couronne."	adelaide
+sp	I07-5	5	adelaide		41	8	1	255	"Il a vaincu tousjours quand il a combatu."	artaban
+sp	I07-6	6	artaban		41	7	1	256	"Ces autres bons succés excitent sa vertu."	adelaide
+sp	I07-7	7	adelaide		48	9	1	257	"Il peut perdre du sang faisant un grand carnage."	artaban
+sp	I07-8	8	artaban		47	9	1	258	"Le mal qui vous fait peur augmente son courage."	adelaide
+sp	I07-9	9	adelaide		50	9	1	259	"Trop de cœur quelquefois nous fait perdre le jour."	artaban
+sp	I07-10	10	artaban		51	11	1	260	"Souvent on perd l’honneur, quand on a trop d’amour."	adelaide
+sp	I07-11	11	adelaide		25	4	1	261	"Il doit doncques partir ?"	artaban
+sp	I07-12	12	artaban		53	9	2	262	"L’affaire est resoluë,
+L’Empereur veut qu’il vainque."	adelaide
+sp	I07-13	13	adelaide		78	15	2	263	"Et je crains qu’on le tuë.
+N’est-il point de moyen, Monsieur, de l’empescher ?"	artaban
+sp	I07-14	14	artaban		144	24	3	264	"Esperez mieux de luy puis qu’il vous est si cher ;
+Quel droit peut revoquer cette belle ordonnance
+Que la Justice a faite avecque la Puissance ?"	adelaide
+sp	I07-15	15	adelaide		47	10	1	267	"Si j’avois du credit* j’en suspendrois l’effet."	artaban
+sp	I07-16	16	artaban		43	6	1	268	"Cette faveur rendroit Crispe mal satisfait."	adelaide
+sp	I07-17	17	adelaide		50	11	1	269	"Chacun est bien content qu’on ait soin* de sa vie."	artaban
+sp	I07-18	18	artaban		84	14	2	270	"La vaillance resiste à cette lasche envie.
+Mettez vôtre repos à plaire à l’Empereur."	adelaide
+stage	stage12	12			18	3			"Artaban se retire."
+stage	stage13	13			6	1			"seule."
+sp	I07-19	19	adelaide		445	75	9	272	"Le funeste* repos qui me met en fureur !
+Que j’avois tort d’aimer un sujet trop aimable*,
+Qui m’afflige* plustost qu’il ne m’est favorable ?
+Je le perds en effet sans l’avoir possedé ;
+Et tout mon bien* consiste à l’avoir regardé.
+Qu’on tombe bien souvent pensant toucher le faiste*,
+Et qu’un grand calme attire une grande tempeste !
+Allons le salüer pour mon dernier devoir,
+Mes yeux voyez-le encor, ne le devant plus voir.
+Fin du premier Acte."	artaban
+div1	II	II	ACTE II	act
+div2	II01	1	Scene premiere	scene
+configuration	II01		constantin crispe	auto
+stage	stage14	14			87	16			"Constantin tenant l’espée pour la donner à son fils. Crispe, Deux Gardes de l’Empereur."
+sp	II01-1	1	constantin		668	110	14	281	"SOuviens-toy bien, mon fils, des exploits de ton pere ;
+Constantin a bien fait, mais Crispe doit mieux faire ;
+Tu dois estre Empereur me devant succeder,
+Et si j’acquiers du bien tu le dois posseder ;
+Mais je veux que suivant les traces de ma vie,
+Tu merites l’Empire en dépit de l’envie :
+Car un grade d’honneur qu’on n’a pas merité,
+Est plustost un affront qu’un poinct de dignité.
+N’apporte pas ta teste, ou porte une Couronne,
+Pour l’avoir sans faillir, hazarde ta personne ;
+Prens cette épée en main, cet acier tout-puissant ;
+Pour avoir son esclat doit estre rougissant ;
+Les Barbares ont fait une esmeute nouvelle,
+Va faire voir ta force où la Gloire t’appelle."	crispe
+sp	II01-2	2	crispe		390	72	8	295	"Pour faire vaillamment il me faut commencer
+A suivre un Conquerant qu’on ne peut devancer;
+Mais je n’ay point de peine à prodiguer ma vie,
+Si c’est mon vray bon-heur*, comme c’est mon envie.
+La Cour ne m’est plus rien quand je songe aux combats :
+Et je crains seulement qu’on ne me choque* pas;
+Il m’ennuie à present de tenir cette épée,
+Car je la vois briller, l’aimant mieux voir trempée."	constantin
+stage	stage15	15			50	10			"Crispe se retire, et Fauste entre d’un autre costé"
+div2	II02	2	Scene II	scene
+configuration	II02		constantin fauste	auto
+stage	stage16	16			36	4			"Constantin, Fauste, Flavie suivante."
+sp	II02-1	1	fauste		392	65	8	303	"Vous perdez donc un fils pour gagner de l’honneur ?
+Un malheur recherché vous ravit* ce bon-heur* ?
+Mes enfans sont petits, les travaux de la guerre
+Vous élevant au ciel, vous courbent vers la terre ;
+Et si Crispe nous vient à manquer aujourd’huy,
+L’Empire est en danger de faillir avec luy ;
+N’ayant point d’ennemis vous allumez des guerres ?
+Et dans la paix de l’air excitez des tonnerres ?"	constantin
+sp	II02-2	2	constantin		285	51	6	311	"Ne vous offensez pas qu’il subisse une Loy
+Qui luy sera tousjours commune avecque moy ?
+Vivra-t’il dans la paix ? j’ay vécu dans la peine,
+Pour m’asseoir sur le thrône on m’a mis à la géne :
+Ma vie pour le moins estoit d’aussi grand prix,
+Le prisez*-vous, Madame, avecque mon mespris ?"	fauste
+sp	II02-3	3	fauste		404	63	9	317	"Monseigneur n’a non plus de Rival que de Maistre,
+Et Crispe prés de vous ne me semble rien estre ;
+Toutefois si le Ciel vous eust fait Empereur,
+Vous causant beaucoup plus de plaisir que d’horreur,
+J’eusse mieux aimé voir couronner vôtre teste
+Dans la tranquillité que parmy la tempeste,
+Ainsi donc les Tyrans* estans tous abbatus,
+Tout le monde adorant ou craignant vos Vertus,
+Laissez Crispe à la Cour."	constantin
+sp	II02-4	4	constantin		564	92	12	326	"Pour aimer les alarmes*,
+Il faut haïr, Madame, un lieu si plein de charmes;
+La Cour peut ramollir la plus mâle vigueur,
+Vous l’aimez Courtisan, et je l’aime Vainqueur.
+Et puis quiconque veut se garder de surprise,
+Doit mesme dans la paix faire quelque entreprise :
+Sans avoir d’ennemis, on doit porter le fer,
+Ou l’on peut se voir vaincre, ayant pû triompher.
+Mais je viens maintenant d’aprendre des nouvelles,
+Qu’un Prince assujetty s’est fait chef des rebelles ;
+Puis donc qu’il se soûleve, il le faut abaisser ;
+Ma douceur l’aigrissant, mon fils le doit forcer."	fauste
+sp	II02-5	5	fauste		47	9	1	337	"Vous avez d’autres chefs pour conduire l’armée."	constantin
+sp	II02-6	6	constantin		44	8	1	338	"Mais Crispe doit luy seul faire sa renommée."	fauste
+sp	II02-7	7	fauste		44	9	1	339	"Je frissonne d’horreur à vous l’oüir nommer."	constantin
+sp	II02-8	8	constantin		48	11	1	340	"S’il se fait tant cherir, qu’il se fasse estimer"	fauste
+sp	II02-9	9	fauste		43	9	1	341	"Il est assez prisé*, tout le monde l’adore."	constantin
+sp	II02-10	10	constantin		48	10	1	342	"Et cette charge aussi fait voir que je l’honore."	fauste
+sp	II02-11	11	fauste		29	7	1	343	"Mais s’il meurt à la guerre ?"	constantin
+sp	II02-12	12	constantin		25	5	1		"Il mourra dans l’honneur."	fauste
+sp	II02-13	13	fauste		22	3	1	344	"Vous serez malheureux."	constantin
+sp	II02-14	14	constantin		19	4	1		"Il aura du bonheur."	fauste
+sp	II02-15	15	fauste		93	16	2	345	"Dans toute sa Faveur je crains quelque disgrace,
+Si quelqu’autre ne va commander en sa place."	constantin
+sp	II02-16	16	constantin		96	22	2	347	"Tout le mal que je crains, c’est qu’estant à la Cour
+Il soûmette à la fin sa grandeur à l’Amour."	fauste
+sp	II02-17	17	fauste		23	6	1	349	"Il n’en est pas touché."	constantin
+sp	II02-18	18	constantin		25	5	1		"Ne le peut-il pas estre ?"	fauste
+sp	II02-19	19	fauste		27	6	1	350	"Il n’a point de Maistresse."	constantin
+sp	II02-20	20	constantin		25	6	1		"Elle n’est pas à naistre."	fauste
+sp	II02-21	21	fauste		21	6	1	351	"Il n’en aime pas une."	constantin
+sp	II02-22	22	constantin		21	4	1		"Au moins est-il aimé."	fauste
+sp	II02-23	23	fauste		96	17	2	352	"Et quel seroit le cœur qui n’en seroit charmé !
+Mais encor, Monseigneur, le nom de son Amante* ?"	constantin
+sp	II02-24	24	constantin		24	5	1	354	"Elle est de vostre Cour."	fauste
+sp	II02-25	25	fauste		499	83	11	355	"Oüy, c’est ma Confidente ;
+Elle a de grands desseins*, mais ce discours* à part,
+Crispe me fait beaucoup souffrir par son depart ;
+Qu’on prenne mes enfans, que le vôtre demeure,
+Ma vie finira s’il arrive qu’il meure.
+Voyez comme mes yeux prevenant ses malheurs,
+Quoy qu’il ne souffre rien, jettent desja des pleurs ;
+Et ne serois-je pas du tout inconsolable,
+Si parmy nos bonheurs il estoit miserable ?
+Si je l’estime tant, c’est qu’estant pres de nous
+En voyant vôtre fils, je croy voir mon espoux."	constantin
+sp	II02-26	26	constantin		182	33	4	365	"Contre ma volonté, je le donne à vos larmes ;
+Qu’il vive pres de vous éloigné des alarmes*.
+Ayez soin* neantmoins qu’il garde sa vigueur,
+Et que d’autre que vous ne possede son cœur."	fauste
+sp	II02-27	27	fauste		179	29	4	369	"En cela comme en tout je vous seray fidele,
+Vôtre précaution s’accordant à mon zele,
+Ma Confidente mesme, et remarquez ce poinct,
+Sans voir choquer* son feu*, ne le cherira point."	constantin
+stage	stage17	17			14	3			"seule à costé."
+sp	II02-28	28	fauste		383	72	8	373	"Mon cœur estoit pressé, mais je sens qu’il respire,
+Dans ma joye pourtant je rencontre un martyre,
+La guerre pour ce Prince a perdu son ardeur,
+Mais je crains d’autre part qu’il ait trop de froideur.
+O Mars ! si ta Venus a pû t’estre agreable,
+Et si pour la cherir tu t’és rendu traitrable ;
+Change en flammes d’amour le feu de sa fureur,
+Et qu’il aime l’amorce* et haïsse l’horreur."	
+div2	II03	3	Scene III.	scene
+configuration	II03		helene-mere crispe	auto
+stage	stage18	18			40	7			"Helene mere de l’Empereur. Crispe, Emile"
+sp	II03-1	1	helene-mere		275	47	6	381	"Puis qu’en fin mon Amour doit ceder à ta gloire,
+Puisses-tu me quittant rencontrer la Victoire !
+à te voir seulement on voudra t’obéïr,
+Il faut ne s’aimer pas pour te pouvoir haïr,
+Tant de belles Vertus et des attraits si rares
+Changeront en douceur l’humeur de ces Barbares."	crispe
+sp	II03-2	2	crispe		206	36	5	387	"Ce n’est pas mon dessein* non plus que mon desir,
+Recherchant du travail, de trouver du plaisir ;
+Qu’ils se defendent bien, je n’aime de conqueste
+Que celle que j’obtiens au peril de ma teste.
+Adieu Madame,"	helene-mere
+sp	II03-3	3	helene-mere		6	1	1		"Adieu."	crispe
+div2	II04	4	Scene IV	scene
+configuration	II04		helene-mere crispe artaban	auto
+stage	stage19	19			42	6			"Helene mere de Constantin. Crispe, Artaban"
+sp	II04-1	1	artaban		117	19	3	392	"Seigneur, ne partez pas;
+La Cour arreste en fin vos desseins* et vos pas.
+L’Empereur a changé sa premiere Ordonnance."	crispe
+sp	II04-2	2	crispe		348	64	7	394	"C’est doncques sans effet que j’ay de la puissance ?
+On me donne une charge afin de me l’oster,
+On me dit que je marche expres pour m’arrester ;
+Qui commande l’armée ? est-il homme de marque ?
+Je suis fils d’Empereur quand il seroit Monarque ;
+Un pere a tout pouvoir sur ce qui m’appartient,
+Mais non pas pour m’oster l’honneur qu’un autre obtient."	artaban
+sp	II04-3	3	artaban		41	7	1	401	"L’Imperatrice mesme a rompu l’entreprise."	crispe
+sp	II04-4	4	crispe		41	6	1	402	"Cette opposition doit estre une surprise."	artaban
+sp	II04-5	5	artaban		89	16	2	403	"Elle ne vous retient qu’afin qu’estant icy
+Vous viviez sans danger comme elle sans soucy."	crispe
+sp	II04-6	6	crispe		182	29	4	405	"Un illustre danger m’est tousjours souhaitable,
+Comme un plaisir honteux ne m’est qu’abominable,
+Elle ne devroit pas acheter son bonheur
+Au prix de mon tourment et de mon deshonneur."	artaban
+sp	II04-7	7	artaban		44	8	1	409	"L’Empereur resistoit d’abord à sa poursuite."	crispe
+sp	II04-8	8	crispe		52	11	1	410	"Et pour la rompre en fin, je veux partir plus viste."	artaban
+sp	II04-9	9	artaban		86	16	2	411	"Mais ses larmes apres l’ont si fort combatu,
+Que la foiblesse en fin emporte la vertu."	crispe
+sp	II04-10	10	crispe		477	85	10	413	"Un Prince ne doit pas se soûmettre à sa femme,
+Ny pour la trop priser* mettre un fils dans le blâme,
+On dira que c’est moy qui charmé de la Cour
+Ne sçaurois sans mourir, vivre ailleurs un seul jour ;
+Mon renom souffrira cette honteuse tache,
+Si j’estois genereux je passeray pour lasche ;
+Bien loin d’estre un grand Chef je seray Courtisan,
+Et l’Amour sans l’honneur sera mon partisan ;
+Je vay tout de ce pas obtenir ma dépesche,
+Car il n’est pas seant qu’une femme l’empesche."	helene-mere
+sp	II04-11	11	helene-mere		135	23	3	423	"Croy que l’Imperatrice agit pour t’obliger*,
+Et la desobligeant tu nous vas affliger*,
+Reconnois en ce poinct l’amour qu’elle te porte."	crispe
+sp	II04-12	12	crispe		137	21	3	426	"Qui me voudroit haïr m’aimeroit de la sorte,
+Sa grandeur va tousjours sur ses contentemens,
+Pourquoy n’auray-je pas les mesmes sentimens."	helene-mere
+sp	II04-13	13	helene-mere		44	9	1	429	"Un pere ne doit pas trouver un fils rebelle."	crispe
+sp	II04-14	14	crispe		43	10	1	430	"Je ne dois pas aussi n’obeïr que pour elle."	artaban
+sp	II04-15	15	artaban		44	8	1	431	"Un honneur qu’on differe est encore asseuré."	crispe
+sp	II04-16	16	crispe		43	8	1	432	"On nous éprouve encor quand il est differé."	helene-mere
+sp	II04-17	17	helene-mere		50	10	1	433	"Mon fils, tu dois priser* l’amour d’une marastre*."	crispe
+sp	II04-18	18	crispe		47	9	1	434	"Cet amour est trompeur puis qu’il est idolâtre."	helene-mere
+div2	II05	5	Scene V	scene
+configuration	II05		helene-fille adelaide	auto
+stage	stage20	20			36	6			"Helene fille de l’Empereur. Adelaïde"
+sp	II05-1	1	helene-fille		104	19	3	435	"Il ne s’en ira pas, appaisons nos douleurs,
+La joye seulement doit avoir de nos pleurs.
+Elle l’a retenu."	adelaide
+sp	II05-2	2	adelaide		70	14	2	438	"Que j’admire son zele,
+Et que j’ay peine à croire une douce nouvelle ?"	helene-fille
+sp	II05-3	3	helene-fille		186	34	4	439	"Elle le voit tousjours, et le veut tousjours voir,
+Et n’a que pour luy seul de cœur ny de pouvoir ;
+En outre elle parloit de quelque mariage
+à dessein d’arrester par l’amour son courage."	adelaide
+sp	II05-4	4	adelaide		96	15	2	443	"He Dieux ! quelle Princesse auroit assez d’appas*
+Pour pouvoir arrester son cœur comme ses pas ?"	helene-fille
+sp	II05-5	5	helene-fille		44	8	1	445	"L’Imperatrice seule a pouvoir de luy plaire."	adelaide
+sp	II05-6	6	adelaide		49	11	1	446	"Mais il veut une femme, et Fauste n’est que mere."	helene-fille
+sp	II05-7	7	helene-fille		93	16	2	447	"Elle doit luy choisir celle qu’il doit aimer ;
+Sondez bien ses secrets pour nous en informer."	adelaide
+stage	stage21	21			17	3			"Helene se retire."
+stage	stage22	22			6	1			"seule."
+sp	II05-8	8	adelaide		761	140	16	449	"Et c’est là mon malheur d’estre sa Confidente,
+Car ce nom me defend d’estre sa concurrente ;
+Si je cheris ce Prince elle me peut haïr,
+Croyant que mon amour ne tend qu’à la trahir.
+Mais aussi n’aimer pas celuy qui me possede ?
+Il faut que pour ce poinct ma Princesse me cede,
+Ou qu’elle m’abandonne, et que j’aye un seul bien*;
+C’est d’estre toute à Crispe et de n’estre plus rien.
+Et puis, elle ne peut s’opposer à ma flamme*,
+Qu’elle soit sa marastre*, et je seray sa femme ;
+Elle m’assistera bien loin de m’empescher,
+Et m’en fera cherir, puis qu’elle le tient cher.
+Qui pourroit-elle aider mieux que sa Confidente ?
+En me desobligeant seroit-elle obligeante* ?
+J’estime que son cœur ne fait rien que pour moy,
+Et qu’elle veut donner son beau Fils à ma Foy*."	helene-fille
+div2	II06	6	Scene VI.	scene
+configuration	II06		fauste procle	auto
+stage	stage23	23			22	3			"Fauste, Procle, Flavie"
+sp	II06-1	1	fauste		193	33	4	465	"Son cœur n’aime donc rien que l’horreur des alarmes* !
+Et met toute sa joye à rejetter les charmes ?
+L’estrange naturel qui fait ses déplaisirs*
+De toutes ces douceurs qui font tous les desirs."	procle
+sp	II06-2	2	procle		191	36	4	469	"S’il peut s’en rencontrer une qui vous égale,
+Madame, il est content d’aimer vôtre Rivale,
+Mais vous n’en ayant point, et n’en pouvant avoir,
+Comment peut-il aimer ce qu’il ne peut pas voir ?"	fauste
+sp	II06-3	3	fauste		283	47	6	473	"Ces doux ressentimens*, au moins comme je pense,
+Viennent bien moins de luy que de ta complaisance,
+Tu penses m’abuser par ce bel entretien,
+Et pour gagner mon cœur tu me donnes le sien,
+Mais Procle, à mon humeur, croy que la flatterie
+Tient moins lieu de plaisir que de supercherie."	procle
+sp	II06-4	4	procle		321	47	7	479	"Madame, vous pourrez connoistre par effet
+Que mon discours* est vray comme il vous satisfait,
+Procle s’abuseroit en trompant sa Princesse,
+Car sa perte soudain puniroit sa finesse,
+On surprend des Esprits indignes de respect,
+Je vous honore trop pour vous estre suspect ;
+Vous possedez ce fils beaucoup plus que son pere."	fauste
+sp	II06-5	5	fauste		520	103	11	486	"Il n’aura doncques pas de peine à me complaire* ;
+Que si j’ay du pouvoir autant que tu m’as dit,
+Et que sa volonté s’accorde à mon credit*,
+Je luy veux faire aimer la merveille du monde,
+Qui ne cede à pas une, et n’a point de seconde,
+Dans la Cour où je suis on voit briller son œil,
+Les astres sont autour, c’est l’unique soleil,
+Je luy diray bien plus. Pour te parler d’Helene,
+Ce qui lie ton cœur, tient le sien à la chaine,
+Elle t’aime si fort depuis mon entretien
+Qu’elle n’a point de vœu, Procle, qui ne soit tien."	procle
+sp	II06-6	6	procle		169	29	4	497	"Crispe se reconnoit obligé dans moy mesme,
+Madame, ayant receu cette faveur extreme.
+Je m’en vay publier* l’effect d’une bonté
+Qui n’a rien de pareil sinon vôtre beauté."	fauste
+stage	stage24	24			17	3			"Procle se retire."
+div2	II07	7	Scene VII	scene
+configuration	II07		fauste adelaide	auto
+stage	stage25	25			24	3			"Fauste, Adelaïde, Flavie"
+sp	II07-1	1	adelaide		203	38	4	501	"Madame, je ne puis plus cacher un mystere,
+Et vous me disant tout, je ne vous dois rien taire ;
+Pour vous estre inconnu mon feu* n’est pas honteux,
+Mais c’est qu’allant bien haut* l’effet en est douteux."	fauste
+sp	II07-2	2	fauste		161	28	3	505	"Le feu* s’éleve fort en quel lieu qu’on le voye,    505
+Parle pour voir changer toutes tes pleurs en joye :
+Va-t’en sçavoir, Flavie, où Crispe est si long-temps."	adelaide
+stage	stage26	26			17	3			"Flavie se retire."
+sp	II07-3	3	adelaide		28	7	1	508	"J’ayme un grand* de la Cour."	fauste
+sp	II07-4	4	fauste		44	7	2	509	"Tes vœux seront contens
+Dy moy ses qualitez."	adelaide
+sp	II07-5	5	adelaide		71	12	2	510	"Il est incomparable,
+Madame, il est vaillant plus qu’il n’est agreable."	fauste
+sp	II07-6	6	fauste		9	2	1	511	"Son nom ?"	adelaide
+sp	II07-7	7	adelaide		93	19	2	512	"Ses qualitez vous le font bien sçavoir,
+On ne voit rien de grand que lors qu’on le peut voir."	fauste
+sp	II07-8	8	fauste		26	5	1	513	"C’est doncques l’Empereur."	adelaide
+sp	II07-9	9	adelaide		76	15	2	514	"Pour si haut* que j’aspire,
+Mes vœux sont au dessous du faiste* de l’Empire."	fauste
+sp	II07-10	10	fauste		25	6	1	515	"C’est Crispe à mon advis."	adelaide
+sp	II07-11	11	adelaide		67	13	2	516	"Ce beau nom me blessant
+Fait voir le mal caché que mon ame ressent."	fauste
+sp	II07-12	12	fauste		45	8	1	517	"Tu devois donc plustost me declarer ta peine."	adelaide
+sp	II07-13	13	adelaide		307	46	7	518	"Je pensois l’étouffer la croyant estre vaine,
+Mais mon feu* s’augmentant jusqu’à l’extremité
+Peut-il estre excessif et sembler limité ?
+Ce Prince ne dépend que de vôtre puissance,
+Vous faites son amour comme mon esperance ;
+Donc si vous desirez voir mon esprit guery,
+Donnez-moy pour Amant* ce noble Favory."	fauste
+sp	II07-14	14	fauste		39	7	1	525	"Mes effets ont déja prevenu ta demande."	adelaide
+sp	II07-15	15	adelaide		52	10	1	526	"La faveur qu’on avance est tousjours la plus grande."	fauste
+sp	II07-16	16	fauste		271	42	6	527	"J’acheveray bien-tost ce que j’ay commencé,
+Et ton feu* par ta foy* sera recompencé ;
+Souviens-toy seulement que dans la confidence
+Tu dois cacher ta flamme* et monstrer ta prudence,
+Presque toute la Cour a connu ton secret,
+L’Amour pour s’asseurer doit paroître discret."	adelaide
+sp	II07-17	17	adelaide		197	30	4	533	"Bien qu’il soit malaisé, Madame, qu’une Amante*
+Toute aveugle qu’elle est puisse estre fort prudente ;
+Je tascheray pourtant de contraindre mes feux*
+Pour conformer tousjours mes desirs à vos vœux."	fauste
+sp	II07-18	18	fauste		186	31	4	537	"Maintenant pour pouvoir mieux avancer l’affaire ;
+Je fais mes interests de ce qui t’a pû plaire,
+Et je vais travailler à gagner cét Amant*
+Comme si ton supplice estoit mon vray tourment."	adelaide
+sp	II07-19	19	adelaide		43	6	1	541	"Peut-on assez priser* une telle Princesse ?"	fauste
+sp	II07-20	20	fauste		45	9	1	542	"L’effet t’étonnera bien plus que la promesse."	adelaide
+div2	II08	8	Scene VIII	scene
+configuration	II08		crispe procle	auto
+stage	stage27	27			14	2			"Crispe, Procle"
+sp	II08-1	1	crispe		270	47	6	543	"Procle, tu m’aymes bien, mais tu cheris ma sœur,
+C’est aussi mon dessein* de t’en voir possesseur ;
+Adelaïde aussi me semble si parfaite,
+Qu’il me faut dans ma force avoüer ma défaite ;
+Je ne semblois haïr que les contentemens,
+Mais enfin je me vois au nombre des Amans."	procle
+sp	II08-2	2	procle		651	115	13	549	"Il n’est point de grandeur ny de beauté si rare
+Qui me puisse toucher si je vous la compare ;
+Et dans le beau dessein* que j’ay de vous servir,
+Rien ne m’agrée ailleurs, bien loin de me ravir.
+Je ne crois pas pourtant que mon amour vous blesse*
+Quand vous prisant* sur tout, j’honore une Maistresse ;
+Il est vray qu’ayant veu qu’elle est de vôtre sang,
+Un Prince peut à peine aspirer à son rang ;
+Mais si mon cœur l’obtient de vous pour recompence,
+Je l’aymeray tousjours moins que vostre alliance:
+Et quoy que cét Hymen nous rende bien-heureux,
+C’est pour vous seulement qu’elle aura tous mes vœux.
+Fauste au surplus vous doit parler de quelque Dame."	crispe
+sp	II08-3	3	crispe		156	32	3	562	"Son discours* me plaira s’il s’accorde à ma flamme* ;
+Mais hors d’un seul objet je n’en sçaurois plus voir,
+Et ce n’est mon humeur non plus que moin devoir."	procle
+sp	II08-4	4	procle		47	8	1	565	"Cette Marastre* agit pour vous avec grand zele."	crispe
+sp	II08-5	5	crispe		266	47	5	566	"Souvent plus il est grand plus il est infidele*:
+Mais pour voir les effets de tant de beaux desirs,
+Et changer à la fin tous nos feux* en plaisirs ;
+Va-t’en voir ma Princesse, et sans te mettre en peine,
+Croy que me la gagnant tu gagneras Helene.
+Fin du second acte."	procle
+div1	III	III	ACTE III	act
+div2	III01	1	Scene premiere	scene
+configuration	III01		fauste	auto
+stage	stage28	28			16	2			"Fauste, Adelaïde"
+sp	III01-1	1	fauste		644	111	14	571	"VA dire à ton Amant* que je luy veux parler,
+C’est pour te l’acquerir, et pour me consoler.
+Si mon Espoux sçavoit les desseins* de mon ame,
+Le tiendroit-il pour fils, me tiendroit-il pour femme ?
+N’importe ; je ne puis resister à ces feux*,
+Et laissant mon devoir il faut suivre mes vœux.
+Mais déja la rougeur me monte sur la face,
+Pour gracieux qu’il soit j’en crains quelque disgrace :
+Il me doit rebutter, ne le ferois-je pas
+S’il avoit mon Amour, si j’avois ses appas* ?
+Il faut tout hazarder, mon mal est trop sensible
+Pour ne me porter pas à tenter l’impossible ;
+Crispe voyant l’excés de ma calamité
+Ne s’étonnera pas de cette extremité."	
+stage	stage29	29			19	3			"Adelaïde se retire."
+stage	stage30	30			17	3			"Crispe entre Icy."
+div2	III02	2	Scene II	scene
+configuration	III02		fauste crispe	auto
+stage	stage31	31			14	2			"Fauste, Crispe"
+sp	III02-1	1	fauste		386	70	8	585	"Beau Crispe dont l’honneur et la grace est extréme,
+Cher Prince qui n’as point d’ennemy qui ne t’aime ;
+Je t’ay fait appeller voulant t’ouvrir un cœur
+Lequel vainquant par tout, te tient pour son vainqueur,
+Crispe fait maintenant tous les vœux d’une Dame,
+Qui fait avecque moy méme corps et méme ame,
+Elle m’égale en tout, si tu veux l’honorer,
+Ou plustost la cherir, je te veux adorer."	crispe
+sp	III02-2	2	crispe		95	19	2	593	"Vous ne pretendez-pas à ce conte que j’aime,
+Madame, s’il n’est rien de si grand que vous-méme."	fauste
+sp	III02-3	3	fauste		86	17	2	595	"Je ne me picque pas qu’elle usurpe mes droits,
+Afin de meriter de vivre sous tes loix."	crispe
+sp	III02-4	4	crispe		90	13	2	597	"Si vous luy permettez de vous estre semblable,
+Vous seule neantmoins me semblez adorable*."	fauste
+sp	III02-5	5	fauste		50	11	1	599	"Quelque autre, à ce qu’on dit, t’oste ta liberté ?"	crispe
+sp	III02-6	6	crispe		148	25	3	600	"Mon cœur est bien attaint, mais non pas arresté ;
+Je mesure mon feu* pour des sujets que j’aime,
+Mais mon zele envers vous paroist toujours extréme."	fauste
+sp	III02-7	7	fauste		44	7	1	603	"Fay-le moy doncques voir dans son extremité."	crispe
+sp	III02-8	8	crispe		46	10	1	604	"Mon respect n’en peut voir qu’un effet limité."	fauste
+sp	III02-9	9	fauste		49	8	1	605	"Quitte ce vain respect pour contenter ma flamme*."	crispe
+sp	III02-10	10	crispe		48	9	1	606	"Il me souvient toujours de qui vous estes femme."	fauste
+sp	III02-11	11	fauste		98	21	2	607	"Crispe n’est pas mon fils si l’autre est mon époux ;
+Fay donc ce que je dy pour faire comme nous ?"	crispe
+sp	III02-12	12	crispe		6	1	1	609	"Quoy ?"	fauste
+sp	III02-13	13	fauste		93	17	2	610	"Fay voir à mon cœur que ta flamme* est extréme
+Aimant ce bel objet qui semble estre moy-méme."	crispe
+sp	III02-14	14	crispe		389	70	8	611	"C’est contraindre mon cœur que de luy faire aimer
+Un objet hors de vous qu’il ne peut estimer,
+Si je suis tout à vous pourrois-je estre à quelque autre,
+Ou bien pretendez-vous que je ne sois plus vôtre ?
+Je sçay qu’Adelaïde a quantité d’attraits,
+Et je resiste mieux aux armes qu’à ses traits ;
+Mais si je la cheris c’est comme une Maistresse,
+Et vous comme ma Mere, et comme ma Princesse."	fauste
+sp	III02-15	15	fauste		92	16	2	619	"Je n’entens-pas parler de cette autre beauté,
+Mais plustost de…Mon cœur n’a plus de liberté."	crispe
+sp	III02-16	16	crispe		47	7	1	621	"Vous avez tout pouvoir bannissez toute crainte."	fauste
+sp	III02-17	17	fauste		50	8	1	622	"Te faisant ce discours* tu fairas quelque plainte."	crispe
+sp	III02-18	18	crispe		92	16	2	623	"Je ne puis m’irriter de vos contentemens,
+C’est vôtre déplaisir* qui fait tous mes tourmens."	fauste
+sp	III02-19	19	fauste		226	40	5	625	"Adelaïde au prix, quoy que ma Confidente,
+Méme à ton jugement ne sera que suivante ;
+Enfin c’est le party le plus grand* de ma Cour ;
+Qui voyant tes respects recherche ton amour ;
+Mais ton cœur estant pris je ne te l’ose dire."	crispe
+sp	III02-20	20	crispe		43	7	1	630	"Vous me pouvez toujours parler avec empire."	fauste
+sp	III02-21	21	fauste		39	8	1	631	"Tu le peux deviner à me voir seulement."	crispe
+sp	III02-22	22	crispe		42	8	1	632	"Madame, j’ay besoin d’un autre truchement."	fauste
+sp	III02-23	23	fauste		92	19	2	633	"Je crains de t’offenser te faisant une grace,
+Il faut que mon époux te cede un peu sa place."	crispe
+sp	III02-24	24	crispe		168	29	4	635	"Au lieu de luy ravir* le premier de ses droits,
+S’il estoit mon sujet je le luy cederois ;
+Madame, je ne puis entendre ce langage,
+Ne m’avantagez-pas à son desavantage."	fauste
+sp	III02-25	25	fauste		205	37	5	639	"Ne pense pas aussi que mon intention
+Soit de voir l’Empereur dans la sujettion ;
+S’il faut perdre l’honneur il faut que l’on me prive,
+Et c’est moy seulement qui veux estre captive.
+Enfin m’aimes-tu bien ?"	crispe
+sp	III02-26	26	crispe		78	17	2	644	"Tout autant que je peux,
+Si c’est moins que je dois, n’en blâmez pas mes vœux."	fauste
+sp	III02-27	27	fauste		44	9	1	645	"Donne m’en une marque aussi douce que belle."	crispe
+sp	III02-28	28	crispe		323	56	7	646	"Dites quelle vous peut estre la plus fidele.
+Si vous me commandez d’affronter le trépas,
+La vie m’est à charge avec tous ses appas*;
+J’immole à vos plaisirs toute ma renommée,
+J’aime mieux vous servir que commander l’armée :
+Voulez-vous que jamais Crispe ne soit qu’à vous,
+Et que pour vous servir j’abhorre d’estre époux ?"	fauste
+sp	III02-29	29	fauste		196	35	4	653	"Ce n’est pas mon desir de contraindre tes flammes*,
+Si tu sers librement la plus grande* des Dames ;
+Et sans prendre autrement le nom de son époux,
+Je voudrois qu’en effet tu luy fusses plus doux."	crispe
+sp	III02-30	30	crispe		93	19	2	657	"L’Empereur seul a droit sur ce bonheur supréme,
+Et le nom et l’effet doit estre pour un méme."	fauste
+sp	III02-31	31	fauste		49	13	1	659	"Qu’il en garde le nom, et fais m’en voir l’effet."	crispe
+sp	III02-32	32	crispe		42	7	1	660	"Ce plaisir pretendu me rend mal satisfait."	fauste
+sp	III02-33	33	fauste		48	9	1	661	"Tu ne me promettois que pour tromper ma flamme*."	crispe
+sp	III02-34	34	crispe		46	8	1	662	"Je promettois en fils, vous demandez en femme."	fauste
+sp	III02-35	35	fauste		26	6	1	663	"Crispe n’est pas mon fils."	crispe
+sp	III02-36	36	crispe		23	4	1		"Constantin m’a produit."	fauste
+sp	III02-37	37	fauste		45	9	1	664	"Et je pretens par là provigner ce beau fruit."	crispe
+sp	III02-38	38	crispe		51	9	1	665	"Quoy ? priser* tant le fils pour mépriser le Pere ?"	fauste
+sp	III02-39	39	fauste		55	12	1	666	"C’est pour te plaire en tout, que je veux luy déplaire."	crispe
+sp	III02-40	40	crispe		45	8	1	667	"Madame, avec l’honneur vous perdez la raison."	fauste
+sp	III02-41	41	fauste		148	29	3	668	"Les sentimens d’honneur ne sont pas de saison.
+J’ay caché si long-temps que je ne puis plus taire
+Ce que tu croy forfait*, et qui n’est que Mystere."	crispe
+sp	III02-42	42	crispe		48	8	1	671	"Mais les plus inhumains ont d’autres sentimens !"	fauste
+sp	III02-43	43	fauste		50	11	1	672	"C’est qu’ils n’ont jamais veu ces beaux lineamens."	crispe
+sp	III02-44	44	crispe		23	4	1	673	"Vous voulez m’éprouver."	fauste
+sp	III02-45	45	fauste		77	14	2	674	"Voy ce cœur que tu brûles !
+Il n’est que trop sincere, approche, tu recules !"	crispe
+sp	III02-46	46	crispe		52	8	1	675	"Les Cieux peuvent-ils voir et souffrir ce dessein* !"	fauste
+sp	III02-47	47	fauste		51	9	1	676	"Ils peuvent bien souffrir ce Tyran* dans mon sein*."	crispe
+sp	III02-48	48	crispe		25	4	1	677	"Dieu vangeur vous entend."	fauste
+sp	III02-49	49	fauste		452	79	10	678	"Les Dieux sont mes exemples,
+Les suivant je ne peux meriter que des Temples.
+Jupiter n’a-t’il pas pour épouse Junon ?
+En elle femme et sœur ne font qu’un méme nom.
+Apres cela tu crois que je serois infame,
+Si Crispe me nommoit sa Marastre* et sa femme,
+Au contraire, je croy que si c’est mon bonheur,
+Comme on n’en peut douter, c’est mon plus grand honneur.
+Enfin les animaux ont-ils quelque avantage
+Qu’on puisse nous ôter sans nous faire un outrage ?"	crispe
+sp	III02-50	50	crispe		759	125	16	687	"Certes vôtre sagesse est sans comparaison
+Puisque les animaux fondent vôtre raison ;
+Si vos Dieux estoient vrais, on verroit la tempeste
+Pour vous guerir le cœur vous écraser la teste ;
+Mais vous n’avez de Dieux sinon ceux qui sont faux,
+Et qui loin de punir approuvent vos defaux.
+C’est Crispe qu’à bon droit Dieu juge abominable,
+Ayant permis ainsi qu’il vous parût aimable*.
+Ciel ! tu m’as fait du bien pour me faire du mal,
+Tu me favorisois pour m’estre plus fatal ;
+Je vois dans cét amour que tu m’avois en haine,
+Puis-je rien esperer si ma grace est ma peine ?
+Foudroye maintenant ces deux chefs malheureux,
+Que ton feu maintenant vienne esteindre ces feux*;
+Oüy je suis criminel d’avoir causé sa flamme*,
+Et ce corps doit perir qui brûle ainsi son ame."	fauste
+sp	III02-51	51	fauste		66	13	2	703	"Croy que si mon époux me sembloit aussi beau
+Je ne t’aimerois pas."	crispe
+sp	III02-52	52	crispe		23	4	1		"Si suis-je son tableau."	fauste
+sp	III02-53	53	fauste		26	5	1	705	"Mais il est moins parfait."	crispe
+sp	III02-54	54	crispe		161	27	4	706	"Vostre poursuite est vaine,
+Cét amour ne peut rien meriter que ma haine ;
+Je vous dois resister si je suis si parfait,
+Et ma vertu ne peut approuver ce forfait*."	fauste
+sp	III02-55	55	fauste		184	35	4	709	"Prince par ces genoux que tu vois que j’adore,
+Modere un peu l’excés du feu* qui me devore ;
+Ou bien si ta froideur étouffe ton amour,
+Sans prendre de mon feu* fais moy perdre le jour."	crispe
+sp	III02-56	56	crispe		97	16	2	713	"Demander un tel crime avec de telles larmes !
+Et pour perdre l’honneur employer tant de charmes !"	fauste
+sp	III02-57	57	fauste		22	4	1	715	"Tu méprises mes vœux ?"	crispe
+sp	III02-58	58	crispe		21	3	1		"Les peut-on estimer ?"	fauste
+sp	III02-59	59	fauste		22	5	1	716	"Tu peux donc me haïr ?"	crispe
+sp	III02-60	60	crispe		25	4	1		"Mais vous peut-on aimer ?"	fauste
+sp	III02-61	61	fauste		19	4	1	717	"Tu t’en repentiras."	crispe
+sp	III02-62	62	crispe		70	11	2	718	"Jamais la repentance
+Ne peut suivre que ceux qui commettent l’offence."	fauste
+sp	III02-63	63	fauste		40	10	1	719	"Si tu ne m’aimes pas garde toy de perir."	crispe
+sp	III02-64	64	crispe		46	10	1	720	"Et si vous m’aimez plus gardez vous de mourir."	fauste
+sp	III02-65	65	fauste		46	8	1	721	"Cruel* ! tu ne veux pas appointer ma requeste."	crispe
+sp	III02-66	66	crispe		47	8	1	722	"Sans doute l’Empereur la doit trouver honneste."	fauste
+stage	stage32	32			55	10			"Crispe se retire, et Fauste fait semblant de le suivre."
+stage	stage33	33			9	2			"à genoux."
+sp	III02-67	67	fauste		463	76	10	723	"Je me rends au devoir confessant que j’ay tort,
+Et vois que mon amour a merité ma mort.
+Prince pardonne moy, j’aurois eu moins de flamme*
+Si ton corps eust semblé moins parfait à mon ame ;
+Je prise* ta vertu si je plain mon malheur,
+Mon plaisir pretendu fait ma vraye douleur ;
+Ce crime apparemment passe pour execrable,
+Mais trop d’affection le peut rendre excusable ;
+Le forfait* est fort beau quand on semble pecher
+Pour tenir un sujet trop aimable* trop cher."	crispe
+div2	III03	3	Scene III	scene
+configuration	III03		fauste	auto
+stage	stage34	34			6	1			"seule."
+sp	III03-1	1	fauste		1612	277	42		"Donc l’aimant je n’ay pû meriter que sa haine ?
+Et je me vois en peine
+Pour avoir eu dessein* de luy faire plaisir ?
+Si devant alleger il afflige* mon ame,
+Je dois changer de flamme,
+Et brûler de cholere et non plus de desir.Cét ingrat me prisoit moins que ma Confidente,
+Est-elle plus puissante ?
+Ou bien peut-estre elle a de plus charmans appas* ?
+Qu’il la nomme Venus aussi bien que sa Reine,
+Je suis leur souveraine,
+Et qui ne m’aime point ne me merite pas.Un rebut ! faut-il pas pour cette grande offence
+Une grande vangeance ?
+Oüy, si Crispe jadis m’a fait mourir d’amour,
+Je veux que maintenant que je suis inhumaine
+Il meure par ma haine,
+Et que perdant ma grace il perde aussi le jour.Mais ; s’il est vertueux le punir d’un supplice
+Qui n’est que pour le vice ?
+Il me faut regarder* que ce fascheux refus
+Vient de trop de respect non de manque de zele,
+Et que s’il m’est rebelle,
+C’est que m’obeïssant il se verroit confus.Cesse de l’excuser raison trop importune,
+Car il perd sa fortune
+Perdant l’occasion d’un si rare bienfait,
+Comme devant* pour luy ma flamme* estoit extréme
+Ma haine est tout de méme,
+Et je pretends perir ou le perdre* en effet.Je te plain neantmoins, Prince jadis aimable*
+Toujours incomparable,
+Si tu te recognois je te veux pardonner ;
+Mais en cas que toujours ta rigueur persevere
+Je me rendray severe,
+La fureur et l’amour me semblant l’ordonner.Tu ne m’as donc déplû que pour plaire à ton Pere,
+Et tu le devois faire ;
+Et moy pour me vanger d’un si mortel affront,
+Je pretends que celuy qui t’a donné la vie
+Te l’oste par envie,
+Et tout mon deshonneur s’en ira sur ton front."	
+div2	III04	4	Scene IV	scene
+configuration	III04		crispe procle	auto
+stage	stage35	35			14	2			"Crispe, Procle"
+sp	III04-1	1	procle		94	15	2	775	"Vous retirer, Monsieur, sans le dire à personne ?
+Ce projet vous rendra suspect à la Couronne."	crispe
+sp	III04-2	2	crispe		90	15	2	777	"Je voudrois avoir fait icy moins de discours*,
+Je ne maudirois pas aujourd’huy mes amours."	procle
+sp	III04-3	3	procle		46	9	1	779	"Vôtre amour n’a jamais esté que fort prospere."	crispe
+sp	III04-4	4	crispe		72	12	2	780	"Pour l’avoir trop esté, Procle, il me desespere ;
+Mais, adieu, cher Amy."	procle
+sp	III04-5	5	procle		26	5	1		"Quoy me celez* vous rien ?"	crispe
+sp	III04-6	6	crispe		40	10	1	782	"Je te cache le mal pour te dire le bien."	procle
+sp	III04-7	7	procle		24	7	1	783	"C’est n’aimer qu’à demy."	crispe
+sp	III04-8	8	crispe		72	16	2	784	"Tu dois lire en mon ame ;
+Mais de te dire tout je ne le puis sans blâme."	procle
+sp	III04-9	9	procle		45	9	1	785	"Vostre desir s’oppose aux vœux de l’Empereur."	crispe
+sp	III04-10	10	crispe		47	11	1	786	"Bien loin de m’agréer sa Cour m’est en horreur."	procle
+sp	III04-11	11	procle		84	12	2	787	"Fauste s’offencera, puisque son entremise
+A fait rompre tantost une méme entreprise."	crispe
+sp	III04-12	12	crispe		184	32	4	789	"Elle ne m’arrestoit que pour ses interests,
+Et pour eux, Procle, aussi, croy que je disparais.
+Avertis l’Empereur que son fils se retire
+Pour l’heur de sa maison*, comme de son Empire."	procle
+sp	III04-13	13	procle		102	19	2	793	"Donc vous me delaissez ? non, Monsieur, je vous suis,
+Car comme à vos douceurs j’ay part à vos ennuis."	crispe
+sp	III04-14	14	crispe		49	10	1	795	"Tu sçais que sans amy mon cœur ne sçauroit vivre."	procle
+sp	III04-15	15	procle		51	12	1	796	"Ce m’est plus que mourir que de ne vous pas suivre."	crispe
+sp	III04-16	16	crispe		87	14	2	797	"Pour rendre neantmoins ce voyage asseuré,
+Tu dois suivre la Cour quand je la quitteray."	procle
+div2	III05	5	Scene V	scene
+configuration	III05		constantin artaban	auto
+stage	stage36	36			19	2			"Constantin, Artaban"
+sp	III05-1	1	constantin		568	92	12	799	"Les troubles ont cessé, mais ils peuvent renaistre,
+Ce peuple m’est sujet, mais n’aime pas son Maistre.
+Il me sert par caprice, et prend la liberté
+De ne suivre mes loix que par sa volonté.
+Nonobstant ses sermens il peut m’estre infidele* ;
+Et la mort seulement convertit un rebelle.
+Pour dompter l’Allemagne avec tous ses mutins,
+Si mon credit*est vain, employons les destins.
+Faisons mourir tous ceux qui choquent* mon Empire,
+Méprisant ma douceur qu’ils éprouvent mon ire,
+Et qu’en voyant leurs Chefs condamnez au trépas,
+Qu’on apprenne que c’est de ne m’obeïr pas."	artaban
+sp	III05-2	2	artaban		406	68	8	811	"Où la clemence est foible, il faut estre severe,
+Il faut que tout perisse, ou bien qu’on vous revere ;
+Mais regnant par amour on acquiert plus d’honneur,
+Le Maistre et le sujet y trouvant leur bonheur.
+Envoyez quelque Prince en ces lieux qu’on peut craindre,
+Il regira les cœurs, ou les pourra contraindre,
+Et sans toucher au sang qu’il vous faut épargner
+En se faisant bien craindre, il vous faira regner."	constantin
+sp	III05-3	3	constantin		102	19	2	819	"Cette charge est pour Crispe, il doit tenir ma place
+Tous en doivent attendre, ou la mort, ou la grace"	artaban
+stage	stage37	37			13	2			"Procle entre."
+div2	III06	6	Scene VI	scene
+configuration	III06		constantin procle artaban	auto
+stage	stage38	38			27	3			"Constantin, Procle, Artaban"
+sp	III06-1	1	procle		46	8	1	821	"Grand* Prince, vôtre fils vient de se retirer."	constantin
+sp	III06-2	2	constantin		46	9	1	822	"Mais contre mon dessein* on l’a fait demeurer."	procle
+sp	III06-3	3	procle		25	5	1	823	"C’est depuis deux momens."	constantin
+sp	III06-4	4	constantin		72	13	2	824	"Sans le dire à personne ?
+Leve moy les soupçons que son depart me donne."	procle
+sp	III06-5	5	procle		90	19	2	825	"Il le fait, m’a-t’il dit, avec grande raison,
+Pour le bien de l’Estat et de vôtre Maison*."	constantin
+sp	III06-6	6	constantin		96	18	2	827	"Ce depart me plairoit, mais il semble une fuite,
+Et dans ma seureté j’en dois craindre la suite."	procle
+sp	III06-7	7	procle		48	9	1	829	"Il vous est trop acquis pour vous estre suspect."	constantin
+sp	III06-8	8	constantin		48	12	1	830	"Procle, s’il a du zele, il n’a point de respect."	procle
+sp	III06-9	9	procle		52	9	1	831	"L’effet vous en plairoit, dit-il, sçachant la cause."	constantin
+sp	III06-10	10	constantin		49	10	1	832	"C’estoit donc son devoir d’en dire quelque chose."	procle
+sp	III06-11	11	procle		25	4	1	833	"Vous le sçaurez toujours."	constantin
+sp	III06-12	12	constantin		92	17	3	834	"Mais il est à propos
+De bien-tost le sçavoir pour avoir du repos :
+A-t’il rien dit à Fauste."	procle
+sp	III06-13	13	procle		166	33	4	836	"Il a craint sa poursuite,
+Et pour ne la pas voir il est party plus viste.
+Elle sçait son depart et non pas son secret,
+Car s’il estoit sa joye, elle a bien du regret."	constantin
+sp	III06-14	14	constantin		104	20	2	839	"Connoissant tant son cœur tu sçais toute l’affaire,
+Puis qu’il le faut sçavoir n’en fais pas un Mystere."	procle
+sp	III06-15	15	procle		98	19	2	841	"Grand* Prince, je n’ay pû luy faire ouvrir le sein*,
+Il me faut comme à vous deviner son dessein*."	constantin
+sp	III06-16	16	constantin		188	37	4	843	"Si je vois arriver du mal de sa retraite,
+Je puis bien le punir et m’en prendre à sa teste ;
+Pour m’esclaircir du tout suis-le dés aujourd’huy,
+Ne viens plus à la Cour où reviens avec luy."	artaban
+stage	stage39	39			17	3			"Procle se retire."
+sp	III06-17	17	artaban		91	16	2	847	"On ne sçauroit jamais avoir trop d’affeurance,
+Et tel se voit trompé qui vit sans défiance."	constantin
+sp	III06-18	18	constantin		89	19	2	849	"Sonde si dans la Ville on a sceu son projet,
+Et s’il est mécontent, quel en est le sujet."	artaban
+sp	III06-19	19	artaban		47	10	1	851	"Je vay tout de ce pas en sçavoir des nouvelles."	constantin
+sp	III06-20	20	constantin		341	57	7	852	"Mon fils s’en iroit-il soûlever nos rebelles ?
+Bien loin de me defendre il s’en va m’attaquer !
+Mais il est trop bien né pour me vouloir chocquer*.
+Fauste vous aviez tort d’arrester son courage ;
+C’est qu’aimant son époux elle aime son image ;
+Mais qu’ay-je à craindre enfin ? suis-je pas Empereur ?
+Un fils me feroit-il redouter sa fureur ?"	artaban
+stage	stage40	40			20	3			"L’Imperatrice entre."
+div2	III07	7	Scene VII	scene
+configuration	III07		constantin fauste	auto
+stage	stage41	41			47	6			"Constantin, Fauste faisant semblant de pleurer."
+sp	III07-1	1	constantin		110	19	2	859	"D’où vient que ces beaux yeux qui font mon allegresse,
+De riants qu’ils estoient, sont couverts de tristesse ?"	fauste
+sp	III07-2	2	fauste		216	37	4	861	"C’est pour vous, Monseigneur, que découlent ses pleurs,
+Si j’avois moins d’amour, j’aurois moins de malheurs ;
+Toujours dans vôtre honneur mon bonheur s’interesse,
+Et de le voir chocqué*, c’est le mal qui me blesse*."	constantin
+sp	III07-3	3	constantin		44	8	1	865	"Si vous le découvriez je le pourrois guerir."	fauste
+sp	III07-4	4	fauste		101	19	2	866	"Mais vous ne pourriez pas l’entendre sans mourir,
+Vôtre fils, ha ! ce mot m’arreste et me fait taire."	constantin
+sp	III07-5	5	constantin		538	94	11	868	"Mon fils s’est retiré, n’est-ce pas le mystere ?
+Faut-il vous offencer, qu’il fasse à son plaisir,
+Et suivant son devoir il suive son desir.
+J’avois mesme dessein*, mais vous l’avez fait rompre,
+Quoy qu’il ait le cœur, la Cour l’eust pû corrompre.
+Dans cét illustre feu* que l’on voit dans ses yeux,
+On reconnoit son Pere avec tous ses ayeux ;
+Mais estant trop aimé, comme il est trop aimable*,
+L’honneste alloit ceder son cœur à l’agreable ;
+Ne vous picquez donc pas s’il aime son honneur,
+Et faites vos plaisirs de son propre bon-heur*."	fauste
+sp	III07-6	6	fauste		195	33	4	879	"Son sejour me touchoit bien plus que sa retraite,
+Je deplore à present qu’il ne l’ait plustost faite ;
+Mais, vôtre fils à part, Grand* Prince, mon regret
+Ne se peut découvrir, ny demeurer secret."	constantin
+sp	III07-7	7	constantin		47	9	1	883	"Madame, en me parlant vous parlez à vous mesme,"	fauste
+sp	III07-8	8	fauste		321	58	7	884	"Et je me tais, Seigneur, pource que je vous aime,
+Je ne puis à present vous nommer mon époux,
+Depuis qu’un scelerat offence un nom si doux ;
+Et je veux à present vous estre si fidele,
+Que mesme ma vertu vous semble criminelle,
+C’est d’un grand* de la Cour que je pleure l’erreur,
+Non y participant, mais en ayant horreur."	constantin
+sp	III07-9	9	constantin		53	10	1	891	"Peut-on bien dans ma Cour faire de si grands crimes ?"	fauste
+sp	III07-10	10	fauste		50	8	1	892	"Les Grands* croyent par fois les rendre legitimes."	constantin
+sp	III07-11	11	constantin		24	3	1	893	"Parlez plus franchement."	fauste
+sp	III07-12	12	fauste		118	19	3	894	"Grand* Prince, je le veux
+Si vôtre sentiment est conforme à mes vœux ;
+Faites grace à celuy que vous sçaurez coupable."	constantin
+sp	III07-13	13	constantin		49	11	1	896	"J’y consens si son crime au moins en est capable."	fauste
+sp	III07-14	14	fauste		311	52	7	897	"Pour vous confesser tout, c’est bien un grand delit
+Que de vous offencer jusques sur vôtre lit ;
+On m’a sollicitée à vous estre infidele*,
+Je serois sans honneur si j’eusse esté sans zele ;
+Mais j’ay dit constamment nonobstant cét effort,
+Que je souffrirois moins cét affront que la mort,
+Je vous en donne avis."	constantin
+sp	III07-15	15	constantin		945	161	20	904	"Vous m’offencez, Madame,
+Luy vouloir pardonner, c’est n’estre pas ma femme ;
+Je jure par le Dieu que je sers de nouveau,
+Qu’il mourra ce jourd’huy si je n’entre au tombeau ;
+Ha ! que c’est estre doux à des humeurs sauvages,
+On flatte leurs excés en flattant leurs courages ;
+C’est un monstre inhumain qui conçoit de ces feux*,
+Mais s’ils luy semblent doux, ils luy seront affreux :
+Et quiconque voudra differer son supplice,
+Y participera comme estant son complice.
+Vouloir fouler mon lit ? le lit de l’Empereur ?
+C’est moins un trait d’amour que d’extréme fureur ;
+Et ne pretend-on pas m’oster le Diadéme,
+Puis qu’on me veut ravir* la moitié de moy-mesme ?
+Je cede volontiers mon thrône et mon pouvoir,
+Car je prise* bien plus l’honneur de vous avoir.
+L’affaire est importante à nous comme à l’Empire,
+Pour oster tout le mal, Madame, il faut tout dire :
+Le nom, la qualité de ce grand criminel,
+Pour qui punir c’est peu qu’un supplice eternel ?"	fauste
+sp	III07-16	16	fauste		88	16	2	923	"Oserez-vous l’oüir si je vous l’ose dire,
+Ou punir un méchant sans souffrir un martyre ?"	constantin
+sp	III07-17	17	constantin		95	17	2	925	"Je sçay que la justice est aveugle en effet,
+Mais sans voir la personne, elle voit le forfait*."	fauste
+sp	III07-18	18	fauste		40	8	1	927	"Si l’Empire est taché de son ignominie ?"	constantin
+sp	III07-19	19	constantin		135	26	3	928	"Mon Empire ne peut voir sa gloire ternie.
+S’il estoit de mon sang, ce que je ne croy pas,
+Je l’épancherois tout, je couperois mon bras."	fauste
+sp	III07-20	20	fauste		13	3	1	931	"C’est Crispe."	constantin
+sp	III07-21	21	constantin		801	138	16	932	"C’est ! C’est Crispe ! O funeste* nouvelle ?
+Cieux ? suis-je trop credule, ou m’est-elle infidele* ?
+De ma femme aujourd’huy mon fils veut estre époux ;
+Que ne suis-je donc mort ? que ne l’étouffez-vous ?
+Un si grand criminel est exempt de supplice ?
+Ce Dieu qu’on croit si juste a si peu de justice ?
+Oüy, c’est Crispe en effet, car ce n’est pas mon fils,
+Ou le Ciel a puny la faute que je fis ;
+Quand pour produire un fils qui meritast l’Empire,
+J’engendray seulement un sujet à son ire.
+Ou plustost en voyant ces signes apparens,
+Je dois croire en effet qu’il est fils des Tyrans* ;
+S’il est mien, je me vois dans quelque horrible offence,
+Puis qu’un monstre inhumain en a pris sa naissance.
+Dieux ! que vous ay-je fait ! l’ay-je doncques produit !
+Enfer ouvre ton sein*, brûle l’arbre et le fruit."	fauste
+sp	III07-22	22	fauste		1433	257	30	947	"Grand* Prince, je ne puis supporter cét orage,
+Qui rend des yeux si doux approchans de la rage ;
+S’il est vray que ce Prince ait commis ce forfait*,
+Mon refus a puny tout le mal qu’il a fait,
+Comme en vôtre faveur j’aymois son avantage,
+Je luy parlois d’amour pour quelque mariage ;
+Il m’a dit là-dessus que seule il m’honoroit,
+Et s’il aimoit ailleurs que son cœur m’adoroit :
+J’ay pris pour compliment ce trait de fantaisie,
+Croyant dans m’a froideur qu’il fut sans frenesie,
+Mais il m’a répondu qu’il seroit comme vous,
+Et n’estant pas mon fils qu’il vouloit m’estre époux ;
+Mon rebut échauffoit sa premiere poursuite,
+Et je n’ay pû sauver mon honneur qu’à la fuite.
+J’ay debattu long temps si je vous le dirois,
+Pendant que du plaisir que je vous causerois,
+De me voir en effet épouse legitime,
+Il naistroit du regret de voir d’ailleurs son crime ;
+Apres tout redoutant un semblable attentat,
+Et prisant mon honneur plus que tout vôtre Estat,
+J’ay creu que je devois pour n’estre pas surprise,
+Vous découvrir icy toute son entreprise.
+Je croy qu’il se repent d’un forfait* plein d’horreur,
+Sa raison ayant moins agy que sa fureur ;
+S’éloignant de la Cour il s’est puny luy-mesme,
+Quoy qu’il vous ait fait tort, si faut-il que je l’aime ;
+Ne le poursuivez pas jusqu’à l’extremité,
+Il n’a pas fait de mal, bien qu’il l’ait souhaitté,
+C’est le crime d’un fils, donc punissez-le en pere,
+Et laissez l’impuny si vous me voulez plaire."	constantin
+sp	III07-23	23	constantin		409	69	8	977	"Vous avez trop d’amour pour ceux qu’il faut haïr,
+Luy puis-je pardonner s’il a pû me trahir ?
+Sans que ce discours* vient d’un excés d’indulgence,
+Je vous croirois d’abord de son intelligence ;
+Apres un tel affront appaiser mon courroux !
+D’estre rude en ce poinct c’est encore estre doux ;
+Tu mourras, tu mourras, traistre, fils parricide,
+Je te seray cruel*, puis que tu m’es perfide.
+Fin du troisième Acte."	fauste
+div1	IV	IV	ACTE IV.	act
+div2	IV01	1	Scene premiere	scene
+configuration	IV01		constantin artaban	auto
+stage	stage42	42			19	2			"Constantin, Artaban"
+sp	IV01-1	1	constantin		101	16	2	985	"Artaban, c’est conclu, mais puis qu’il doit mourir,
+Quels moyens prendrons-nous pour le faire perir ?"	artaban
+sp	IV01-2	2	artaban		100	18	2	987	"Grand* Prince, il ne faut pas avancer la vangeance,
+Souvent elle ne suit que de trop prés l’offence."	constantin
+sp	IV01-3	3	constantin		49	8	1	989	"Peut-on sans faire un crime excuser ce forfait* ?"	artaban
+sp	IV01-4	4	artaban		51	10	1	990	"Non ; mais il faut devant* s’informer bien du fait."	constantin
+sp	IV01-5	5	constantin		46	9	1	991	"Puis-je douter jamais de la foy* de ma femme ?"	artaban
+sp	IV01-6	6	artaban		49	9	1	992	"Croyez-vous qu’un bon fils ait une mauvaise ame !"	constantin
+sp	IV01-7	7	constantin		47	11	1	993	"S’il n’a pas fait de mal le peut-elle accuser ?"	artaban
+sp	IV01-8	8	artaban		45	9	1	994	"Combien qu’elle l’accuse, il se peut excuser."	constantin
+sp	IV01-9	9	constantin		23	6	1	995	"Je ne le veux pas voir."	artaban
+sp	IV01-10	10	artaban		68	13	2	996	"De punir un coupable
+Sans l’oüir, ce n’est pas estre Juge équitable."	constantin
+sp	IV01-11	11	constantin		52	13	1	997	"L’oüir ! je ne veux plus le voir qu’il ne soit mort."	artaban
+sp	IV01-12	12	artaban		48	11	1	998	"Mais le pouvez vous voir mourir si c’est à tort."	constantin
+sp	IV01-13	13	constantin		47	8	1	999	"A tort ! ayant voulu soüiller ainsi ma couche ?"	artaban
+sp	IV01-14	14	artaban		48	10	1	1000	"Pour le sçavoir il faut l’entendre de sa bouche."	constantin
+sp	IV01-15	15	constantin		43	6	1	1001	"Pourroit-il avoüer devant moy ce forfait* ?"	artaban
+sp	IV01-16	16	artaban		41	7	1	1002	"Peut-il avoir esté si coupable en effet !"	constantin
+sp	IV01-17	17	constantin		46	9	1	1003	"Fauste l’a trop aimé pour le rendre coupable ?"	artaban
+sp	IV01-18	18	artaban		45	7	1	1004	"Les marastres* toujours ont le cœur variable."	constantin
+sp	IV01-19	19	constantin		48	9	1	1005	"Son depart prouve assez qu’il se croit criminel."	artaban
+sp	IV01-20	20	artaban		45	10	1	1006	"Son sejour a monstré qu’il ne peut estre tel."	constantin
+sp	IV01-21	21	constantin		21	5	1	1007	"Tu t’entens avec luy."	artaban
+sp	IV01-22	22	artaban		23	4	1		"Je defends l’innocence."	constantin
+sp	IV01-23	23	constantin		22	4	1	1008	"Il est donc innocent ?"	artaban
+sp	IV01-24	24	artaban		26	6	1		"Pour le moins je le pense."	constantin
+sp	IV01-25	25	constantin		96	19	2	1009	"Quels seront les meschans, si de fouler mon lit
+C’est un trait d’innocence et non pas un delit !"	artaban
+sp	IV01-26	26	artaban		89	17	2	1011	"Je l’appelle innocent, pource que la justice
+Ne l’a pas jusqu’icy convaincu d’aucun vice."	constantin
+sp	IV01-27	27	constantin		96	17	2	1013	"Et j’entens, Artaban, que sans autre respect
+Il soit bien-tost puny, pource qu’il m’est suspect."	artaban
+sp	IV01-28	28	artaban		93	14	2	1015	"Quand il auroit failly, sa faute est pardonnable,
+Un crime sans effet est toujours reparable."	constantin
+sp	IV01-29	29	constantin		48	10	1	1017	"C’est un mal que sa mort peut seulement guerir ;"	artaban
+sp	IV01-30	30	artaban		45	10	1	1018	"Si vous estes son pere il ne doit pas perir :"	constantin
+sp	IV01-31	31	constantin		54	11	1	1019	"S’il ne vit pas en fils, pourquoy vivrois-je en pere ?"	artaban
+sp	IV01-32	32	artaban		44	10	1	1020	"Il vous peut agréer s’il vous a pû deplaire."	constantin
+sp	IV01-33	33	constantin		90	15	2	1021	"Pour me plaire, Artaban, il me faut contenter ;
+Or mon plaisir sera de le voir tourmenter."	artaban
+sp	IV01-34	34	artaban		142	24	3	1023	"C’est la raison qui parle ; écoutez la nature,
+Vous voulez dans ce fils vous mettre à la torture ;
+Et puis son deshonneur rejaillira sur vous."	constantin
+sp	IV01-35	35	constantin		193	35	4	1026	"Pourveu qu’il souffre bien tous ses maux me sont doux,
+Je n’ay jamais produit un fils si detestable ;
+S’il estoit mon image, il me seroit semblable ;
+Ainsi le deshonneur ne peut estre qu’à luy."	artaban
+sp	IV01-36	36	artaban		148	27	3	1030	"Mais enfin s’il perit, vous perdez vôtre apuy ;
+Vous vous perdez vous mesme en le pensant détruire ;
+Et vous en prenez moins à Crispe qu’à l’Empire."	constantin
+sp	IV01-37	37	constantin		380	68	8	1033	"Tu nommes mon apuy qui me veut renverser ?
+Qui ne voit mes plaisirs que pour les traverser ?
+Il est meilleur pour moy de voir punir ma race,
+Que si dedans mon lit un fils prenoit ma place ;
+Et j’ayme beaucoup mieux détruire mon Estat,
+Que de le laisser vivre apres cét attentat ;
+Ce n’est rien de regner si l’on regne sans gloire,
+Et qu’on dure long temps pour flétrir sa memoire."	artaban
+sp	IV01-38	38	artaban		42	7	1	1041	"Ce coup* diffamera par tout vôtre maison*."	constantin
+sp	IV01-39	39	constantin		43	10	1	1042	"Mais on dira par tout que je suy la raison."	artaban
+sp	IV01-40	40	artaban		50	9	1	1043	"Les attraits d’un beau-fils nuiront à vôtre femme."	constantin
+sp	IV01-41	41	constantin		47	8	1	1044	"Luy seul courant danger encourra tout le blâme."	artaban
+sp	IV01-42	42	artaban		47	11	1	1045	"S’il est le seul coupable, on ne le croira pas."	constantin
+sp	IV01-43	43	constantin		140	23	3	1046	"Il faudra bien le croire ayant veu son trépas.
+Ce discours* semble trop retarder son supplice ;
+Si tu ne le poursuis je te croiray complice."	artaban
+sp	IV01-44	44	artaban		41	8	1	1049	"Ce mot encore, Sire, on se peut repentir."	constantin
+sp	IV01-45	45	constantin		141	26	3	1050	"Non pas de m’avoir plû, mais de me repartir.
+Je t’ay dit mon secret, sois moy doncques fidelle,
+Et montre toy plustost trop zelé que rebelle."	artaban
+div2	IV02	2	Scene II	scene
+configuration	IV02		artaban	auto
+stage	stage43	43			5	1			"seul."
+sp	IV02-1	1	artaban		1035	182	24		"Quel credit* qui n’est bon que pour faire du mal ?
+Et m’est avantageux pour m’estre plus fatal !
+Je pers la probité si Crispe perd la vie,
+Et s’il vit, je subis ou la haïne, ou l’enuie ;
+Toutefois il vaut mieux perir,
+Que de perdre d’un coup doublement l’innocence,
+Et si le Prince doit mourir
+Il faut que par sa mort le subjet le devance.Mais d’ailleurs je ne puis que me desesperer ;
+Car ma mort du trépas ne le peut delivrer,
+Et de causer deux morts n’en devant causer qu’une ;
+C’est vouloir l’obliger* par un autre infortune ;
+Luy seul donc souffrira la mort,
+Mon mal ne luy pouvant estre que dommageable ;
+Et combien qu’il n’ait point de tort,
+Les Grands* n’en trouvant point peuvent faire un coupable.Cher Prince, excuse moy si tu meurs de poison,
+C’est contre mon desir comme contre raison,
+Mais si tu dois perir veux-tu que je perisse ?
+Oüy, je desirerois recevoir ton supplice ;
+Mais si ton pere ne veut pas
+Que d’autre que son fils de ton mal se ressente ;
+Et s’il ordonne ton trépas,
+Ma main obéïssant mon ame est innocente."	
+div2	IV03	3	Scene III	scene
+configuration	IV03		fauste adelaide	auto
+stage	stage44	44			16	2			"Fauste, Adelaïde"
+sp	IV03-1	1	fauste		561	106	12	1077	"Il est vray qu’il a tort de s’éloigner ainsi,
+S’il en a du plaisir j’en ay bien du soucy.
+En cas qu’on me l’eust dit, j’eusse empesché sa fuite,
+Mais il s’en est allé sans témoins et sans suite,
+Qui le gagne le perd, je l’obligeois* assez,
+Son cœur reconnoit mal tant de bienfaits passez ;
+Au reste à ton amour il est impenetrable,
+Et l’aimant tu ne peux qu’estre fort miserable.
+Comme je luy parlois d’agréer ton ardeur,
+Il ne m’a témoigné que beaucoup de froideur ;
+Et pour t’oster enfin tout sujet d’esperance,
+Ayant sceu ton dessein* il sort de ta presence."	adelaide
+sp	IV03-2	2	adelaide		102	17	2	1089	"Justes Cieux ! pôuvez-vous brûler ainsi mon cœur,
+Si moy n’estant qu’amour, Crispe n’est que rigueur ?"	fauste
+sp	IV03-3	3	fauste		287	51	6	1091	"Croyrois-tu qu’il rejette un amour legitime,
+Pour en aimer ailleurs une autre dans le crime ?
+Il poursuit une Dame inégale à son rang,
+Et qu’il ne peut cherir qu’il ne choque* le sang ;
+Cette nouvelle donc qui n’est que trop certaine,
+Te doit laisser pour luy moins d’amour que de haïne."	adelaide
+sp	IV03-4	4	adelaide		51	11	1	1097	"Ah ! qu’elle a de bonheur, quoy qu’il soit defendu."	fauste
+sp	IV03-5	5	fauste		47	11	1	1098	"Soit-il bonheur ou non, c’est ce qui l’a perdu."	adelaide
+sp	IV03-6	6	adelaide		70	10	2	1099	"Perdu ! vous devinez quelque étrange infortune :
+Le nom de cette Dame."	fauste
+sp	IV03-7	7	fauste		226	40	5	1101	"Ah ! ce mot m’importune,
+Comme il ne peut l’aimer que par un grand forfait*,
+Je ne puis t’en parler que dans un mesme effet ;
+Tu l’apprendras pourtant plustost que tu ne penses,
+Et perdras tous tes vœux perdant tes esperances."	adelaide
+stage	stage45	45			13	2			"Helene entre."
+div2	IV04	4	Scene IV	scene
+configuration	IV04		fauste helene-mere	auto
+stage	stage46	46			34	6			"Fauste, Helene mere de l’Empereur."
+sp	IV04-1	1	helene-mere		387	65	8	1105	"Crispe s’est mal conduit en partant de ce lieu,
+Sans nous en avertir, et sans vous dire adieu ;
+La prudence n’est pas vertu de la jeunesse,
+Sa promptitude agit plustost que son adresse,
+Madame, s’il vous semble estre peu circonspect,
+Que son depart pourtant ne vous soit plus suspect ;
+Je sçay qu’il vous cherit autant qu’il vous honore,
+Et pour vous seulement la Cour luy plaist encore."	fauste
+sp	IV04-2	2	fauste		571	96	12	1113	"Sa presence m’estant un agreable objet,
+Son absence m’afflige* à tres-juste sujet ;
+Ne croyez pas pourtant que son depart m’offence,
+Son plaisir m’est encor plus cher que sa presence ;
+C’est plustost l’Empereur qui s’en est irrité,
+Et nomme trahison une legereté.
+Comme j’ayme ce Prince en quel lieu qu’il puisse estre,
+Jusqu’au poinct que luy seul a pû le reconnaistre.
+J’ay tâché par douceur d’appaiser son courroux,
+Mais je l’aigrissois plus le voulant rendre doux ;
+S’il ne revient bien-tost, je crain pour sa personne ;
+Prenez en bonne part, lavis que je vous donne."	helene-mere
+sp	IV04-3	3	helene-mere		197	36	4	1125	"Ce Prince est trop bien né pour couver dans le sein*,
+Parmy tant de bonté quelque mauvais dessein*;
+Je n’ay pas pû sçavoir ce qui peut luy deplaire,
+Mais il estoit en peine aussi bien qu’en colere."	fauste
+sp	IV04-4	4	fauste		46	11	1	1129	"Je ne vois pas au moins qu’on l’ait desobligé."	helene-mere
+sp	IV04-5	5	helene-mere		49	11	1	1130	"C’est de trop de plaisir qu’il est donc affligé*."	fauste
+sp	IV04-6	6	fauste		94	17	2	1131	"J’estime apres avoir bien pesé cette affaire,
+Que pour sauver le fils, il faut gagner le pere."	helene-mere
+sp	IV04-7	7	helene-mere		93	15	2	1133	"Aydez-nous donc, Madame, à sauver un sujet
+Dont les respects vous ont toujours eu pour objet."	fauste
+sp	IV04-8	8	fauste		192	34	4	1135	"Quoy qu’en se retirant il m’ait bien affligée*,
+Au poinct que j’attendois d’en estre soulagée ;
+Je veux l’aider, Madame, et tiens à grand bienfait
+De pouvoir l’obligeant* vous servir en effet."	helene-mere
+sp	IV04-9	9	helene-mere		88	14	2	1139	"Ainsi vôtre clemence à nulle autre seconde,
+Gagnant un seul sujet gagnera tout le monde."	fauste
+div2	IV05	5	Scene V	scene
+configuration	IV05		constantin emile	auto
+stage	stage47	47			17	2			"Constantin, Emile"
+sp	IV05-1	1	constantin		86	15	2	1141	"Artaban tarde trop à faire un si bon coup*,
+Qui me doit affliger* et réjoüir beaucoup."	emile
+sp	IV05-2	2	emile		141	28	3	1143	"Il m’a dit que dé-ja l’affaire est avancée,
+Et qu’il peut l’achever comme elle est commencée ;
+Selon que vous voudrez, ou la vie, ou la mort."	constantin
+sp	IV05-3	3	constantin		361	63	7	1146	"Les dés sont trop avant pour faire un autre sort*.
+Je me coupe le bras, mais un bras qui m’est traistre,
+Qui m’est rival au lit, veut estre ailleurs mon Maistre ;
+Je me crain neantmoins que Crispe s’en doutant,
+Tournera contre nous les pieges qu’on luy tend ?
+Un Grand* ne doit rien craindre ; Artaban m’est fidelle,
+Et Dieu hait comme moy cette ame criminelle."	emile
+stage	stage48	48			16	3			"Emile se retire."
+stage	stage49	49			13	2			"Helene entre."
+div2	IV06	6	Scene VI	scene
+configuration	IV06		constantin helene-fille	auto
+stage	stage50	50			28	4			"Constantin, Helene sa fille."
+sp	IV06-1	1	helene-fille		188	36	4	1153	"Seigneur, à qui je dois et l’honneur et le jour,
+Et qui joignez si bien la grandeur à l’amour ;
+Ne vous estonnez pas si parmy vôtre joye,
+Vous voyez maintenant qu’en mes pleurs je me noye."	constantin
+sp	IV06-2	2	constantin		147	24	3	1157	"J’approuve tes sanglots, sçachant que ta douleur
+Prend sa source d’amour, non de quelque malheur,
+Tu regrettes ton frere, et tu blâmes sa retraite,"	helene-fille
+sp	IV06-3	3	helene-fille		52	10	1	1160	"Je crain quelque accident qui luy pend sur la teste."	constantin
+sp	IV06-4	4	constantin		51	8	1	1161	"Quel malheur ? de quel lieu luy pourroit-il venir ?"	helene-fille
+sp	IV06-5	5	helene-fille		48	10	1	1162	"Le present luy rit bien, mais je crain l’avenir."	constantin
+sp	IV06-6	6	constantin		55	12	1	1163	"Ma fille, as-tu bien sceu le mal qu’on luy veut faire ?"	helene-fille
+sp	IV06-7	7	helene-fille		53	13	1	1164	"Non ; mais le cœur me dit qu’on m’en fait un mystere."	constantin
+sp	IV06-8	8	constantin		9	1	1	1165	"Comment ?"	helene-fille
+sp	IV06-9	9	helene-fille		1222	214	26	1166	"Mon frere, helas, estant party d’icy,
+J’ay cherché du repos pour charmer mon soucy ;
+Lors il m’a semblé voir Minervine ma mere,
+Qui m’a dit ; tu ne dois jamais plus voir ton frere,
+Un cœur qui l’adoroit recherchera sa mort,
+Pour avoir trop bien fait, il aura tout le tort.
+Sortant de ce repos je me trouve à la géne,
+Crispe estoit tant aimé, qui peut l’avoir en haine ?
+Vous l’avez estimé moins encor que chery,
+Fauste en faisoit son Dieu comme son favory ;
+S’il meurt donc ce sera par la main d’un barbare* ;
+Mais il conserveroit une vie si rare,
+Et quelque fier qu’il soit, s’il n’est plus qu’inhumain,
+Mon frere est trop charmant pour mourir de sa main.
+J’adoucissois ainsi ma premiere tristesse
+Mais plus je l’affoiblis, et plus elle me presse,
+M’avertissant fort bien qu’il faut moins s’asseurer
+Lors que la seureté semble tousjours durer,
+J’ay crû que je devois en avertir un pere,
+Qui cherissant la sœur doit plus cherir le frere :
+Détournez, Monseigneur, un si malheureux sort* ;
+Crispe ne peut mourir qu’on ne vous mette à mort,
+Vous perdrez avec luy l’heritier de l’Empire,
+Vôtre mere et sa sœur vont perir s’il expire ;
+Fauste qui ne vivoit qu’en voyant ses apas,
+Ne pourra le voir mort sans souffrir le trépas."	constantin
+sp	IV06-10	10	constantin		299	56	6	1191	"Je l’aimois plus que tous ; s’il meurt à cette heure ;
+Ma fille, ne crains pas que de long temps il meure,
+Il est vray que j’avois quelque aigreur contre luy,
+Mais il m’a plainement satisfait ce jourd’huy.
+J’ay pour luy de l’amour, si j’estois en colere,
+Et Crispe desormais ne me sçauroit déplaire."	helene-fille
+sp	IV06-11	11	helene-fille		89	19	2	1197	"Je m’en vay publier* ma joye et son bonheur,
+En dépit de l’enuie il vivra dans l’honneur."	constantin
+div2	IV07	7	Scene VII	scene
+configuration	IV07		constantin	auto
+stage	stage51	51			5	1			"seul."
+sp	IV07-1	1	constantin		1029	177	26		"Qui peut trahir son cœur ? j’ay pour luy de la haine,
+Mais j’ay bien de la peine
+A soûtenir d’ailleurs les assauts de l’amour ;
+Sans perir je ne puis perdre ainsi mon image,
+Et si Crispe m’outrage
+Il me semble pourtant estre digne du jour.Je voudrois qu’Artaban eut une autre ordonnance
+Pour user de clemence ;
+Ou je seray Tyran* si j’estois Empereur !
+Mon fils m’ayant haï pour cherir mes delices*,
+Peut-on voir des supplices
+Qui ne semblent trop doux pour punir sa fureur ?Pauvre sœur je te plains, et connois* que ta mere
+T’avertit du mystere ;
+Mais pesant bien aussi l’horreur de son forfait*,
+Elle ne juge pas qu’il puisse estre excusable,
+Ny son époux blâmable,
+Si comme il l’a produit il le perd en effet.
+Crispe, je sens pourtant que songeant à ta peine
+Mon ame est à la géne ;
+Ah ! qu’il est bon pour moy que tu souffres du mal,
+Sans que ton Juge soit témoin de ta souffrance,
+Car mesme en ton absence
+Je sens que ton destin me doit estre fatal.Pour conserver pourtant les droits de la justice,
+Il faut que tout perisse."	
+stage	stage52	52			25	4			"Fauste et Helene entrent."
+div2	IV08	8	Scene VIII	scene
+configuration	IV08		constantin fauste helene-mere	auto
+stage	stage53	53			46	7			"Constantin, Fauste, Helene mere de l’Empereur."
+sp	IV08-1	1	fauste		193	33	4	1225	"Si vôtre fils, grand* Prince, a failly contre vous,
+Soyez pere envers luy si vous m’estes époux ;
+J’aime mieux son salut que voir vôtre vengeance,
+Et s’il est affligé* je suis sans allegeance ;"	helene-mere
+sp	IV08-2	2	helene-mere		293	55	6	1229	"Un Prince qui ravit les cœurs comme les yeux,
+Ne vit pas dans la Cour long temps sans envieux ;
+Il n’est point de vertu que l’on ne calomnie,
+Ce qu’on peut asseurer contre luy, je le nie ;
+Et crois asseurément que son plus grand forfait*,
+C’est d’estre trop aimable* et d’avoir trop bien fait."	fauste
+sp	IV08-3	3	fauste		182	31	4	1235	"Et quoy qu’il ait peché, vous estes tousjours pere,
+Que l’amour envers luy vainque vôtre colere ;
+En fin pour m’obliger* d’un bienfait eternel,
+Donnez à mes desirs ce noble Criminel."	constantin
+sp	IV08-4	4	constantin		22	6	1	1239	"Il n’aura plus de mal."	fauste
+sp	IV08-5	5	fauste		68	11	2	1240	"O clemence infinie,
+Qui doit punir l’offence, et la laisse impunie !"	constantin
+div2	IV09	9	Scene IX	scene
+configuration	IV09		procle	auto
+stage	stage54	54			50	10			"seul, estant de retour du lieu où Crispe est mort."
+sp	IV09-1	1	procle		1320	218	32		"Quel de ces deux malheurs, Procle, dois-tu choisir !
+Voyant ton amy mort tu ne sçaurois plus vivre ;
+D’ailleurs ne vivre pas, c’est contre le desir
+De celuy qui mourant t’empescha de le suivre ;
+Crispe ne voulut point quand il souffrit la mort
+Que j’eusse ma part de sa peine,
+Je veux doncques faire un effort
+Pour n’avoir pas ma vie en haine.Mais las ! Crispe estant mort quel plaisir puis-je avoir ?
+Comme je l’ay perdu, je perdray mon Helene,
+Et je vis neantmoins seulement pour la voir,
+Et d’abord* la voyant je la dois mettre en peine ;
+Ne vaut-il donc pas mieux que je meure à l’instant
+Pour la garantir d’un supplice,
+Que si pour estre trop constant
+Je la tuois par un service ?Toutefois de perir sans luy conter la mort
+De celuy qui m’en fit une expresse ordonnance,
+Ce seroit sans sujet me mettre dans le tort,
+Et tromper mon amour comme son esperance :
+Il faut donc maintenant que je l’aille trouver
+Pour l’affliger* quoy que je l’aime,
+Et puis je pretens achever
+Mon malheur avec elle mesme.Mais helas ! que je crains que mes premiers propos
+Ne l’obligent soudain à perdre la parole !
+Ne vaudroit-il pas mieux la laisser en repos,
+Que de l’aller blesser* par un discours* frivole ?
+Il faut dissimuler un si cruel* trespas ;
+Pour insensiblement le dire,
+Et que Procle n’agissant pas,
+Elle se cause son martyre."	
+div2	IV10	10	Scene X	scene
+configuration	IV10		crispe helene-fille procle hycarie	auto
+stage	stage55	55			50	5			"Helenefille de l’Empereur. Procle.Hycariesuivante."
+sp	IV10-1	1	helene-fille		97	17	2	1273	"Procle m’estoit connu, mais je le méconnoy,
+Ses joyes sont ailleurs, et ses pleurs sont pour moy."	procle
+sp	IV10-2	2	procle		49	8	1	1275	"Si Procle est affligé*, vous causez sa tristesse."	helene-fille
+sp	IV10-3	3	helene-fille		43	6	1	1276	"Si faisois-je devant* toute son allegresse."	procle
+sp	IV10-4	4	procle		51	9	1	1277	"Mais depuis quelque temps le sort* est bien changé."	helene-fille
+sp	IV10-5	5	helene-fille		47	8	1	1278	"A quelque autre party, Procle, s’est-il rangé !"	procle
+sp	IV10-6	6	procle		94	17	2	1279	"Je suis trop honoré de vous faire service,
+Mais vôtre frere et vous m’estes un grand supplice."	helene-fille
+sp	IV10-7	7	helene-fille		26	6	1	1281	"Crispe que t’a-t’il fait ?"	procle
+sp	IV10-8	8	procle		22	5	1		"Ne m’en demandez rien."	helene-fille
+sp	IV10-9	9	helene-fille		98	20	2	1282	"Qui peut avoir rompu cét intime lien ?
+Vous n’aviez en deux corps qu’un seul cœur, et qu’une ame ?"	procle
+sp	IV10-10	10	procle		52	12	1	1284	"Pour bon amy qu’il fust, il est du tout sans flamme."	helene-fille
+sp	IV10-11	11	helene-fille		43	7	1	1285	"Quelque grand accident vous a donc separez."	crispe
+sp	IV10-12	12	crispe		65	11	2	1286	"Et nous separera lors que vous le sçaurez,
+Car je pretens mourir."	helene-fille
+sp	IV10-13	13	helene-fille		25	4	1		"Mais que fait-il encore ?"	procle
+sp	IV10-14	14	procle		43	9	1	1288	"Il ne vous aime plus, personne ne l’honore."	helene-fille
+sp	IV10-15	15	helene-fille		91	19	2	1289	"Je sçay bien que mon cœur ne l’a pas offencé ;
+Si mon pere s’aigrit son courroux est passé."	procle
+sp	IV10-16	16	procle		25	5	1	1291	"Il ne vous sçauroit voir."	helene-fille
+sp	IV10-17	17	helene-fille		70	11	2	1292	"Et moy je passionne,
+De voir Crispe plustost que toute autre personne."	procle
+sp	IV10-18	18	procle		45	8	1	1293	"Vous ne le verrez plus qu’avecque déplaisir*."	helene-fille
+sp	IV10-19	19	helene-fille		50	11	1	1294	"Quelque mal que j’attende, au moins j’ay ce desir."	procle
+sp	IV10-20	20	procle		176	29	4	1295	"Je ne puis en parler qu’avecque violence,
+Et vous le pourriez voir dedans la complaisance ?
+Il ne peut retourner ny s’en ressouvenir,
+Il faudroit le porter pour le faire venir."	helene-fille
+sp	IV10-21	21	helene-fille		25	6	1	1299	"Je croy qu’il est blessé."	procle
+sp	IV10-22	22	procle		80	16	2	1300	"Son corps est sans blessure,
+Crispe n’a point de mal, c’est Procle qui l’endure."	hycarie
+sp	IV10-23	23	hycarie		28	7	1	1301	"Il s’en est fuy peut estre ?"	procle
+sp	IV10-24	24	procle		22	5	1		"Il est allé bien loin."	helene-fille
+sp	IV10-25	25	helene-fille		50	11	1	1302	"Tu montres que ton cœur en eust bien peu de soin*."	procle
+sp	IV10-26	26	procle		53	11	1	1303	"Peu de soin*; ha ! Dieu sçait si mon cœur le deplore."	helene-fille
+sp	IV10-27	27	helene-fille		52	10	1	1304	"Fais-moy donc tout sçavoir, tu sçais que je t’adore."	procle
+sp	IV10-28	28	procle		13	2	1	1305	"Enfin Crispe."	helene-fille
+sp	IV10-29	29	helene-fille		9	1	1		"Poursuis."	procle
+sp	IV10-30	30	procle		22	4	1		"Il me faudroit mourir."	helene-fille
+sp	IV10-31	31	helene-fille		47	12	1	1306	"Si je te fais du mal, je puis bien t’en guerir."	procle
+sp	IV10-32	32	procle		187	30	4	1307	"Crispe, Madame ; il faut encore des larmes,
+Crispe n’a plus icy de grandeurs ny de charmes.
+Vous lirez maintenant le reste dans mes yeux,
+Qui sans autre discours* vous en parleront mieux."	helene-fille
+sp	IV10-33	33	helene-fille		119	20	3	1311	"Je prevois un malheur à voir ta contenance,
+Et mon songe sans doute, aura trop de creance,
+Procle, mon frere est mort ?"	procle
+sp	IV10-34	34	procle		71	13	2	1314	"Vous mesme l’avez dit,
+Car pour vous l’annoncer j’estois trop interdit."	helene-fille
+sp	IV10-35	35	helene-fille		208	40	4	1315	"Crispe mon frere est mort, ce beau corps est sans ame !
+Dieux ! il me faut perir, c’est trop peu que je pâme ;
+Nous nâquimes tous deux à mesme poinct de temps,
+De mourir avec luy, c’est le bien* que j’attens."	procle
+sp	IV10-36	36	procle		87	15	2	1319	"Il me faut soûtenir cette belle Princesse,
+Accablé que je suis du regret qui me presse."	hycarie
+sp	IV10-37	37	hycarie		114	21	2	1321	"Ceux qui sont les plus grands*, ont les plus grands malheurs,
+Et s’ils ont des plaisirs, ils ont plus de douleurs."	procle
+sp	IV10-38	38	procle		97	17	2	1323	"Madame, vous mourez, au contraire il faut vivre,
+Car Crispe vous defend comme à moy de le suivre."	hycarie
+sp	IV10-39	39	hycarie		209	43	4	1325	"Vôtre decés n’est pas pour le resusciter,
+Et si c’est un Grand* mort, il le faut regretter.
+Qu’il est vray que l’amour de deux n’en fait qu’un mesme ?
+Quoy que Crispe soit mort, je croy qu’il est moins blesme."	helene-fille
+stage	stage56	56			12	2			"se relevant."
+sp	IV10-40	40	helene-fille		43	8	1	1329	"Ton cœur me le celoit me pensant obliger* ?"	procle
+sp	IV10-41	41	procle		45	7	1	1330	"Je differois tousjours à vous tant affliger*."	helene-fille
+sp	IV10-42	42	helene-fille		120	23	3	1331	"Affliger*; c’en est fait, Helene n’a de vie
+Que pour voir dans ce jour qu’elle luy soit ravie*.
+Et comment est-il mort ?"	procle
+sp	IV10-43	43	procle		22	5	1		"Par l’effet du poison."	helene-fille
+sp	IV10-44	44	helene-fille		252	43	5	1334	"Il n’eust sceu redouter que quelque trahison.
+Que dira l’Empereur, mais que dira sa femme ?
+Sont-ils pas pour mourir si l’autre a rendu l’ame ?
+Helene aussi ma mere ; ha ! ce seul souvenir
+M’empesche de parler et de me soûtenir.
+Fin du quatriesme Acte."	procle
+div1	V	V	ACTE V	act
+div2	V01	1	Scene premiere	scene
+configuration	V01		fauste helene-mere	auto
+stage	stage57	57			34	6			"Fauste, Helene mere de l’Empereur."
+sp	V01-1	1	fauste		88	12	2	1339	"Oui, Madame, sa mort me semble déplorable,
+Mais sa faute autrement sembloit irreparable."	helene-mere
+sp	V01-2	2	helene-mere		92	14	2	1341	"Madame, en l’offençant vous m’offencez aussi,
+L’excusiez-vous devant* pour l’accuser ainsi ?"	fauste
+sp	V01-3	3	fauste		49	10	1	1343	"Mon cœur parle bien moins que l’interest du pere."	helene-mere
+sp	V01-4	4	helene-mere		52	11	1	1344	"Croyez qu’il n’en a point, Madame, en cette affaire."	fauste
+sp	V01-5	5	fauste		55	12	1	1345	"Quoy qu’il en soit, Madame, au moins son fils est mort."	helene-mere
+sp	V01-6	6	helene-mere		53	12	1	1346	"Cela n’est que trop vray, mais c’est toujours à tort."	fauste
+sp	V01-7	7	fauste		100	17	2	1347	"L’Empereur se craignoit de quelque intelligence ;
+Il l’étouffe avec luy, c’est un trait de prudence."	helene-mere
+sp	V01-8	8	helene-mere		91	18	2	1349	"L’Empereur n’ayant point minuté ce forfait*,
+L’on ne peut sans peché le charger de l’effet."	fauste
+sp	V01-9	9	fauste		45	10	1	1351	"Si ne s’émeut-il pas de voir Crispe sans vie."	helene-mere
+sp	V01-10	10	helene-mere		142	26	3	1352	"Si verrez-vous pourtant sa mort bien poursuivie :
+Et le Ciel est menteur s’il ne met pas à mort
+Ceux qui firent mourir sa joye et mon support."	fauste
+sp	V01-11	11	fauste		123	22	3	1355	"Je voudrois de ma part aider à la vengeance,
+Et mes douleurs pourroient trouver de l’allegeance ;
+Mais je n’ay pas le cœur."	helene-mere
+sp	V01-12	12	helene-mere		22	4	1		"De vanger l’Innocent ?"	fauste
+sp	V01-13	13	fauste		46	8	1	1358	"Celuy qui veut couvrir un forfait*, y consent."	helene-mere
+sp	V01-14	14	helene-mere		51	12	1	1359	"Vôtre cœur n’a donc plus pour luy que de la haïne ?"	fauste
+sp	V01-15	15	fauste		327	55	7	1360	"Trop d’amour envers luy m’a failly mettre en peine.
+Puis qu’il pretendoit estre autant que l’Empereur,
+Quel cœur pourroit aimer cét excés de fureur ?
+Madame, avec raison je regrette sa perte,
+Mais ne l’excusez point sa faute est découverte ;
+Et puis il ne faut pas en matiere d’Estat,
+Employer son credit* pour un tel attentat."	helene-mere
+sp	V01-16	16	helene-mere		297	52	6	1367	"Il n’est plus d’innocent si mon fils est coupable,
+Fauste, Helene, en un mot, chacun est execrable.
+Cher Prince tu peux voir si tu devois cherir
+Ces yeux qui sans pleurer t’ont regardé perir !
+Mais son sang neantmoins vous fera voir, Madame,
+Que du forfait* qu’on dit, quelque autre en a le blâme."	fauste
+stage	stage58	58			17	3			"Helene se retire."
+div2	V02	2	Scene II	scene
+configuration	V02		fauste	auto
+stage	stage59	59			6	1			"seule."
+sp	V02-1	1	fauste		1734	287	40		"Donc le sang de ce mort m’apprendra mon devoir ?
+Invisible qu’il est, il me semble le voir,
+Qui me dit par reproche ; ha ! marastre* infidelle,
+Tu ne seras plus mere estant si criminelle ;
+Je vois encor briller ses yeux,
+Combien que le trespas les ait rendus fort sombres,
+Et qui semblent blâmer les Cieux,
+De me pouvoir souffrir ailleurs qu’entre les ombres.Pardonne-moy, cher Crispe, au moins apres ta mort
+Mon amour immortel me fait voir que j’ay tort ;
+Je devois moins t’aimer ou t’estre moins severe,
+Et ne te perdre* pas, si tu m’avois peu plaire ;
+Ta vertu causa tes tourmens,
+Et dans tout son bonheur, Fauste fut malheureuse,
+T’ostant tous les contentemens
+Afin de contenter sa fureur amoureuse.Si j’ay causé sa mort ne dois-je pas mourir ?
+Et le puis-je survivre ayant pû le cherir ?
+L’Innocent a souffert le supplice du crime,
+Mais je dois l’endurant le rendre legitime ;
+Et je ne sçaurois plus rien voir,
+Ayant eu tant d’amour ensemble et tant de haine,
+Et tout le monde doit sçavoir
+Que si j’ay fait le mal, j’en porte bien la peine.Mourons donc maintenant puis que c’est la raison,
+Vangeons par le poignard ce qu’a fait le poison,
+Allons jusqu’aux Enfers satisfaire à son ombre,
+Les Furies y sont, et je seray du nombre ;
+Que peuvent-elles avoir fait
+Qui ne semble estre doux l’opposant à ma rage ?
+Et peut-on commettre un forfait*,
+Qui prés du mien ne soit plustost vertu qu’outrage.Mais ne devant plus vivre, il ne faut pas mourir,
+Le mal subsiste encor, et je le dois guerir ;
+Comme j’ay cy-devant* chargé son innocence,
+Je la dois décharger* suivant ma conscience ;
+Crispe, je m’en vay t’excuser,
+Et par mesme moyen me rendre inexcusable !
+Mon époux, j’ay pû t’abuser,
+Tu ne peux doncques pas m’estre qu’impitoyable ?"	
+stage	stage60	60			15	2			"Adelaïde entre."
+div2	V03	3	Scene III	scene
+configuration	V03		fauste adelaide	auto
+stage	stage61	61			16	2			"Fauste, Adelaïde"
+sp	V03-1	1	adelaide		97	17	2	1413	"Vos regrets maintenant ont un plus grand effort,
+Vous ressentez du mal d’ailleurs que de la mort."	fauste
+sp	V03-2	2	fauste		161	29	4	1415	"Je ne m’en émeu pas ayant sceu la nouvelle,
+Me doutant que ce fust quelque bruit infidele* ;
+Maintenant que je voy la verité du fait
+Je ne puis plus me feindre*."	adelaide
+sp	V03-3	3	adelaide		126	22	3	1419	"On le voit en effet.
+A quoy visent pourtant ces pleurs et ce courage ?
+Ce sont moins des regrets que des transports* de rage ?"	fauste
+sp	V03-4	4	fauste		47	9	1	1421	"Il faut suivre mon Crispe, et mourir comme luy."	adelaide
+sp	V03-5	5	adelaide		103	18	2	1422	"C’est vouloir doublement le meurtrir aujourd’huy :
+Puis que vous ne faisiez avec luy qu’un cœur mesme ?"	fauste
+sp	V03-6	6	fauste		45	10	1	1424	"Mon decés fera voir qu’encore mort je l’aime."	adelaide
+sp	V03-7	7	adelaide		44	8	1	1425	"Il faut vivre et vanger cét enorme forfait*."	fauste
+sp	V03-8	8	fauste		47	10	1	1426	"Je m’en vay découvrir l’unique autheur du fait."	adelaide
+div2	V04	4	Scene V	scene
+configuration	V04		constantin artaban	auto
+stage	stage62	62			19	2			"Constantin, Artaban"
+sp	V04-1	1	constantin		41	7	1	1427	"L’affaire a reüssi suivant mon esperance."	artaban
+sp	V04-2	2	artaban		49	9	1	1428	"Si crains-je bien l’effet d’une telle ordonnance."	constantin
+sp	V04-3	3	constantin		45	8	1	1429	"Un Empereur ne peut craindre d’autre pouvoir."	artaban
+sp	V04-4	4	artaban		49	8	1	1430	"Je dois craindre toujours de choquer* mon devoir."	constantin
+sp	V04-5	5	constantin		67	12	2	1431	"N’est-ce pas ton devoir de rendre obeïssance
+A celuy qui peut tout."	artaban
+sp	V04-6	6	artaban		22	4	1		"Hors de ma conscience."	constantin
+sp	V04-7	7	constantin		41	8	1	1433	"La conscience veut qu’on suive la raison."	artaban
+sp	V04-8	8	artaban		40	7	1	1434	"La raison defendoit de donner ce poison."	constantin
+sp	V04-9	9	constantin		48	9	1	1435	"Mon fils devoit souffrir pour me tirer de peine."	artaban
+sp	V04-10	10	artaban		42	8	1	1436	"L’innocent devoit-il estre mis à la géne ?"	constantin
+sp	V04-11	11	constantin		44	7	1	1437	"L’innocent, prevenu d’un horrible forfait* ?"	artaban
+sp	V04-12	12	artaban		50	10	1	1438	"S’il vous parust coupable, il fut chaste en effet."	constantin
+sp	V04-13	13	constantin		39	7	1	1439	"Tu l’excuses encor avec ton eloquence !"	artaban
+sp	V04-14	14	artaban		48	9	1	1440	"Je parle moins pour luy que sa propre innocence."	constantin
+sp	V04-15	15	constantin		43	8	1	1441	"Tu pretens m’irriter m’en discourant ainsi."	artaban
+sp	V04-16	16	artaban		47	10	1	1442	"Ceux qui l’ont veu mourir vous le diront aussi."	constantin
+sp	V04-17	17	constantin		44	8	1	1443	"Sa mort devoit toujours ressembler à sa vie."	artaban
+sp	V04-18	18	artaban		52	12	1	1444	"Il est mort dans l’honneur, s’il est mort par envie."	constantin
+sp	V04-19	19	constantin		53	11	1	1445	"Il est mort dans l’honneur m’ayant fait cét affront ?"	artaban
+sp	V04-20	20	artaban		42	8	1	1446	"L’innocence toujours a paru sur son front."	constantin
+sp	V04-21	21	constantin		46	9	1	1447	"L’impudence par fois prend le nom d’innocence."	artaban
+sp	V04-22	22	artaban		76	13	2	1448	"Jamais tant de douceur ne viendroit d’impudence.
+Il a toujours nié ce crime."	constantin
+sp	V04-23	23	constantin		14	4	1		"On l’a prouvé."	artaban
+sp	V04-24	24	artaban		48	11	1	1450	"Mais vous ne voyez pas s’il n’est que controuvé."	constantin
+sp	V04-25	25	constantin		24	4	1	1451	"L’accusateur est grand*."	artaban
+sp	V04-26	26	artaban		26	5	1		"Et fait un grand coupable."	constantin
+sp	V04-27	27	constantin		28	5	1	1452	"Fauste estoit hors de blâme."	artaban
+sp	V04-28	28	artaban		25	4	1		"Et l’autre irreprochable."	constantin
+sp	V04-29	29	constantin		55	11	1	1453	"Si Dieu l’eust veu sans crime, eust-il permis sa mort ?"	artaban
+sp	V04-30	30	artaban		51	10	1	1454	"Les Dieux permettent bien qu’on leur face du tort ?"	constantin
+sp	V04-31	31	constantin		27	6	1	1455	"Qu’a-t’-il dit en mourant ?"	artaban
+sp	V04-32	32	artaban		81	15	2	1456	"Qu’il n’estoit pas coupable
+D’une horreur dont un Monstre à peine estoit capable."	constantin
+sp	V04-33	33	constantin		43	10	1	1457	"Il devoit ainsi dire au lieu de s’en aller."	artaban
+sp	V04-34	34	artaban		44	8	1	1458	"La Cour reconnoistra qu’il le devoit celer*."	constantin
+sp	V04-35	35	constantin		48	9	1	1459	"Cependant il est mort sans qu’on le reconnaisse."	artaban
+sp	V04-36	36	artaban		48	10	1	1460	"Le Soleil a ses rais sans qu’il nous apparaisse."	constantin
+sp	V04-37	37	constantin		44	10	1	1461	"Mais il ne tarde pas à luire dans les Cieux."	artaban
+sp	V04-38	38	artaban		40	7	1	1462	"Et possible ce mort dessillera vos yeux."	constantin
+sp	V04-39	39	constantin		396	70	8	1463	"Qu’il dessille les siens qui n’ont plus de lumiere ?
+Je cede neantmoins à ma flamme* premiere ;
+J’aime encore mon fils, et bien qu’il m’ait picqué,
+J’ay du regret pour luy de ce qu’il m’a choqué* ;
+Je pleure pour sa mort combien qu’elle soit juste,
+Et mesme criminel, Crispe me semble auguste ;
+Resistons neantmoins à ces lasches douleurs,
+La justice est sans yeux, qu’elle soit donc sans pleurs."	artaban
+stage	stage63	63			13	2			"Helene entre."
+div2	V05	5	Scene V	scene
+configuration	V05		constantin helene-mere	auto
+stage	stage64	64			27	4			"Constantin, Helene sa mere."
+sp	V05-1	1	helene-mere		48	9	1	1471	"Et vous vivez encor, le Prince estant sans ame ?"	constantin
+sp	V05-2	2	constantin		51	10	1	1472	"Qu’ay-je fait pour mourir qui soit digne de blâme ?"	helene-mere
+sp	V05-3	3	helene-mere		26	5	1	1473	"Qu’avoit fait vôtre fils ?"	constantin
+sp	V05-4	4	constantin		65	13	2	1474	"Il avoit bien du tort,
+Puis que son pere mesme a procuré sa mort."	helene-mere
+sp	V05-5	5	helene-mere		51	9	1	1475	"Quel tort pouvoit avoir un fils plein d’innocence ?"	constantin
+sp	V05-6	6	constantin		46	9	1	1476	"De l’appeler ainsi, c’est doubler son offence."	helene-mere
+sp	V05-7	7	helene-mere		29	5	1	1477	"Et quelle est cette offence ?"	constantin
+sp	V05-8	8	constantin		73	15	2	1478	"Elle est noire à ce poinct,
+Que son enormité fait qu’on n’en parle point."	helene-mere
+sp	V05-9	9	helene-mere		45	8	1	1479	"Vôtre cœur peut-il rien celer* à vôtre mere ?"	constantin
+sp	V05-10	10	constantin		48	9	1	1480	"Ce fils ne tenoit plus Constantin pour son pere."	helene-mere
+sp	V05-11	11	helene-mere		22	4	1	1481	"Il vous honoroit tant."	constantin
+sp	V05-12	12	constantin		21	4	1		"Oüy pour me mépriser."	helene-mere
+sp	V05-13	13	helene-mere		24	5	1	1482	"Il estoit tout à Fauste."	constantin
+sp	V05-14	14	constantin		22	4	1		"Oüy pour la courtiser."	helene-mere
+sp	V05-15	15	helene-mere		41	6	1	1483	"Pouvez-vous accuser une si pure flamme* ?"	constantin
+sp	V05-16	16	constantin		49	9	1	1484	"L’innocent souhaittoit d’estre époux de ma femme."	helene-mere
+sp	V05-17	17	helene-mere		27	5	1	1485	"Quels en sont les témoins ?"	constantin
+sp	V05-18	18	constantin		73	14	2	1486	"Ceux qui le sçavent bien.
+Et qui por l’excuser n’en disent pourtant rien."	helene-mere
+sp	V05-19	19	helene-mere		44	8	1	1487	"Fauste ne dira pas que Crispe soit coupable."	constantin
+sp	V05-20	20	constantin		47	10	1	1488	"Ny qu’un si prompt depart ne le rende blâmable."	helene-mere
+sp	V05-21	21	helene-mere		51	8	1	1489	"Les objets le cherchoient, il en trouvoit ailleurs."	constantin
+sp	V05-22	22	constantin		48	9	1	1490	"Il n’en rencontroit pas peut estre de meilleurs."	helene-mere
+sp	V05-23	23	helene-mere		101	16	2	1491	"Pour voir de grands malheurs ne cherchons pas les Fables,
+On peut trouver icy des Phedres veritables."	constantin
+sp	V05-24	24	constantin		94	18	2	1493	"Possible on l’a chargé des attentats d’autruy,
+Quel autre eut osé faire un tel crime que luy ?"	helene-mere
+sp	V05-25	25	helene-mere		180	32	4	1495	"Fauste dans son amour pour se tirer de peine,
+A fait voir à ce coup* sa prudence et sa haine ;
+Je voy bien que son zele estoit pernicieux,
+Elle le cherissoit pour le rendre odieux."	constantin
+sp	V05-26	26	constantin		46	10	1	1499	"Il ne faut pas blamer ma femme en ma presence."	helene-mere
+sp	V05-27	27	helene-mere		46	9	1	1500	"Fauste aussi n’y doit pas accuser l’innocence."	constantin
+stage	stage65	65			13	2			"Fauste entre."
+div2	V06	6	Scene VI	scene
+configuration	V06		constantin fauste helene-mere artaban	auto
+stage	stage66	66			41	5			"Constantin, Fauste, Artaban, Helene mere."
+sp	V06-1	1	fauste		45	9	1	1501	"Je demande justice, et pour vous et pour moy."	constantin
+sp	V06-2	2	constantin		52	10	1	1502	"Devant* qu’en voir l’effet il faut sçavoir pourquoy."	fauste
+sp	V06-3	3	fauste		42	9	1	1503	"Il faut icy vanger la mort de l’innocence."	constantin
+sp	V06-4	4	constantin		55	12	1	1504	"Il n’est mort d’aujourd’huy qu’un Monstre d’impudence !"	fauste
+sp	V06-5	5	fauste		91	17	2	1505	"Apres que Crispe est mort il faut faire perir
+Cét esprit qui l’aimoit pour le faire mourir."	constantin
+sp	V06-6	6	constantin		27	7	1	1507	"Il faut s’en prendre à moy."	fauste
+sp	V06-7	7	fauste		166	31	4	1508	"Vous estes excusable,
+S’il est mort innocent, c’est moy qui suis coupable.
+C’est moy qui l’accusay du crime que je fis,
+Voulant un autre époux, je vous ostay ce fils."	constantin
+sp	V06-8	8	constantin		84	15	2	1511	"Rappellez vos esprits ; une forte pensée
+De la mort de mon fils l’a renduë insensée."	fauste
+sp	V06-9	9	fauste		88	18	2	1513	"Non, je n’ay pas perdu l’usage de raison,
+Mais j’ay perdant ce fils perdu vôtre maison*."	constantin
+sp	V06-10	10	constantin		54	10	1	1515	"Vos discours* en deux temps n’ont pas de ressemblance."	fauste
+sp	V06-11	11	fauste		698	125	15	1516	"Je dis la verité n’ayant plus d’impudence.
+Je le sollicitay, mais il me resista,
+Et l’amour me quittant la fureur m’emporta.
+Lors je vins l’accuser pour colorer mon crime,
+Croyant qu’estant couvert* il seroit legitime ;
+J’ay fait ce que j’ay pû pour cacher mes excés,
+Mais je meurs mille fois ayant sceu son decés.
+Il m’oste le repos aussi bien que la vie,
+De jour comme de nuit je m’en vois poursuivie.
+Ne l’apperçoit-on pas qui d’un regard affreux,
+Vient m’arracher le cœur et me pocher les yeux ?
+S’il n’estoit que douceur, il n’est plus que vengeance,
+Aussi ne suis-je plus un objet de clemence :
+Acheve donc, cher Prince ; hé ! tu ne le veux pas,
+Mais pour mieux me punir retardes mon trépas !"	constantin
+sp	V06-12	12	constantin		9	2	1	1531	"O Manie !"	artaban
+sp	V06-13	13	artaban		10	2	1		"O fureur !"	fauste
+sp	V06-14	14	fauste		168	30	4	1532	"Si Crispe est debonnaire,
+Il me faut irriter la fureur de son Pere,
+j’ay mis ton fils à mort, fais moy doncques mourir,
+L’innocent n’estant plus, ne dois-je pas perir ?"	constantin
+stage	stage67	67			28	5			"Elle s’adresse à Constantin."
+sp	V06-15	15	constantin		341	57	7	1535	"Comme elle aimoit mon fils elle le pretend suivre,
+Et pour le suivre ailleurs, elle ne veut plus vivre :
+C’est pourquoy n’ayant point d’autre cause de mort,
+Pour se faire coupable elle fait un effort.
+Je vous estime trop pour vous croire sincere,
+Sous ce mal apparent vous couvrez un mystere :
+Ce discours* n’est qu’opprobre et que temerité."	fauste
+sp	V06-16	16	fauste		247	45	5	1542	"Qu’il soit tel, je le veux, mais c’est la verité ;
+Je cherissois ton fils, non pas comme une mere,
+Mais comme une marastre*, ou comme une Megere*;
+Je le veux suivre ailleurs, mais c’est moins par amour,
+Qu’en effet me voyant estre indigne du jour."	constantin
+sp	V06-17	17	constantin		44	7	1	1547	"Artaban dois-je croire à ce rapport infame ?"	artaban
+sp	V06-18	18	artaban		23	4	1	1548	"C’estoit une marastre*."	constantin
+sp	V06-19	19	constantin		52	10	2	1549	"Oüy, mais c’estoit ma femme.
+Elle avoit le cœur bon."	artaban
+sp	V06-20	20	artaban		25	5	1		"Et le Prince estoit beau."	constantin
+sp	V06-21	21	constantin		50	10	1	1550	"Mais quoy, pour le cherir l’avoir mis au tombeau ?"	helene-mere
+stage	stage68	68			4	1			"mere"
+sp	V06-22	22	helene-mere		185	32	4	1551	"Vivez apres avoir veu perir vôtre image,
+Ce sont là de beaux fruits d’un second mariage ;
+Il vous ravit* un fils digne d’estre Empereur,
+Pour ne vous engendrer que des sujets d’horreur."	fauste
+sp	V06-23	23	fauste		185	29	4	1555	"Dedans vôtre equité vous vous rendez coupable,
+D’aviser seulement si je suis excusable :
+Vous redoublez encor le crime que j’ay fait,
+Quand vous me laissez vivre ayant veu mon forfait*."	helene-mere
+div2	V07	7	Scene VII	scene
+configuration	V07		constantin fauste helene-mere helene-fille artaban	auto
+stage	stage69	69			54	7			"Constantin, Fauste, Helene mere. Helene fille. Artaban"
+stage	stage70	70			6	1			"fille."
+sp	V07-1	1	helene-fille		591	105	12	1559	"Vous voyez, Monseigneur, dans l’effet de mon songe,
+Que c’est la verité qu’on appelloit mensonge ;
+Mon frere toutefois n’est mort que par moitié,
+Achevez donc sa mort par haine ou par pitié :
+C’est pour me voir vivante en ce lieu que je pleure,
+Je nâquis avec luy pour mourir à mesme heure ;
+La nature eust grand tort de nous unir tous deux,
+Si je vis malheureuse, et s’il est mort heureux ;
+Je vous declare encor que s’il fut dans l’offence,
+Sa sœur pareillement n’est plus dans l’innocence ;
+Mais avant que perir, que j’embrasse son corps,
+Pour me voir avec luy mettre au nombre des morts."	helene-mere
+stage	stage71	71			19	4			"mere de l’Empereur."
+sp	V07-2	2	helene-mere		181	30	4	1571	"Donc pour avoir suivy les humeurs d’une femme
+Tout couvert de Laurier, on vous couvre de blâme ?
+Rappellez maintenant un Prince si parfait,
+Et le resuscitez, s’il est mort en effet."	constantin
+stage	stage72	72			41	6			"Les deux Helenes se retirent brusquement."
+sp	V07-3	3	constantin		1016	179	22	1575	"Ce seroit mon desir, s’il n’estoit impossible,
+Et nous le reverrions sans qu’il est invisible ;
+Ah mon fils ! voy ton pere en peine de ta mort,
+Et que s’il en est cause, un autre en a le tort.
+Ma haine a moins agy qu’un zele de justice,
+J’aimois mieux te voir mort que soupçonné d’un vice.
+J’ay failly neantmoins ne considerant pas,
+ue ton défaut estoit d’avoir eu trop d’appas*.
+Que ne m’est-il permis de t’embrasser encore !
+Mes vœux sont indiscrets, il faut que l’on t’adore.
+Je t’immole aujourd’huy, celle qui t’accusa,
+Et trompe son espoir comme elle m’abusa :
+Megere* tu pensois en t’accusant toy-mesme,
+Excuser finement une malice extréme.
+Tu mourras neantmoins, et loin de t’estre doux,
+Je seray ton bourreau si je fus ton époux :
+Meschante pour cela tu rompis le voyage
+D’un fils que tu voulois reserver à ta rage ?
+Prens, prens tous tes enfans pour perir avec toy,
+Crispe témoigne assez qu’ils ne sont pas à moy.
+Tu fis mourir celuy qui n’estoit pas coupable,
+Lave donc cette erreur dans un sang execrable."	artaban
+stage	stage73	73			22	4			"Il fléchit le genoüil."
+stage	stage74	74			18	4			"Il parle à Fauste."
+stage	stage75	75			89	18			"Il parle tout bas à Artaban, et luy donne charge de noyer Fauste dans le bain et ajouste."
+sp	V07-4	4	artaban		46	8	1	1597	"Ce dernier coup* perdra du tout vôtre maison*."	constantin
+sp	V07-5	5	constantin		47	11	1	1598	"Je la veux voir perir puis que c’est la raison."	artaban
+sp	V07-6	6	artaban		46	8	1	1599	"Vous consolez vos maux par de grandes miseres."	fauste
+sp	V07-7	7	fauste		49	10	1	1600	"Pour punir un tel crime on fait trop de mysteres."	constantin
+sp	V07-8	8	constantin		20	4	1	1601	"Sa peine tarde trop."	fauste
+sp	V07-9	9	fauste		78	16	2	1602	"Il est vray qu’il est lent,
+Tout supplice m’est doux, bien qu’il soit violent."	constantin
+div2	V08	8	Scene VIII	scene
+configuration	V08		helene-fille procle adelaide	auto
+stage	stage76	76			44	7			"Helene fille de l’Empereur. Adelaïde, Procle"
+sp	V08-1	1	helene-fille		98	16	2	1603	"Maintenant que nos yeux ont épuisé nos larmes,
+Dy nous comment mourut ce vainqueur loin des armes."	procle
+sp	V08-2	2	procle		1353	236	29	1605	"Vous me faites mourir me demandant sa mort ;
+Pour vous faire plaisir je vay faire un effort.
+Vous avez bien apris qu’elle fut sa retraite,
+Et quoy qu’on la blâmast qu’elle estoit fort honneste ;
+Quoy qu’il fut bien content d’avoir quitté la Cour,
+Il maudissoit souvent le plaisir et l’amour ;
+Je croyois que son cœur vous trouvoit inhumaine,
+Et que vôtre froideur avoit causé sa haine ;
+Mais pour dire le vray, je ne le pûs sçavoir,
+Car sa langue en ce poinct cedoit à son devoir :
+Il se plaignoit pourtant, et disoit à chaque heure,
+Si je suis tant aimé, faut-il pas que je meure ?
+Lors je luy repartois, si l’on vous aime tant,
+Au lieu de mourir triste, il faut vivre content.
+Artaban là-dessus vint au nom de son pere,
+Et pour mieux le surprendre il taschoit de luy plaire :
+J’estois ravy de voir, qu’encore l’Empereur
+Eust pour luy de l’amour ayant eu de l’aigreur ;
+Cét Agent luy disoit que Fauste estoit sans ame,
+Et s’il ne revenoit qu’elle iroit sous la lame.
+Le Prince à ce discours* n’avoit plus de couleur,
+Mais on nommoit amour un effet de douleur.
+Ce traistre confident sur le soir le convie
+Pour luy donner la mort dans l’aprest de la vie.
+On parle en ce festin de plaisir et d’honneur,
+Et le Prince au dehors est remply de bonheur ;
+Mais il a son malheur ay dedans de luy-mesme,
+Son visage de vif à l’instant devient blesme.
+Il chancelle."	helene-fille
+stage	stage77	77			31	7			"Il parle à Adelaïde en ce vers."
+sp	V08-3	3	helene-fille		9	2	1		"Je meurs."	procle
+sp	V08-4	4	procle		253	39	6	1634	"Il tombe renversé,
+Et sans sembler malade, il paroist trespassé.
+Artaban s’en estonne au moins en apparence,
+Nous prenons mille fois et perdons esperance ;
+On s’oppose à son mal pour empescher sa mort,
+Mais nous voyons nos soins* trompez par son effort."	adelaide
+sp	V08-5	5	adelaide		93	18	2	1639	"Se souvint-il de nous devant* que rendre l’ame ?
+Je fais la curieuse, et je sens que je pâme."	procle
+sp	V08-6	6	procle		897	153	19	1641	"Je m’escrie en pleurant, Crispe vous me laissez !
+Et puis-je vivre icy si vous y trépassez ?
+A ces mots s’éveillant, il ouvre la paupiere,
+Et n’a pas peur de moy comme de la lumiere.
+Et puis se relevant d’une masle vigueur,
+S’il s’en va perdre l’ame, il semble prendre cœur ;
+On croit voir un Soleil regardant son visage,
+Le mal l’affoiblissant augmente son courage ;
+Et puis d’une voix forte, et d’un tres-doux accent,
+Que tous sçachent, dit-il, que je meurs innocent.
+Mon trépas neantmoins aura bien sa vengeance,
+Et mort je feray voir si je vis dans l’offence.
+Là-dessus il m’embrasse, et me baisant deux fois ;
+C’est pour toy, me dit-il, que j’ay repris la voix ;
+Mourant dans ton amy tu dois pourtant survivre,
+Ma mort estant injuste il la faudra poursuivre,
+Je ne t’en diray pas toutefois le secret,
+Ay-je esté si méchant si je suis si discret  ?
+Aime toujours ma sœur, honore ma Maistresse."	adelaide
+sp	V08-7	7	adelaide		43	8	1	1660	"Que ce doux souvenir me cause de tristesse."	procle
+sp	V08-8	8	procle		1129	195	24	1661	"Apres de tels propos ses yeux s’abbaissent fort,
+Nous le croyons vivant et nous le voyons mort ;
+Il me parle de vous, quand la douleur le presse,
+Dans ses convulsions encore il me caresse,
+Il se meurt de foiblesse, et je me meurs d’ennuy,
+Voyant que par son ordre il faut vivre apres luy ;
+Je pers à tout le moins la voix dessus sa bouche,
+Il semble un homme encor, mais je semble une souche.
+Il expire à la fin, je ne puis respirer,
+Et ne peux plus agir pouvant tout endurer.
+On croit que mesme mal me cause mesme peine,
+Mais pour mon plus grand mal cette creance est vaine.
+On le leve aussi-tost, on le fait visiter,
+L’autheur de sa mort tasche à le resusciter ;
+Mais enfin il est mort, en un moment la terre
+Perd en luy son Soleil et son foudre de guerre;
+Je voulois conserver ses restes precieux,
+Et perdre la lumiere ayant fermé ses yeux ;
+Mais suivant mon amour comme son ordonnance,
+Je suis venu vous voir et haster sa vengeance ;
+Et puis que son vouloir est conforme à mes vœux,
+Madame, recevez mes larmes et mes feux*.
+Je n’aimois que luy seul, je n’aimeray qu’Helene,
+Il passoit pour mon Prince, et vous serez ma Reine."	helene-fille
+stage	stage78	78			18	4			"Il parle à Helene."
+sp	V08-9	9	helene-fille		97	17	2	1685	"Oüy, Procle, je me rends à ce doux compliment,
+Et sans qu’il faut mourir nous vivrions doucement."	adelaide
+sp	V08-10	10	adelaide		91	15	2	1687	"Allons nous informer si Fauste est étouffée,
+Mon amour de sa mort doit dresser son trophée."	helene-fille
+div2	V09	9	Scene IX, et derniere.	scene
+configuration	V09		constantin helene-mere procle artaban emile	auto
+stage	stage79	79			46	6			"Constantin, Helene mere. Artaban Emile, Procle"
+sp	V09-1	1	constantin		103	22	2	1689	"C’est en vain, c’est en vain qu’on la pretend sauver,
+Ce forfait* est trop noir, ce bain le doit laver."	emile
+sp	V09-2	2	emile		49	9	1	1691	"Vos enfans crient-là, nous n’aurons plus de mere."	artaban
+sp	V09-3	3	artaban		47	9	1	1692	"Qui veüille à ses enfans choisir un autre Pere."	helene-mere
+stage	stage80	80			13	2			"Helene entre."
+stage	stage81	81			5	1			"mere."
+sp	V09-4	4	helene-mere		282	46	6	1693	"C’est contre mon desir que je demande un don,
+Mais la Foy* nous aprend qu’il faut faire pardon ;
+Fauste pour elle mesme est vrayment punissable,
+Trois innocens pourtant la rendent excusable ;
+Ils sont foibles encor, ne la leur ostez pas,
+Ou vous les tuez tous pour venger un trépas."	constantin
+sp	V09-5	5	constantin		187	33	4	1699	"Pardonner ! si mon fils avec tant d’innocence
+Plus que les scelerats éprouva ma vengeance !
+Vous ne l’aimez donc plus, ou ce n’est qu’à demy,
+Si vous pleurez sa mort plaignant son ennemy."	helene-mere
+stage	stage82	82			5	1			"mere."
+sp	V09-6	6	helene-mere		53	13	1	1703	"Le sang m’enseigne l’un, et le Ciel m’aprend l’autre."	constantin
+sp	V09-7	7	constantin		51	9	1	1704	"Mon sentiment pourtant n’est pas conforme au vôtre."	helene-mere
+stage	stage83	83			5	1			"mere."
+sp	V09-8	8	helene-mere		92	16	2	1705	"Mais la mettant à mort vous estes pour mourir,
+Et perdant tout son sang Constantin va perir."	constantin
+sp	V09-9	9	constantin		104	22	2	1707	"C’est un sang corrompu que j’épanche à cette heure,
+J’ay bien perdu devant* le bon sans que j’en meure ?"	helene-mere
+stage	stage84	84			8	2			"à costé."
+sp	V09-10	10	helene-mere		92	19	2	1709	"Dedans la probité son mal ne me plaist pas,
+Mais j’ay bien de la peine à pleurer son trépas."	constantin
+sp	V09-11	11	constantin		92	16	2	1711	"Qui peut sans m’offencer defendre une Megere* ?
+Qui de pere m’a fait un Tyran* sanguinaire ?"	artaban
+stage	stage85	85			14	2			"Artaban entre."
+sp	V09-12	12	artaban		23	5	1	1713	"On vient de l’étouffer."	constantin
+sp	V09-13	13	constantin		354	63	8	1714	"Quel excés de malheur ?
+Où je me fais du mal pour calmer ma douleur ;
+Je peris par moitié sans pourtant rendre l’ame,
+Je vis ayant veu morts et mon fils et ma femme,
+Je suis au moins content qu’apres un tel effet,
+Si je suis affligé* mon fils soit satisfait ?
+Et que si l’innocent est mort par ma puissance,
+Le forfait* bien puny vange ainsi l’innocence."	procle
+stage	stage86	86			13	2			"Procle entre."
+sp	V09-14	14	procle		30	7	1	1721	"On a porté le corps de Crispe."	constantin
+sp	V09-15	15	constantin		153	27	4	1722	"Le devoir
+Aussi bien que l’amour nous oblige à le voir,
+Estant mort méprisé qu’il vive dans la gloire,
+Et que dans sa défaite il trouve sa victoire.
+FIN."	procle

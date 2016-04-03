@@ -50,10 +50,10 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:value-of select="$tab"/>
       <xsl:text>target</xsl:text>
       <xsl:value-of select="$lf"/>
-      <xsl:apply-templates select="/*/tei:text/tei:body/*"/>
+      <xsl:apply-templates select="/*/tei:text/tei:body/*[.//tei:sp]"/>
     </root>
   </xsl:template>
-  <!-- Acte -->
+  <!-- Acte, some <div> may not have <sp> (intermede, etc) -->
   <xsl:template match="tei:body/tei:div1 | tei:body/tei:div">
     <xsl:variable name="code">
       <xsl:choose>
@@ -413,7 +413,7 @@ Ramasser des informations chiffrées d’une pièce
   </xsl:template>
   <!-- To Count chars -->
   <xsl:template match="tei:note|tei:stage|tei:speaker|tei:listPerson" mode="txt"/>
-  <xsl:template match="tei:quote" mode="txt">
+  <xsl:template match="tei:quote | tei:lg" mode="txt">
     <xsl:choose>
       <xsl:when test="tei:p|tei:lg|tei:l">
         <xsl:apply-templates select="*" mode="txt"/>

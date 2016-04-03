@@ -7,9 +7,9 @@ include('../Teinte/Doc.php'); // dépendance déclarée
 
 if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
 else if (php_sapi_name() == "cli") {
-  Dramagraph_Base::cli();
+  Dramagraph_Load::cli();
 }
-class Dramagraph_Base {
+class Dramagraph_Load {
   /** Lien à une base SQLite, unique */
   public $pdo;
   /** fichier de la base sqlite */
@@ -46,128 +46,6 @@ class Dramagraph_Base {
     // table temporaire en mémoire
     $this->pdo->exec("PRAGMA temp_store = 2;");
   }
-  /**
-   * Ligne bibliographique pour une pièce
-   */
-  public function bibl($play) {
-    if (is_string($play)) {
-      $playcode = $this->pdo->quote($playcode);
-      $play = $this->pdo->query("SELECT * FROM play WHERE code = $playcode")->fetch();
-    }
-    $bibl = $play['author'].', '.$play['title'];
-    $meta = array();
-    if ($play['created']) $meta[] = $play['created'];
-    if ($play['issued']) $meta[] = $play['issued'];
-    if ($play['genre'] == 'tragedy') $meta[] = 'tragédie';
-    else if ($play['genre'] == 'comedy') $meta[] = 'comédie';
-    if ($play['acts']) $meta[] = $play['acts'].(($play['acts']>2)?" actes":" acte");
-    $meta[] = (($play['verse'])?"vers":"prose");
-    if (count($meta)) $bibl .= " (".implode(", ", $meta).")";
-    return $bibl;
-  }
-
-
-  /**
-   * Table bibliographique des pièces en base
-   */
-  public function bibliotable( $cols = null, $linkf = "%s" )
-  {
-    if ( !$cols && !is_array($cols) ) {
-      $cols = array(
-        'author',
-        'created',
-        'issued',
-        'title',
-        'c',
-        'sp',
-        'spavg',
-        'role',
-        'roleavg',
-        'publisher'
-      );
-    }
-    echo '      <table class="sortable">'."\n";
-    echo '        <tr>'."\n";
-    foreach ($cols as $key) {
-      if ( 'author' == $key)
-        echo '          <th>Auteur</th>'."\n";
-      else if ( 'created' == $key)
-        echo '          <th title="Date de création">Créé</th>'."\n";
-      else if ( 'issued' == $key)
-        echo '          <th title="Date de publication">Publié</th>'."\n";
-      else if ( 'title' == $key)
-        echo '          <th>Titre</th>'."\n";
-      else if ( 'c' == $key)
-        echo '          <th title="Quantité de texte prononcé en lignes (60 signes).">Paroles</th>'."\n";
-      else if ( 'sp' == $key)
-        echo '          <th title="Nombre de répliques.">Répliques</th>'."\n";
-      else if ( 'spavg' == $key)
-        echo '          <th title="Taille moyenne d’une réplique, en lignes (60 signes).">Rép. moy.</th>'."\n";
-      else if ( 'role' == $key)
-        echo '          <th title="Nombre de personnages déclarés dans la distribution.">Pers.</th>'."\n";
-      else if ( 'roleavg' == $key)
-        echo '          <th title="Nombre moyen de personnages sur scène.">Prés. moy.</th>'."\n";
-      else if ( 'publisher' == $key)
-        echo '          <th>Éditeur</th>'."\n";
-    }
-    echo '        </tr>'."\n";
-    foreach ($this->pdo->query("SELECT * FROM play ORDER BY author, issued") as $row) {
-      echo '        <tr>'."\n";
-      foreach ($cols as $key) {
-        if ( 'author' == $key)
-          echo '          <td>'.$row['author'].'</td>'."\n";
-        else if ( 'created' == $key)
-          echo '          <td>'.$row['created'].'</td>'."\n";
-        else if ( 'issued' == $key)
-          echo '          <td>'.$row['issued'].'</td>'."\n";
-        else if ( 'title' == $key) {
-          $href = sprintf( $linkf, $row['code'] );
-          echo '          <td>'.'<a href="'.$href.'">'.$row['title']."</a></td>\n";
-        }
-        else if ( 'c' == $key)
-          echo '          <td align="right">'.number_format($row['c']/60, 0, ',', ' ').' l.</td>';
-        else if ( 'sp' == $key)
-          echo '          <td align="right">'.$row['sp'].'</td>';
-        else if ( 'spavg' == $key)
-          echo '          <td align="right">'.number_format($row['c']/$row['sp']/60, 2, ',', ' ').' l.</td>';
-        else if ( 'role' == $key)
-          echo '          <td align="right">'.$row['roles'].'</td>';
-        else if ( 'roleavg' == $key)
-          echo '          <td align="right">'.number_format($row['presence']/$row['c'], 1, ',', ' ').' pers.</td>';
-        else if ( 'publisher' == $key) {
-          if ($row['identifier']) echo '          <td><a href="'.$row['identifier'].'">'.$row['publisher'].'</a></td>'."\n";
-          else echo '          <td>'.$row['publisher'].'</td>'."\n";
-        }
-      }
-      echo '        </tr>'."\n";
-    }
-    echo '</table>'."\n";
-  }
-
-   /**
-    * Liste de pièce comme un <select>
-    */
-   public function biblioselect( $playcode=null, $id="dramagraph" )
-   {
-     $html = array();
-     $html[] = '       <select name="play" onchange="this.form.submit()">';
-     $html[] = '         <option> </option>';
-     foreach ($this->pdo->query("SELECT * FROM play ORDER BY author, created") as $row) {
-       if ($row['code'] == $playcode) $selected=' selected="selected"';
-       else $selected = "";
-       if ($row['created'] && $row['issued']) $date = " (".$row['created'].", ".$row['issued'].") ";
-       else if ($row['created']) $date = " (".$row['created'].") ";
-       else if ($row['issued']) $date = " (".$row['issued'].") ";
-       else $date = ' ; ';
-       $title = $row['title'];
-       if ($pos = strpos($title, ' ou ') ) $title = trim( substr( $title, 0, $pos) );
-       else if ($pos = strpos($title, ',') ) $title = trim( substr( $title, 0, $pos) );
-       else if ($pos = strpos($title, '.') ) $title = trim( substr( $title, 0, $pos) );
-       $html[] = '         <option value="'.$row['code'].'"'.$selected.'>'.$row['author'].$date.$title."</option>";
-     }
-     $html[] = '       </select>';
-     return implode("\n", $html);
-   }
 
   /**
    * Charger un XML en base
@@ -177,8 +55,6 @@ class Dramagraph_Base {
     if (is_string($p)) {
       $p = array( 'source'=>$p );
     }
-    if ( !isset( $p['publisher'] ) ) $p['publisher'] = null;
-    if ( !isset( $p['identifier'] ) ) $p['identifier'] = null;
 
     if (STDERR) fwrite(STDERR, $p['source'] );
     $doc = new Dramagraph_Doc( $p['source'] );
@@ -186,6 +62,10 @@ class Dramagraph_Base {
     // default is naked, do better for bibdramatique site
     $doc->naked();
     $play = $doc->meta();
+    // the value provided by caller wil override the one extracted from TEI source
+    if ( !isset( $p['publisher'] ) ) $p['publisher'] = $play['publisher'];
+    if ( !isset( $p['identifier'] ) ) $p['identifier'] = $play['identifier'];
+
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
     INSERT INTO play (code, publisher, identifier,  author, title, date, created, issued, acts, verse, genre)
@@ -314,7 +194,7 @@ class Dramagraph_Base {
           $conf = array_flip(explode(' ', $data['label']));
           // test if unknow role, if known add it as a presence
           foreach ($conf as $k=>$v) {
-            // an entry
+            // a stage entry
             if (!isset($oldconf[$k])) {
               if (!isset($cast[$k]['entries']) || !$cast[$k]['entries']) $cast[$k]['entries'] = 1;
               else $cast[$k]['entries']++;
@@ -506,7 +386,7 @@ class Dramagraph_Base {
   }
 
   /**
-   * Statistiques SQL précalculées
+   * Statistiques SQL précalculées pour une pièce
    */
   function _sqlstats($playid) {
     $this->pdo->beginTransaction();
@@ -530,6 +410,8 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE scene SET l = (SELECT SUM(l) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET confs = (SELECT COUNT(DISTINCT configuration) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
 
+    $this->pdo->exec("UPDATE presence SET c = (SELECT SUM(c) FROM sp WHERE sp.configuration = presence.configuration AND sp.role = presence.role) WHERE play = $playid;");
+
     $this->pdo->exec("UPDATE configuration SET sp = (SELECT COUNT(*) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE configuration SET c = (SELECT SUM(c) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE configuration SET w = (SELECT SUM(w) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
@@ -545,34 +427,37 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET presence = (SELECT SUM(c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id) WHERE play = $playid ");
+    $this->pdo->exec("UPDATE role SET presence = (SELECT SUM(configuration.c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id) WHERE play = $playid ");
     // vu, des faux rôles
-    $this->pdo->exec("DELETE FROM role WHERE play = $playid AND presence IS NULL");
-    $this->pdo->exec("UPDATE play SET presence = (SELECT SUM(roles * c) FROM configuration WHERE play = $playid) WHERE id = $playid;");
+    // $this->pdo->exec("DELETE FROM role WHERE play = $playid AND presence IS NULL");
+    $this->pdo->exec("UPDATE play SET proles = (SELECT SUM(c * roles) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->commit();
-    // if play.c is needed now, do it after commit
+    // stats needing a commit
+    $this->pdo->exec("UPDATE configuration SET speakers = (SELECT COUNT(*) FROM presence WHERE presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE play SET pspeakers = (SELECT SUM(c * speakers) FROM configuration WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE role SET pspeakers = (SELECT SUM(configuration.c * configuration.speakers) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET proles = (SELECT SUM(configuration.c * configuration.roles) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id ) WHERE play = $playid;");
   }
   /**
    * Insérer des contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
    */
-  function _insobj($dom, $playid, $playcode) {
+  private function _insobj($dom, $playid, $playcode) {
     $insert = $this->pdo->prepare("
     INSERT INTO object (play, playcode, type, code, cont)
                 VALUES (?,    ?,        ?,    ?,    ?)
     ");
+
     $this->pdo->beginTransaction();
-    $charline = new Dramagraph_Charline($this->sqlitefile);
-    $cont = $charline->pannel(array('playcode'=>$playcode));
+    // global objects
+
+    // navigations
+    $cont = Dramagraph_Charline::pannel($this->pdo, array('playcode'=>$playcode));
     $insert->execute(array($playid, $playcode, 'charline', null, $cont));
-    unset($charline);
-    $rolenet = new Dramagraph_Rolenet($this->sqlitefile);
-    $cont = $rolenet->sigma($playcode);
-    $insert->execute(array($playid, $playcode, 'sigma', null, $cont));
-    $cont = $rolenet->roletable($playcode);
+    $cont = Dramagraph_Rolenet::graph($this->pdo, $playcode);
+    $insert->execute(array($playid, $playcode, 'graph', null, $cont));
+    $cont = Dramagraph_Rolenet::roletable($this->pdo, $playcode);
     $insert->execute(array($playid, $playcode, 'roletable', null, $cont));
-    $cont = $rolenet->canvas("graph");
-    $insert->execute(array($playid, $playcode, 'canvas', null, $cont));
-    // insérer des transformations du fichier
+    // text
     $teinte = new Teinte_Doc($dom);
     $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));
     $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc('nav') ));
@@ -581,6 +466,7 @@ class Dramagraph_Base {
 
     $this->pdo->commit();
   }
+
 
   /**
    * Command line API
@@ -595,7 +481,7 @@ class Dramagraph_Base {
     array_shift($_SERVER['argv']); // shift first arg, the script filepath
     if (!count($_SERVER['argv'])) exit($usage);
     $sqlite = array_shift($_SERVER['argv']);
-    $base = new Dramagraph_Base($sqlite);
+    $base = new Dramagraph_Load($sqlite);
     /*
     if (!count($_SERVER['argv'])) exit('
     action  ? (valid|insert|gephi)

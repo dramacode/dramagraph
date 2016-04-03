@@ -3,8 +3,6 @@
  * Visualisation relatives au réseaux de parole
  */
 class Dramagraph_Rolenet {
-  /** Lien à une base SQLite, unique */
-  public $pdo;
   /** Couleurs pour le graphe, la clé est une classe de nœud, les valeurs son 1: nœud, 2: lien */
   public static $colors = array(
     1 => array("#FF4C4C", "rgba(255, 0, 0, 0.5)"),
@@ -24,33 +22,26 @@ class Dramagraph_Rolenet {
     "male inferior" => array("#C0C0FF", "rgba(96, 96, 192, 0.3)"),
     "male exterior" => array("#A0A0A0", "rgba(96, 96, 192, 0.3)"),
   );
-  /**
-   * Se lier à la base
-   */
-  public function __construct($sqlitefile)
-  {
-    // ? pouvois passer un pdo ?
-    $this->pdo = new PDO('sqlite:'.$sqlitefile);
-    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-  }
 
   /**
    *
    */
-  public function graph( $playcode, $dramahref )
+  public static function graph( $pdo, $playcode )
   {
-    echo $this->canvas( $playcode );
-    echo'<script> var data =';
-    echo $this->sigma( $playcode );
-    // http://dramacode.github.io/Dramagraph/
-    echo ' var graph = new Rolenet("'.$playcode.'", data, "'.$dramahref.'sigma/worker.js"); //';
-    echo "</script>\n";
+    $html = array();
+    $id = 'graph_'.$playcode;
+    $html[] = self::canvas( $id );
+    $html[] = '<script> (function () { var data =';
+    $html[] = self::sigma( $pdo, $playcode );
+    $html[] = ' var graph = new Rolenet("'.$id.'", data ); //';
+    $html[] = " })(); </script>\n";
+    return implode("\n", $html);
   }
 
   /**
    * Html for canvas
    */
-  public function canvas($id='graph')
+  public static function canvas($id='graph')
   {
     $html = '
     <div id="'.$id.'" class="graph" oncontextmenu="return false">
@@ -73,9 +64,10 @@ class Dramagraph_Rolenet {
   /**
    * Json compatible avec la librairie sigma.js
    */
-  public function sigma($playcode) {
-    $nodes = $this->nodes($playcode, 'act');
-    $edges = $this->edges($playcode, 'act');
+  public static function sigma( $pdo, $playcode )
+  {
+    $nodes = self::nodes( $pdo, $playcode, 'act' );
+    $edges = self::edges( $pdo, $playcode, 'act' );
     $html = array();
     $html[] = "{ ";
     $html[] = "  edges: [";
@@ -138,8 +130,9 @@ class Dramagraph_Rolenet {
    * Produire fichier de nœuds et de relations
    * TODO, à vérifier
    */
-  public function gephi($filename) {
-    $data = $this->nodes($filename);
+  public static function gephi( $pdo, $filename )
+  {
+    $data = self::nodes( $pdo, $filename );
     $f = $filename.'-nodes.csv';
     $w = fopen($f, 'w');
     for ($i=0; $i<count($data); $i++) {
@@ -147,7 +140,7 @@ class Dramagraph_Rolenet {
     }
     fclose($w);
     echo $f.'  ';
-    $data = $this->edges($filename);
+    $data = self::edges( $pdo, $filename );
     $f = $filename.'-edges.csv';
     $w = fopen($f, 'w');
     for ($i=0; $i<count($data); $i++) {
@@ -159,7 +152,7 @@ class Dramagraph_Rolenet {
   /**
    * Table des relations
    */
-  public function edgetable ($playcode)
+  public function edgetable ( $pdo, $playcode )
   {
     $html = array();
     $html[] = '
@@ -174,7 +167,7 @@ class Dramagraph_Rolenet {
     <th>Rép. moy.</th>
   </tr>
   ';
-    $edges = $this->edges($playcode);
+    $edges = self::edges( $pdo, $playcode );
     foreach ($edges as $key => $edge) {
       $html[] = "  <tr>";
       $html[] = '    <td>'.$edge['no']."</td>";
@@ -193,15 +186,16 @@ class Dramagraph_Rolenet {
   /**
    * Table des rôles
    */
-  public function roletable ($playcode)
+  public static function roletable ($pdo, $playcode)
   {
-    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
+    $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     $html = array();
     $html[] = '
 <table class="sortable">
   <tr>
     <th title="Nom du personnage dans l’ordre de la distribution.">Personnage</th>
     <th title="Nombre de rôles interagissant avec le personnage.">Interl.</th>
+    <th title="Nombre moyen de personnages parlants pendant que le personnage est présent.">Pres. moy.</th>
     <th title="Part du texte de la pièce (en signes) où le personnage est présent.">Présence</th>
     <th title="Part du texte de la pièce, prononcée par le personnage (en signes).">Paroles</th>
     <th title="Part du texte que le personnage prononce, durant son temps de présence (en signes).">Par. % prés.</th>
@@ -211,23 +205,27 @@ class Dramagraph_Rolenet {
   ';
     $html[] = '  <tr>';
     $html[] = '    <td data-sort="0">[TOUS]</td>';
-    $html[] = '    <td align="right">'.number_format($play['presence']/$play['c'], 1, ',', ' ').'</td>';
+    $html[] = '    <td align="right" title="Nombre total de personnages">'.$play['roles'].'</td>';
+    $html[] = '    <td align="right">'.number_format($play['pspeakers']/$play['c'], 1, ',', ' ').'</td>';
     $html[] = '    <td align="right">100 %</td>';
     // $html[] = '    <td align="right">'.number_format($play['entries']/$play['roles'], 1, ',', ' ').'</td>';
     $html[] = '    <td align="right">'.number_format($play['c']/60, 0, ',', ' ').' l.</td>';
-    $html[] = '    <td align="right">'.ceil(100 * $play['c']/$play['presence'])." %</td>";
+    $html[] = '    <td align="right">'.ceil(100 * $play['c']/$play['pspeakers'])." %</td>";
     $html[] = '    <td align="right">'.$play['sp'].'</td>';
     $html[] = '    <td align="right">'.number_format($play['c']/($play['sp']*60), 2, ',', ' ').' l.</td>';
     $html[] = '  </tr>';
     $i = 1;
-    foreach ($this->pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY ord") as $role) {
+    foreach ($pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY ord") as $role) {
       $html[] = "  <tr>";
-      $html[] = '    <td data-sort="'.$i.'">'.$role['label']."</td>";
+      $html[] = '    <td data-sort="'.$i.'" title="'.$role['title'].'">'.$role['label']."</td>";
       $html[] = '    <td align="right">'.$role['targets']."</td>";
+      if ($role['presence']) $html[] = '    <td align="right">'.number_format($role['pspeakers']/$role['presence'], 1, ',', ' ').'</td>';
+      else $html[] = '    <td align="right">0</td>';
       $html[] = '    <td align="right">'.ceil(100 * $role['presence']/$play['c'])." %</td>";
       // $html[] = '    <td align="right">'.$role['entries'].'</td>';
       $html[] = '    <td align="right">'.ceil(100 * $role['c']/$play['c'])." %</td>";
-      $html[] = '    <td align="right">'.ceil( 100 * $role['c']/$role['presence'])." %</td>";
+      if ($role['presence']) $html[] = '    <td align="right">'.ceil( 100 * $role['c']/$role['presence'])." %</td>";
+      else $html[] = '    <td align="right">0</td>';
       $html[] = '    <td align="right">'.$role['sp']."</td>";
       if ($role['sp']) $html[] = '    <td align="right">'.number_format($role['c']/($role['sp']*60), 2, ',', ' ')." l.</td>";
       else $html[] = '<td align="right">0</td>';
@@ -243,14 +241,14 @@ class Dramagraph_Rolenet {
   /**
    * Liste de nœuds, pour le graphe, on filtre selon le type d'acte
    */
-  public function nodes($playcode, $acttype=null)
+  public static function nodes($pdo, $playcode, $acttype=null)
   {
-    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
+    $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     $data = array();
     $rank = 1;
 
-    $qact = $this->pdo->prepare("SELECT act.* FROM presence, configuration, act WHERE act.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.act = act.id ");
-    foreach ($this->pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY role.c DESC") as $role) {
+    $qact = $pdo->prepare("SELECT act.* FROM presence, configuration, act WHERE act.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.act = act.id ");
+    foreach ($pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY role.c DESC") as $role) {
       // role invisible dans les configurations
       if (!$role['sources']) continue;
       if ($acttype) {
@@ -275,11 +273,12 @@ class Dramagraph_Rolenet {
   /**
    * Relations paroles entre les rôles
    */
-  public function edges($playcode, $acttype = null) {
-    $play = $this->pdo->query("SELECT * FROM play where code = ".$this->pdo->quote($playcode))->fetch();
+  public static function edges( $pdo, $playcode, $acttype = null )
+  {
+    $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     // load a dic of rowid=>code for roles
     $cast = array();
-    foreach  ($this->pdo->query("SELECT id, code, label, c FROM role WHERE play = ".$play['id'], PDO::FETCH_ASSOC) as $row) {
+    foreach  ($pdo->query("SELECT id, code, label, c FROM role WHERE play = ".$play['id'], PDO::FETCH_ASSOC) as $row) {
       $cast[$row['id']] = $row;
     }
     $sql = "SELECT
@@ -294,7 +293,7 @@ class Dramagraph_Rolenet {
     GROUP BY edge.source, edge.target
     ORDER BY sort DESC
     ";
-    $q = $this->pdo->prepare($sql);
+    $q = $pdo->prepare($sql);
 
     $q->execute(array($play['id']));
     $data = array();

@@ -4,9 +4,9 @@
  */
 class Dramagraph_Doc {
   /** Document XML */
-  private $dom;
+  private $_dom;
   /** Processeur xpath */
-  private $xpath;
+  private $_xpath;
   /** Chemin original du fichier */
   public $file;
   /** Précharger des transformations courantes */
@@ -16,13 +16,13 @@ class Dramagraph_Doc {
    */
   public function __construct($file, $cont=null)
   {
-    $this->dom = new DOMDocument();
-    $this->dom->preserveWhiteSpace = false;
-    $this->dom->formatOutput=true;
-    $this->dom->substituteEntities=true;
+    $this->_dom = new DOMDocument();
+    $this->_dom->preserveWhiteSpace = false;
+    $this->_dom->formatOutput=true;
+    $this->_dom->substituteEntities=true;
     $options = LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOWARNING;
-    if ($cont) $this->dom->loadXML($cont, $options);
-    else $this->dom->load($file, $options);
+    if ($cont) $this->_dom->loadXML($cont, $options);
+    else $this->_dom->load($file, $options);
     $this->file = $file;
   }
   /**
@@ -30,10 +30,10 @@ class Dramagraph_Doc {
    */
    public function xpath()
    {
-     if ($this->xpath) return $this->xpath;
-     $this->xpath = new DOMXpath($this->dom);
-     $this->xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
-     return $this->xpath;
+     if ($this->_xpath) return $this->_xpath;
+     $this->_xpath = new DOMXpath($this->_dom);
+     $this->_xpath->registerNamespace('tei', "http://www.tei-c.org/ns/1.0");
+     return $this->_xpath;
    }
   /**
    * Wash notes and paratext
@@ -46,9 +46,9 @@ class Dramagraph_Doc {
        self::$trans['naked'] = new XSLTProcessor();
        self::$trans['naked']->importStyleSheet($xsl);
      }
-     $this->dom = self::$trans['naked']->transformToDoc($this->dom);
-     $this->xpath = null;
-     return $this->dom;
+     $this->_dom = self::$trans['naked']->transformToDoc($this->_dom);
+     $this->_xpath = null;
+     return $this->_dom;
    }
 
   /**
@@ -56,7 +56,7 @@ class Dramagraph_Doc {
    */
   public function dom()
   {
-      return $this->dom;
+      return $this->_dom;
   }
   /**
    * Métadonnées de pièce
@@ -66,8 +66,8 @@ class Dramagraph_Doc {
     $this->xpath();
     $meta = array();
     $meta['code'] = pathinfo($this->file, PATHINFO_FILENAME);
-
-    $nl = $this->xpath->query("/*/tei:teiHeader//tei:author");
+    // author
+    $nl = $this->_xpath->query("/*/tei:teiHeader//tei:author");
     if (!$nl->length)
       $meta['author'] = null;
     else if ($nl->item(0)->hasAttribute("key"))
@@ -75,9 +75,16 @@ class Dramagraph_Doc {
     else
       $meta['author'] = $nl->item(0)->textContent;
     if (($pos = strpos($meta['author'], '('))) $meta['author'] = trim(substr($meta['author'], 0, $pos));
-
-    $nl = $this->xpath->query("/*/tei:teiHeader/tei:profileDesc/tei:creation/tei:date");
-    // loop on dates
+    // publisher
+    $nl = $this->_xpath->query("/*/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:publisher");
+    if ($nl->length) $meta['publisher'] = $nl->item(0)->textContent;
+    else $meta['publisher'] = null;
+    // identifier
+    $nl = $this->_xpath->query("/*/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno");
+    if ($nl->length) $meta['identifier'] = $nl->item(0)->textContent;
+    else $meta['identifier'] = null;
+    // dates
+    $nl = $this->_xpath->query("/*/tei:teiHeader/tei:profileDesc/tei:creation/tei:date");
     $meta['created'] = null;
     $meta['issued'] = null;
     $meta['date'] = null;
@@ -97,18 +104,18 @@ class Dramagraph_Doc {
 
 
 
-    $nl = $this->xpath->query("/*/tei:teiHeader//tei:title");
+    $nl = $this->_xpath->query("/*/tei:teiHeader//tei:title");
     if ($nl->length) $meta['title'] = $nl->item(0)->textContent;
     else $meta['title'] = null;
-    $nl = $this->xpath->query("/*/tei:teiHeader//tei:term[@type='genre']/@subtype");
+    $nl = $this->_xpath->query("/*/tei:teiHeader//tei:term[@type='genre']/@subtype");
     if ($nl->length) $meta['genre'] = $nl->item(0)->nodeValue;
     else $meta['genre'] = null;
 
-    $meta['acts'] = $this->xpath->evaluate("count(/*/tei:text/tei:body//tei:*[@type='act'])");
-    if (!$meta['acts']) $meta['acts'] = $this->xpath->evaluate("count(/*/tei:text/tei:body/*[tei:div|tei:div2])");
+    $meta['acts'] = $this->_xpath->evaluate("count(/*/tei:text/tei:body//tei:*[@type='act'])");
+    if (!$meta['acts']) $meta['acts'] = $this->_xpath->evaluate("count(/*/tei:text/tei:body/*[tei:div|tei:div2])");
     if (!$meta['acts']) $meta['acts'] = 1;
-    $l = $this->xpath->evaluate("count(//tei:sp/tei:l)");
-    $p = $this->xpath->evaluate("count(//tei:sp/tei:p)");
+    $l = $this->_xpath->evaluate("count(//tei:sp/tei:l)");
+    $p = $this->_xpath->evaluate("count(//tei:sp/tei:p)");
     if ($l > 2*$p) $meta['verse'] = true;
     else if ($p > 2*$l) $meta['verse'] = false;
     else $meta['verse'] = null;
@@ -120,7 +127,7 @@ class Dramagraph_Doc {
   function elValue( $el )
   {
     $text = array();
-    $nl = $this->xpath->query(".//text()[not(ancestor::tei:note)]", $el);
+    $nl = $this->_xpath->query(".//text()[not(ancestor::tei:note)]", $el);
     foreach ( $nl as $n ) {
       $text[] = $n->wholeText;
     }
@@ -141,7 +148,7 @@ class Dramagraph_Doc {
   function cast()
   {
     $this->xpath();
-    $nodes = $this->xpath->query("//tei:role[@xml:id]|//tei:person[@xml:id]");
+    $nodes = $this->_xpath->query("//tei:role[@xml:id]|//tei:person[@xml:id]");
     $cast = array();
     $i = 1;
     foreach ($nodes as $n) {
@@ -200,12 +207,12 @@ class Dramagraph_Doc {
   {
     $this->xpath();
     // TODO configurations
-    $nodes = $this->xpath->query("//tei:role/@xml:id|//tei:person[@xml:id]");
+    $nodes = $this->_xpath->query("//tei:role/@xml:id|//tei:person[@xml:id]");
     $castlist = array();
     foreach ($nodes as $n) {
       $castlist[$n->nodeValue] = true;
     }
-    $nodes = $this->xpath->query("//@who");
+    $nodes = $this->_xpath->query("//@who");
     foreach ($nodes as $n) {
       $who = $n->nodeValue;
       if (isset($castlist[$who])) continue;
@@ -224,7 +231,7 @@ class Dramagraph_Doc {
       self::$trans['drama2csv']->importStyleSheet($xsl);
     }
     // $trans->setParameter('', 'filename', $play['code']); // ?
-    return self::$trans['drama2csv']->transformToXML($this->dom);
+    return self::$trans['drama2csv']->transformToXML($this->_dom);
   }
 
 }

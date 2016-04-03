@@ -1,12 +1,9 @@
 <?php
 $playcode = @$_REQUEST['play'];
-$sqlite = "test.sqlite";
-include(dirname(__FILE__).'/Base.php');
-// TODO lourd
-$base = new Dramagraph_Base($sqlite);
-$charline = new Dramagraph_Charline($sqlite);
-$rolenet = new Dramagraph_Rolenet($sqlite);
-$play = $charline->pdo->query("SELECT * FROM play WHERE code = ".$charline->pdo->quote($playcode))->fetch();
+include(dirname(__FILE__).'/Biblio.php');
+include(dirname(__FILE__).'/Charline.php');
+include(dirname(__FILE__).'/Rolenet.php');
+
 
 
 ?><!DOCTYPE html>
@@ -22,17 +19,23 @@ $play = $charline->pdo->query("SELECT * FROM play WHERE code = ".$charline->pdo-
     <script src="Rolenet.js">//</script>
   </head>
   <body>
-<?php if ($play) {
+<?php
+$sqlite = "test.sqlite";
+$pdo = new PDO('sqlite:'.$sqlite);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+$play = $pdo->query("SELECT * FROM play WHERE code = ".$pdo->quote( $playcode ))->fetch();
 
-  echo $base->biblioselect( $playcode );
-  $hrefToDramagraph = '';
-  echo $rolenet->graph( $playcode, $hrefToDramagraph );
-  echo $rolenet->roletable( $playcode );
-} else {
-  echo $base->bibliotable(null, "?play=%s");
+if ($play) {
+  echo '<form>';
+  echo Dramagraph_Biblio::select( $pdo, $playcode );
+  echo '</form>';
+  echo Dramagraph_Rolenet::graph( $pdo, $playcode );
+  echo Dramagraph_Rolenet::roletable( $pdo, $playcode );
+}
+else {
+  echo Dramagraph_Biblio::table( $pdo, null, "?play=%s");
 }
  ?>
-
-    <script type="text/javascript" src="../Teinte/Sortable.js">//</script>
+    <script type="text/javascript" src="http://oeuvres.github.io/Teinte/Sortable.js">//</script>
   </body>
 </html>

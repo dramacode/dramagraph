@@ -1,5 +1,8 @@
+// get URI of this script
+var scripts = document.getElementsByTagName("script");
+var src = scripts[scripts.length-1].src;
 
-// sigma autoloader FAILED
+// sigma autoloader FAILED, synchronism problem, scipt tags in html file is easier than everything
 ;(function() {
   'use strict';
   if ("onhashchange" in window) {
@@ -262,13 +265,13 @@
 
 
 
-  window.Rolenet = function (canvas, graph, workerUrl) {
-
-    this.workerUrl = workerUrl;
+  window.Rolenet = function ( canvas, data ) {
+    this.src = src; // store the global
+    this.workerUrl = this.src.substr( 0, this.src.lastIndexOf("/")+1 )+"sigma/worker.js";
     this.canvas = document.getElementById(canvas);
-    this.odata = graph;
+    this.odata = data;
     this.sigma = new sigma({
-      graph: graph,
+      graph: data,
       renderer: {
         container: this.canvas,
         type: 'canvas'
