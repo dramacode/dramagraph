@@ -57,13 +57,16 @@ var src = scripts[scripts.length-1].src;
 
     var prefix = settings('prefix') || '';
 
-    if (settings('bw')) context.fillStyle = settings('defaultNodeColor');
+    if ( settings('bw') ) context.fillStyle = settings('defaultNodeColor');
     else context.fillStyle = node.color || settings('defaultNodeColor');
     context.beginPath();
+    // calculate a size relative to global canvas
+    var divsize = Math.max( Math.min(settings('height'), settings('width')), 200);
+    var size = node[prefix + 'size'] * (divsize/500);
     context.arc(
       node[prefix + 'x'],
       node[prefix + 'y'],
-      node[prefix + 'size'],
+      size,
       0,
       Math.PI * 2,
       true
@@ -135,8 +138,6 @@ var src = scripts[scripts.length-1].src;
         defaultEdgeColor = settings('defaultEdgeColor'),
         cp = {},
         size = Math.max(edge[prefix + 'size']),
-        tSize = target[prefix + 'size'],
-        sSize = target[prefix + 'size'],
         sX = source[prefix + 'x'],
         sY = source[prefix + 'y'],
         tX = target[prefix + 'x'],
@@ -149,7 +150,9 @@ var src = scripts[scripts.length-1].src;
         aY,
         vX,
         vY;
-
+    // calculate a size relative to global canvas
+    var divsize = Math.max( Math.min(settings('height'), settings('width')), 200);
+    size = size * (divsize/500);
     if (!color)
       switch (edgeColor) {
         case 'source':
@@ -170,7 +173,7 @@ var src = scripts[scripts.length-1].src;
       context.lineWidth = size / 2;
       context.beginPath();
       context.moveTo(sX, sY);
-      cp = sigma.utils.dramaSelf(sX, sY, tSize);
+      cp = sigma.utils.dramaSelf(sX, sY, size);
       context.bezierCurveTo(cp.x1, cp.y1, cp.x2, cp.y2, tX, tY);
       context.stroke();
     }
@@ -187,13 +190,13 @@ var src = scripts[scripts.length-1].src;
       var d2X = (tY - sY) * (2+size/2) / d;
       var d2Y = -(tX - sX) * (2+size/2) / d;
       // base of arrowhead
-      var bX = sX + (tX - sX) * (d - tSize - aSize) / d;
-      var bY = sY + (tY - sY) * (d - tSize - aSize) / d;
+      var bX = sX + (tX - sX) * (d - size - aSize) / d;
+      var bY = sY + (tY - sY) * (d - size - aSize) / d;
       // target point of arrow
-      var aX = sX + (tX - sX) * (d - tSize) / d;
-      var aY = sY + (tY - sY) * (d - tSize) / d;
-      var a2X = sX + (tX - sX) * (d - tSize + 2) / d;
-      var a2Y = sY + (tY - sY) * (d - tSize + 2) / d;
+      var aX = sX + (tX - sX) * (d - size) / d;
+      var aY = sY + (tY - sY) * (d - size) / d;
+      var a2X = sX + (tX - sX) * (d - size + 2) / d;
+      var a2Y = sY + (tY - sY) * (d - size + 2) / d;
       // diff for arrowhead base
       var dbX = (tY - sY) * (size*1.5) / d;
       var dbY = (tX - sX) * (size*1.5) / d;
@@ -291,6 +294,8 @@ var src = scripts[scripts.length-1].src;
         labelSize: "proportional",
         labelSizeRatio: 1,
         */
+        height: this.canvas.offsetHeight,
+        width: this.canvas.offsetWidth,
         // labelAlignment: 'center', // linkurous only and not compatible with drag node
         sideMargin: 1,
         maxNodeSize: 30,
@@ -335,26 +340,26 @@ var src = scripts[scripts.length-1].src;
     if (els.length) {
       els[0].net = this;
       els[0].onclick = function() {
-        var bw = this.net.sigma.settings('bw');
+        var bw = this.net.sigma.settings( 'bw' );
         if (!bw) {
           this.innerHTML = '🌈';
-          this.net.sigma.settings('bw', true);
+          this.net.sigma.settings( 'bw', true );
         }
         else {
           this.innerHTML = '◐';
-          this.net.sigma.settings('bw', false);
+          this.net.sigma.settings( 'bw', false );
         }
         this.net.sigma.refresh();
       };
     }
-    var els = this.canvas.getElementsByClassName('zoomin');
+    var els = this.canvas.getElementsByClassName( 'zoomin' );
     if (els.length) {
       els[0].net = this;
       els[0].onclick = function() {
         var c = this.net.sigma.camera; c.goTo({ratio: c.ratio / c.settings('zoomingRatio')});
       };
     }
-    var els = this.canvas.getElementsByClassName('zoomout');
+    var els = this.canvas.getElementsByClassName( 'zoomout' );
     if (els.length) {
       els[0].net = this;
       els[0].onclick = function() {
@@ -363,13 +368,13 @@ var src = scripts[scripts.length-1].src;
     }
 
 
-    var els = this.canvas.getElementsByClassName('mix');
+    var els = this.canvas.getElementsByClassName( 'mix' );
     if (els.length) {
       this.mixBut = els[0];
       this.mixBut.net = this;
       this.mixBut.onclick = this.mix;
     }
-    var els = this.canvas.getElementsByClassName('shot');
+    var els = this.canvas.getElementsByClassName( 'shot' );
     if (els.length) {
       els[0].net = this;
       els[0].onclick = function() {
@@ -389,7 +394,7 @@ var src = scripts[scripts.length-1].src;
     }
 
     // resizer
-    var els = this.canvas.getElementsByClassName('resize');
+    var els = this.canvas.getElementsByClassName( 'resize' );
     if (els.length) {
       els[0].net = this;
       els[0].onmousedown = function(e) {
@@ -399,27 +404,27 @@ var src = scripts[scripts.length-1].src;
         html.dragO = this.net.canvas;
         html.dragX = e.clientX;
         html.dragY = e.clientY;
-        html.dragWidth = parseInt(document.defaultView.getComputedStyle(html.dragO).width, 10);
-        html.dragHeight = parseInt(document.defaultView.getComputedStyle(html.dragO).height, 10);
-        html.addEventListener('mousemove', Rolenet.doDrag, false);
-        html.addEventListener('mouseup', Rolenet.stopDrag, false);
+        html.dragWidth = parseInt( document.defaultView.getComputedStyle( html.dragO ).width, 10 );
+        html.dragHeight = parseInt( document.defaultView.getComputedStyle( html.dragO ).height, 10 );
+        html.addEventListener( 'mousemove', Rolenet.doDrag, false );
+        html.addEventListener( 'mouseup', Rolenet.stopDrag, false );
       };
     }
 
 
-    this.sigma.bind('overNode', function(e) {
+    this.sigma.bind( 'overNode', function( e ) {
       // attention, n’écrire qu’une fois
-      if (!e.data.node._label && e.data.node.title) {
+      if ( !e.data.node._label && e.data.node.title ) {
         e.data.node._label = e.data.node.label;
         e.data.node.label = e.data.node.label + ', ' + e.data.node.title;
         e.target.render();
       }
     });
-    this.sigma.bind('rightClickNode', function(e) {
+    this.sigma.bind( 'rightClickNode', function( e ) {
       e.data.renderer.graph.dropNode(e.data.node.id);
       e.target.refresh();
     });
-    this.sigma.bind('outNode', function(e) {
+    this.sigma.bind( 'outNode', function( e ) {
       if (e.data.node._label) {
         e.data.node.label = e.data.node._label;
         e.data.node._label = null;
@@ -427,7 +432,7 @@ var src = scripts[scripts.length-1].src;
       }
     });
     // Initialize the dragNodes plugin:
-    sigma.plugins.dragNodes(this.sigma, this.sigma.renderers[0]);
+    sigma.plugins.dragNodes( this.sigma, this.sigma.renderers[0] );
     this.start();
   }
   Rolenet.prototype.start = function() {
@@ -452,7 +457,7 @@ var src = scripts[scripts.length-1].src;
     if (this.workerUrl) {
       pars.workerUrl = this.workerUrl;
     }
-    this.sigma.startForceAtlas2(pars);
+    this.sigma.startForceAtlas2( pars );
     var dramanet = this;
     setTimeout(function() { dramanet.stop();}, 3000)
   };
@@ -483,13 +488,15 @@ var src = scripts[scripts.length-1].src;
     return false;
   };
   // global static
-  Rolenet.doDrag = function(e) {
-    this.dragO.style.width = (this.dragWidth + e.clientX - this.dragX) + 'px';
-    this.dragO.style.height = (this.dragHeight + e.clientY - this.dragY) + 'px';
+  Rolenet.doDrag = function( e ) {
+    this.dragO.style.width = ( this.dragWidth + e.clientX - this.dragX ) + 'px';
+    this.dragO.style.height = ( this.dragHeight + e.clientY - this.dragY ) + 'px';
   };
-  Rolenet.stopDrag = function(e) {
-    this.removeEventListener('mousemove', Rolenet.doDrag, false);
-    this.removeEventListener('mouseup', Rolenet.stopDrag, false);
+  Rolenet.stopDrag = function( e ) {
+    this.removeEventListener( 'mousemove', Rolenet.doDrag, false );
+    this.removeEventListener( 'mouseup', Rolenet.stopDrag, false );
+    this.sigma.settings( 'height', this.dragO.offsetHeight );
+    this.sigma.settings( 'width', this.dragO.offsetWidth );
     this.sigma.refresh();
   };
 
