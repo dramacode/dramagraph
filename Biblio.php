@@ -84,7 +84,7 @@ class Dramagraph_Biblio {
         'publisher'
       );
     }
-    echo '      <table class="sortable">'."\n";
+    echo '      <table class="sortable" align="center">'."\n";
     echo '        <tr>'."\n";
     foreach ($cols as $key) {
       if ( 'n' == $key)

@@ -2,7 +2,7 @@
 // declare(encoding = 'utf-8');
 setlocale(LC_ALL, 'fr_FR.utf8');
 mb_internal_encoding("UTF-8");
-foreach (array('Charline.php', 'Rolenet.php', 'Doc.php') as $file) include(dirname(__FILE__).'/'.$file);
+foreach (array('Charline.php', 'Net.php', 'Table.php', 'Doc.php') as $file) include(dirname(__FILE__).'/'.$file);
 include('../Teinte/Doc.php'); // dépendance déclarée
 
 if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
@@ -454,12 +454,12 @@ class Dramagraph_Load {
     // navigations
     $cont = Dramagraph_Charline::pannel($this->pdo, array('playcode'=>$playcode));
     $insert->execute(array($playid, $playcode, 'charline', null, $cont));
-    $cont = Dramagraph_Rolenet::graph($this->pdo, $playcode);
+    $cont = Dramagraph_Net::graph($this->pdo, $playcode);
     $insert->execute(array($playid, $playcode, 'graph', null, $cont));
-    $cont = Dramagraph_Rolenet::roletable($this->pdo, $playcode);
-    $insert->execute(array($playid, $playcode, 'roletable', null, $cont));
-    $cont = Dramagraph_Rolenet::reltable($this->pdo, $playcode);
-    $insert->execute(array($playid, $playcode, 'reltable', null, $cont));
+    $cont = Dramagraph_Table::roles($this->pdo, $playcode);
+    $insert->execute(array($playid, $playcode, 'roles', null, $cont));
+    $cont = Dramagraph_Table::relations($this->pdo, $playcode);
+    $insert->execute(array($playid, $playcode, 'relations', null, $cont));
     // text
     $teinte = new Teinte_Doc($dom);
     $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));

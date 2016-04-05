@@ -5,12 +5,14 @@ var src = scripts[scripts.length-1].src;
 // sigma autoloader FAILED, synchronism problem, scipt tags in html file is easier than everything
 ;(function() {
   'use strict';
+  /*
   if ("onhashchange" in window) {
     window.addEventListener("hashchange", function() {
       window.scrollBy(0, -60);
     }, false);
 
   };
+  */
    /**
    * Return the coordinates of the two control points for a self loop (i.e.
    * where the start point is also the end point) computed as a cubic bezier
