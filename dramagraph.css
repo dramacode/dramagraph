@@ -1,4 +1,4 @@
-div.graph { height: 500px; position: relative; background: #F5F5F5; border: 1px solid #CCCCCC; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-family: sans-serif; }
+div.graph { height: 485px; position: relative; background: #F5F5F5; border: 1px solid #CCCCCC; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-family: sans-serif; }
 .dramarythm { font-family: sans-serif; font-size: 14px; border-collapse: collapse; margin-bottom: 10px;  }
 .dramarythm th.year { width: 5ex; padding-left: 1ex; }
 .dramarythm td.act, .dramarythm td.label { padding: 0 5px 0 4px; border-left: 1px solid #000000; }

@@ -395,6 +395,7 @@ class Dramagraph_Load {
     $this->pdo->exec("UPDATE play SET w = (SELECT SUM(w) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET c = (SELECT SUM(c) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET confs = (SELECT COUNT(*) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET roles = (SELECT COUNT(*) FROM role WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET entries = (SELECT SUM(entries) FROM role WHERE play = $playid) WHERE id = $playid;");
 
@@ -457,6 +458,8 @@ class Dramagraph_Load {
     $insert->execute(array($playid, $playcode, 'graph', null, $cont));
     $cont = Dramagraph_Rolenet::roletable($this->pdo, $playcode);
     $insert->execute(array($playid, $playcode, 'roletable', null, $cont));
+    $cont = Dramagraph_Rolenet::reltable($this->pdo, $playcode);
+    $insert->execute(array($playid, $playcode, 'reltable', null, $cont));
     // text
     $teinte = new Teinte_Doc($dom);
     $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));
@@ -471,7 +474,8 @@ class Dramagraph_Load {
   /**
    * Command line API
    */
-  static function cli() {
+  static function cli()
+  {
     $timeStart = microtime(true);
     $usage = '
     usage    : php -f '.basename(__FILE__).' base.sqlite *.xml

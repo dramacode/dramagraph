@@ -20,6 +20,7 @@ CREATE TABLE play (
   entries    INTEGER, -- ??? nombre total d’entrées, pour moyennes
   acts       INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
   scenes     INTEGER, -- nombre de scènes
+  confs      INTEGER, -- nombre de scènes
   verse      BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
   genre      TEXT,    -- comedy|tragedy
   c          INTEGER, -- <c> (char) taille en caractères

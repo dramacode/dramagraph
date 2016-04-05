@@ -2,11 +2,51 @@
 // declare(encoding = 'utf-8');
 setlocale(LC_ALL, 'fr_FR.utf8');
 mb_internal_encoding("UTF-8");
+
+if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
+else if (php_sapi_name() == "cli") { Dramagraph_Biblio::cli(); }
+
 class Dramagraph_Biblio {
+
+  /**
+   *
+   */
+  public static function csv( $pdo, $cols = null )
+  {
+    $csv = array();
+    if ( !$cols && !is_array($cols) ) {
+      $cols = array(
+        'author',
+        'date',
+        'genre',
+        'verse',
+        'spavg',
+        'roleavg',
+        'title',
+      );
+    }
+    $cell = array();
+    foreach ($cols as $key) {
+      $cell[] = $key;
+    }
+    $csv[] = implode( "\t", $cell );
+    foreach ($pdo->query("SELECT * FROM play ORDER BY author, date") as $row) {
+      if (!$row['c']) continue; // pièce boguée
+      $cell = array();
+      foreach ($cols as $key) {
+        if ( 'spavg' == $key ) $cell[] = $row['c']/$row['sp']/60;
+        else if ( 'roleavg' == $key ) $cell[] = $row['pspeakers']/$row['c'];
+        else $cell[] = $row[$key];
+      }
+      $csv[] = implode( "\t", $cell );
+    }
+    return implode ("\n", $csv);
+  }
   /**
    * Ligne bibliographique pour une pièce
    */
-  public static function bibl($pdo, $play) {
+  public static function bibl($pdo, $play)
+  {
     if (is_string($play)) {
       $playcode = $pdo->quote($playcode);
       $play = $pdo->query("SELECT * FROM play WHERE code = $playcode")->fetch();
@@ -134,5 +174,20 @@ class Dramagraph_Biblio {
      $html[] = '       </select>';
      return implode("\n", $html);
    }
+
+   /**
+    * Sortir des stats directemnt
+    */
+    static function cli()
+    {
+      $timeStart = microtime(true);
+      $usage = '
+      usage    : php -f '.basename(__FILE__).' base.sqlite '."\n\n";
+      array_shift($_SERVER['argv']); // shift first arg, the script filepath
+      if (!count($_SERVER['argv'])) exit($usage);
+      $pdo = new PDO('sqlite:'.$_SERVER['argv'][0]);
+      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+      echo self::csv($pdo);
+    }
 }
 ?>
