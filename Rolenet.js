@@ -54,15 +54,16 @@ var src = scripts[scripts.length-1].src;
    * @param  {configurable}             settings The settings function.
    */
   sigma.canvas.nodes.drama = function(node, context, settings) {
-
+    context.save();
+    // a fefault ratio % size of canvas
+    var scale = (settings('scale'))?settings('scale'):1;
     var prefix = settings('prefix') || '';
 
     if ( settings('bw') ) context.fillStyle = settings('defaultNodeColor');
     else context.fillStyle = node.color || settings('defaultNodeColor');
     context.beginPath();
     // calculate a size relative to global canvas
-    var divsize = Math.max( Math.min(settings('height'), settings('width')), 200);
-    var size = node[prefix + 'size'] * (divsize/500);
+    var size = node[prefix + 'size'] * scale ;
     context.arc(
       node[prefix + 'x'],
       node[prefix + 'y'],
@@ -74,9 +75,12 @@ var src = scripts[scripts.length-1].src;
 
     context.closePath();
     context.fill();
+    /*
     context.strokeStyle = "#000";
     context.lineWidth = 1;
     context.stroke();
+    */
+    context.restore();
   };
 
   sigma.utils.pkg('sigma.canvas.labels');
@@ -88,37 +92,148 @@ var src = scripts[scripts.length-1].src;
    * @param  {configurable}             settings The settings function.
    */
   sigma.canvas.labels.drama = function(node, context, settings) {
-    context.save();
-    var fontSize,
-        prefix = settings('prefix') || '',
-        size = node[prefix + 'size'];
-
-    if (size < settings('labelThreshold'))
-      return;
-
     if (!node.label || typeof node.label !== 'string')
       return;
-
-    fontSize = (settings('labelSize') === 'fixed') ?
+    var prefix = settings('prefix') || '';
+    // no labels for little nodes
+    if (node[prefix + 'size'] < settings('labelThreshold'))
+      return;
+    context.save();
+    var scale = (settings('scale'))?settings('scale'):1;
+    // node size relative to global size
+    var nodeSize = node[prefix + 'size'] * scale;
+    // fontSize relative to nodeSize
+    var fontSize = (settings('labelSize') === 'fixed') ?
       settings('defaultLabelSize') :
-      settings('labelSizeRatio') * size;
+      settings('defaultLabelSize') + settings('labelSizeRatio') * (nodeSize - settings('minNodeSize'));
+    // default font ?
+    context.font = settings('fontStyle')+' '+fontSize+'px '+settings('font');
 
-    context.font = fontSize + 'px ' + settings('font');
-
-    var x = Math.round(node[prefix + 'x'] + size + 3);
-    var y = Math.round(node[prefix + 'y'] + fontSize / 3);
     var width = Math.round(context.measureText(node.label).width);
-    var height = parseInt(context.font, 10);
-    // bg color
+    var height = parseInt(fontSize);
+    var x = Math.round(node[prefix + 'x'] - (width / 2) );
+    var y = Math.round(node[prefix + 'y'] + nodeSize);
+    // bg color ?
+    /*
     context.fillStyle = 'rgba(255, 255, 255, 0.6)';
     context.fillRect(x-2, y - fontSize + 3, width+4, height);
+    */
     // text color
-    context.fillStyle = (settings('labelColor') === 'node') ?
-      (node.color || settings('defaultNodeColor')) :
-      settings('defaultLabelColor');
+    if (settings('labelColor') === 'node')
+      context.fillStyle = (node.color || settings('defaultNodeColor'));
+    else
+      context.fillStyle = settings('defaultLabelColor');
     context.fillText( node.label, x, y);
+    if (settings('labelStrokeStyle')) {
+      context.strokeStyle = settings('labelStrokeStyle');
+      context.strokeText(node.label, x, y);
+    }
     context.restore();
   };
+
+  // Initialize packages:
+    sigma.utils.pkg('sigma.canvas.hovers');
+
+  /**
+   * This hover renderer will basically display the label with a background.
+   *
+   * @param  {object}                   node     The node object.
+   * @param  {CanvasRenderingContext2D} context  The canvas context.
+   * @param  {configurable}             settings The settings function.
+   */
+  sigma.canvas.hovers.def = function(node, context, settings) {
+    // nothing to display, go out
+    if (!node.label || typeof node.label !== 'string') return;
+    var scale = (settings('scale'))?settings('scale'):1;
+    context.save();
+        var x,
+        y,
+        w,
+        h,
+        e,
+        fontStyle = settings('hoverFontStyle') || settings('fontStyle'),
+        prefix = settings('prefix') || '',
+        nodeSize = node[prefix + 'size'] * scale,
+        fontSize = settings('defaultLabelSize'); // default font-size
+
+
+    context.beginPath();
+    context.fillStyle = settings('labelHoverBGColor') === 'node' ?
+      (node.color || settings('defaultNodeColor')) :
+      settings('defaultHoverLabelBGColor');
+
+    if (settings('labelHoverShadow')) {
+      context.shadowOffsetX = 0;
+      context.shadowOffsetY = 0;
+      context.shadowBlur = 8;
+      context.shadowColor = settings('labelHoverShadowColor');
+    }
+
+    var text = node.label;
+    if (node.title)
+      text += ', '+node.title;
+    context.font = fontSize + 'px sans-serif';
+    x = Math.round(node[prefix + 'x'] - fontSize / 2 - 2);
+    y = Math.round(node[prefix + 'y'] - fontSize / 2 - 2);
+    w = Math.round(
+      context.measureText(text).width + fontSize/2 + nodeSize + 7
+    );
+    h = Math.round(fontSize + 4);
+    e = Math.round(fontSize / 2 + 2);
+
+
+    context.moveTo(x, y + e);
+    context.arcTo(x, y, x + e, y, e);
+    context.lineTo(x + w, y);
+    context.lineTo(x + w, y + h);
+    context.lineTo(x + e, y + h);
+    context.arcTo(x, y + h, x, y + h - e, e);
+    context.lineTo(x, y + e);
+
+    context.closePath();
+    context.fill();
+
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+    context.shadowBlur = 0;
+
+
+    // Node border:
+    if (settings('borderSize') > 0) {
+      context.beginPath();
+      context.fillStyle = settings('nodeBorderColor') === 'node' ?
+        (node.color || settings('defaultNodeColor')) :
+        settings('defaultNodeBorderColor');
+      context.arc(
+        node[prefix + 'x'],
+        node[prefix + 'y'],
+        nodeSize + settings('borderSize'),
+        0,
+        Math.PI * 2,
+        true
+      );
+      context.closePath();
+      context.fill();
+    }
+
+    // Node:
+    var nodeRenderer = sigma.canvas.nodes[node.type] || sigma.canvas.nodes.def;
+    nodeRenderer(node, context, settings);
+    // Label background:
+
+    // Display the text:
+    context.fillStyle = (settings('labelHoverColor') === 'node') ?
+      (node.color || settings('defaultNodeColor')) :
+      settings('defaultLabelHoverColor');
+
+    context.fillText(
+      text,
+      Math.round(node[prefix + 'x'] + nodeSize + 3),
+      Math.round(node[prefix + 'y'] + fontSize / 3)
+    );
+    context.restore();
+  };
+
 
   sigma.utils.pkg('sigma.canvas.edges');
   /**
@@ -150,9 +265,9 @@ var src = scripts[scripts.length-1].src;
         aY,
         vX,
         vY;
+    var scale = (settings('scale'))?settings('scale'):1;
     // calculate a size relative to global canvas
-    var divsize = Math.max( Math.min(settings('height'), settings('width')), 200);
-    size = size * (divsize/500);
+    size = size * scale;
     if (!color)
       switch (edgeColor) {
         case 'source':
@@ -189,21 +304,21 @@ var src = scripts[scripts.length-1].src;
       var dY = -(tX - sX) * (size/2) / d;
       var d2X = (tY - sY) * (2+size/2) / d;
       var d2Y = -(tX - sX) * (2+size/2) / d;
-      // base of arrowhead
-      var bX = sX + (tX - sX) * (d - size - aSize) / d;
-      var bY = sY + (tY - sY) * (d - size - aSize) / d;
       // target point of arrow
-      var aX = sX + (tX - sX) * (d - size) / d;
-      var aY = sY + (tY - sY) * (d - size) / d;
-      var a2X = sX + (tX - sX) * (d - size + 2) / d;
-      var a2Y = sY + (tY - sY) * (d - size + 2) / d;
+      var sSize = source[prefix + 'size'] * scale ;
+      var tSize = target[prefix + 'size'] * scale ;
+      // base of arrowhead
+      var bX = sX + (tX - sX) * (d - tSize - aSize) / d;
+      var bY = sY + (tY - sY) * (d - tSize - aSize) / d;
+
+      var aX = sX + (tX - sX) * ( d - tSize ) / d ;
+      var aY = sY + (tY - sY) * ( d - tSize ) / d ;
+      var a2X = sX + (tX - sX) * ( d - tSize - 2 ) / d;
+      var a2Y = sY + (tY - sY) * ( d - tSize - 2 ) / d ;
       // diff for arrowhead base
       var dbX = (tY - sY) * (size*1.5) / d;
       var dbY = (tX - sX) * (size*1.5) / d;
 
-      // start line from outside the source node
-      oX = sX + (tX - sX) * (0.9*source[prefix + 'size'] / d),
-      oY =  sY + (tY - sY) * (0.9*source[prefix + 'size'] / d);
       /*
                   3
               1---2 \
@@ -239,6 +354,7 @@ var src = scripts[scripts.length-1].src;
       context.stroke();
       context.closePath();
 
+      /*
       context.beginPath();
       context.lineWidth = 1;
       context.strokeStyle = '#FFF';
@@ -247,6 +363,7 @@ var src = scripts[scripts.length-1].src;
       context.lineTo(bX - (d2X*2), bY - (d2Y*2)); // 5
       context.stroke();
       context.closePath();
+      */
       /*
       context.beginPath();
       context.lineWidth = 0.5;
@@ -274,7 +391,13 @@ var src = scripts[scripts.length-1].src;
     this.src = src; // store the global
     this.workerUrl = this.src.substr( 0, this.src.lastIndexOf("/")+1 )+"sigma/worker.js";
     this.canvas = document.getElementById(canvas);
+
+
     this.odata = data;
+    //
+    var height = this.canvas.offsetHeight;
+    var width = this.canvas.offsetWidth;
+    var scale = Math.max( Math.min(height, width), 200) / 500;
     this.sigma = new sigma({
       graph: data,
       renderer: {
@@ -286,22 +409,26 @@ var src = scripts[scripts.length-1].src;
         defaultNodeColor: "rgba(230, 230, 230, 0.7)",
         edgeColor: "default",
         drawLabels: true,
-        defaultLabelSize: 18,
+        defaultLabelSize: 14,
+        defaultLabelColor: "rgba(0, 0, 0, 0.7)",
+        labelStrokeStyle: "rgba(255, 255, 255, 0.7)",
         labelThreshold: 0,
-        labelSize:"fixed",
-        // font: 'arial',
+        labelSize:"proportional",
+        labelSizeRatio: 1.5,
+        font: ' "Franklin Gothic Demi", sans-serif', // after fontSize
+        fontStyle: ' bold ', // before fontSize
         /* marche mais trop grand avec les commentaires
         labelSize: "proportional",
-        labelSizeRatio: 1,
         */
-        height: this.canvas.offsetHeight,
-        width: this.canvas.offsetWidth,
+        height: height,
+        width: width,
+        scale : scale, // effect of global size on graph objects
         // labelAlignment: 'center', // linkurous only and not compatible with drag node
         sideMargin: 1,
         maxNodeSize: 30,
-        minNodeSize: 2,
+        minNodeSize: 5,
         minEdgeSize: 1,
-        maxEdgeSize: 30,
+        maxEdgeSize: 40,
         minArrowSize: 15,
         maxArrowSize: 20,
         borderSize: 2,
@@ -411,25 +538,9 @@ var src = scripts[scripts.length-1].src;
       };
     }
 
-
-    this.sigma.bind( 'overNode', function( e ) {
-      // attention, n’écrire qu’une fois
-      if ( !e.data.node._label && e.data.node.title ) {
-        e.data.node._label = e.data.node.label;
-        e.data.node.label = e.data.node.label + ', ' + e.data.node.title;
-        e.target.render();
-      }
-    });
     this.sigma.bind( 'rightClickNode', function( e ) {
       e.data.renderer.graph.dropNode(e.data.node.id);
       e.target.refresh();
-    });
-    this.sigma.bind( 'outNode', function( e ) {
-      if (e.data.node._label) {
-        e.data.node.label = e.data.node._label;
-        e.data.node._label = null;
-        e.target.render();
-      }
     });
     // Initialize the dragNodes plugin:
     sigma.plugins.dragNodes( this.sigma, this.sigma.renderers[0] );
@@ -493,10 +604,15 @@ var src = scripts[scripts.length-1].src;
     this.dragO.style.height = ( this.dragHeight + e.clientY - this.dragY ) + 'px';
   };
   Rolenet.stopDrag = function( e ) {
+    var height = this.dragO.offsetHeight;
+    var width = this.dragO.offsetWidth;
+    var scale = Math.max( Math.min(height, width), 200) / 500;
+
     this.removeEventListener( 'mousemove', Rolenet.doDrag, false );
     this.removeEventListener( 'mouseup', Rolenet.stopDrag, false );
-    this.sigma.settings( 'height', this.dragO.offsetHeight );
-    this.sigma.settings( 'width', this.dragO.offsetWidth );
+    this.sigma.settings( 'height', height );
+    this.sigma.settings( 'width', width );
+    this.sigma.settings( 'scale', scale );
     this.sigma.refresh();
   };
 

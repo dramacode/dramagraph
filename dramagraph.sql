@@ -16,7 +16,7 @@ CREATE TABLE play (
   roles      INTEGER, -- nombre de personnages en tout
   speakers   INTEGER, -- nombre de personnages parlants
   proles     INTEGER, -- presence totale de tous les personnage en nombre de signes
-  pspeakers  INTEGER, -- présence totale des personnages parlants
+  pspeakers  INTEGER, -- présence totale des personnages parlants (Σ configuration(c*speakers))
   entries    INTEGER, -- ??? nombre total d’entrées, pour moyennes
   acts       INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
   scenes     INTEGER, -- nombre de scènes

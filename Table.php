@@ -16,20 +16,22 @@ class Dramagraph_Table
       $cast[$row['id']] = $row;
     }
     $html = array();
-    $html[] = '
-<table class="sortable" align="center">
-  <caption>Table des relations</caption>
-  <tr>
-    <th title="Nombre de scènes avec les deux personnages en présence">Scènes</th>
-    <th title="Quantité de texte de la relation">Texte</th>
-    <th title="Part de la relation dans le texte">% texte</th>
-    <th title="Nom de personnage">Pers. 1</th>
-    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>
-    <th title="Part de ce personnage dans la relation">%</th>
-    <th title="Nom de personnage">Pers. 2</th>
-    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>
-    <th title="Part de ce personnage dans la relation">%</th>
-  </tr>';
+    $html[] = '<table class="sortable" align="center">';
+    $html[] = '  <caption>Table des relations</caption>';
+    $html[] = '  <tr>';
+    $html[] = '    <th title="Quantité de texte de la relation">Texte</th>';
+    $html[] = '    <th title="Part de la relation dans le texte">% texte</th>';
+    $html[] = '    <th title="Nombre de scènes avec les deux personnages en présence">Scènes</th>';
+    // $html[] = '    <th title="Nombre moyen de personnages parlants sur scène quand les deux sont ensemble">Occupation</th>';
+    $html[] = '    <th title="Nom de personnage">Pers. 1</th>';
+    $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
+    $html[] = '    <th title="Nombre de scènes">Scènes</th>';
+    $html[] = '    <th title="Nombre de répliques">Répliques</th>';
+    $html[] = '    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>';
+    $html[] = '    <th title="Nom de personnage">Pers. 2</th>';
+    $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
+    $html[] = '    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>';
+    $html[] = '  </tr>';
     // $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     $sql = "SELECT
         min (source, target) AS m1,
@@ -38,12 +40,15 @@ class Dramagraph_Table
         edge.target,
         count(sp) AS sp,
         sum(sp.c) AS c,
-        count(DISTINCT configuration) AS confs
+        count(DISTINCT configuration) AS confs,
+        (SELECT SUM(c * speakers) FROM configuration WHERE id IN (SELECT DISTINCT sp.configuration)) AS pspeakers
       FROM edge, sp
       WHERE edge.sp = sp.id AND edge.play = ".$play['id']."
       GROUP BY edge.source, edge.target
       ORDER BY m1, m2
     ";
+    // SELECT SUM( c * speakers ) FROM configuration WHERE id IN (SELECT DISTINCT configuration FROM presence WHERE presence.configuration )
+    "SELECT SUM( c * speakers ) FROM configuration, presence WHERE presence.configuration = configuration.id ";
     $m1 = null;
     $m1c = 0;
     $m1sp = 0;
@@ -67,34 +72,36 @@ class Dramagraph_Table
           $m2c = $row['c'];
           $m2sp = $row['sp'];
         }
-        $html[] = '<tr>
-  <td align="right">'.$confs.'</td>
-  <td align="right">'.ceil( $c/60 ).' l.</td>
-  <td align="right">'.ceil( 100 * $c / $play['c'] ).' %</td>
-  <td>'.$cast[$m1]['label'].'</td>
-  <td align="right">'.number_format( $m1c/$m1sp/60 , 1, ',', ' ').' l.</td>
-  <td align="right">'.ceil( 100 * $m1c / $c ).' %</td>
-  <td>'.$cast[$m2]['label'].'</td>
-  <td align="right">'.number_format( $m2c/$m2sp/60 , 1, ',', ' ').' l.</td>
-  <td align="right">'.ceil( 100 * $m2c / $c ).' %</td>
-</tr>';
+        $html[] = '  <tr>';
+        $html[] = '    <td align="right">'.ceil( $c/60 ).' l.</td>';
+        $html[] = '    <td align="right">'.ceil( 100 * $c / $play['c'] ).' %</td>';
+        $html[] = '    <td align="right">'.$confs.'</td>';
+        // $html[] = '    <td align="right">'.$row['pspeakers']/$c.'</td>';
+        $html[] = '    <td>'.$cast[$m1]['label'].'</td>';
+        $html[] = '    <td align="right">'.ceil( 100 * $m1c / $c ).' %</td>';
+        $html[] = '    <td align="right">'.number_format( $m1c/$m1sp/60 , 1, ',', ' ').' l.</td>';
+        $html[] = '    <td>'.$cast[$m2]['label'].'</td>';
+        $html[] = '    <td align="right">'.ceil( 100 * $m2c / $c ).' %</td>';
+        $html[] = '    <td align="right">'.number_format( $m2c/$m2sp/60 , 1, ',', ' ').' l.</td>';
+        $html[] = '  </tr>';
         $m1 = null;
         $m2 = null;
         $confs = 0;
       }
       // monologue
       if ( $row['m1'] == $row['m2'] ) {
-        $html[] = '<tr>
-  <td align="right">'.$row['confs'].'</td>
-  <td align="right">'.ceil( $row['c']/60 ).' l.</td>
-  <td align="right">'.ceil( 100 * $row['c'] / $play['c'] ).' %</td>
-  <td>'.$cast[$row['m1']]['label'].'</td>
-  <td align="right">'.number_format( $row['c']/60/$row['sp'] , 1, ',', ' ').' l.</td>
-  <td align="right">100 %</td>
-  <td>'.$cast[$row['m1']]['label'].'</td>
-  <td align="right">'.number_format( $row['c']/60/$row['sp'] , 1, ',', ' ').' l.</td>
-  <td align="right">100 %</td>
-</tr>';
+        $html[] = '  <tr>';
+        $html[] = '    <td align="right">'.ceil( $row['c']/60 ).' l.</td>';
+        $html[] = '    <td align="right">'.ceil( 100 * $row['c'] / $play['c'] ).' %</td>';
+        $html[] = '    <td align="right">'.$row['confs'].'</td>';
+        // $html[] = '    <td/>';
+        $html[] = '    <td>'.$cast[$row['m1']]['label'].'</td>';
+        $html[] = '    <td align="right">100 %</td>';
+        $html[] = '    <td align="right">'.number_format( $row['c']/60/$row['sp'] , 1, ',', ' ').' l.</td>';
+        $html[] = '    <td>'.$cast[$row['m1']]['label'].'</td>';
+        $html[] = '    <td align="right">100 %</td>';
+        $html[] = '    <td align="right">'.number_format( $row['c']/60/$row['sp'] , 1, ',', ' ').' l.</td>';
+        $html[] = '  </tr>';
         $c = 0;
         $m1 = null;
         $m2 = null;

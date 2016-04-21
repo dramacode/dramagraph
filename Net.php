@@ -1,4 +1,8 @@
 <?php
+if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
+else if (php_sapi_name() == "cli") {
+  Dramagraph_Net::cli();
+}
 /**
  * Visualisation relatives au réseaux de parole
  */
@@ -11,6 +15,8 @@ class Dramagraph_Net
     3 => array("#4C4CFF", "rgba(0, 0, 255, 0.5)"),
     4 => array("#4c4ca6", "rgba(0, 0, 128, 0.5)"),
     5 => array("#A6A6A6", "rgba(140, 140, 160, 0.6)"),
+    "superior" => array("#333333", "rgba(00, 00, 00, 0.3)"),
+    "inferior" => array("#A0A0A0", "rgba(96, 96, 96, 0.3)"),
     "female" => array("#FF4C4C", "rgba(255, 0, 0, 0.5)"),
     "female superior" => array("#FF0000", "rgba(255, 0, 0, 0.5)"),
     "female junior" => array("#FFb0D0", "rgba(255, 128, 192, 0.5)"),
@@ -20,7 +26,7 @@ class Dramagraph_Net
     "male junior" => array("#B0D0FF", "rgba(128, 192, 255, 0.5)"),
     "male veteran" => array("#333390", "rgba(0, 0, 128, 0.3)"),
     "male superior" => array("#0000FF", "rgba(0, 0, 255, 0.3)"),
-    "male inferior" => array("#C0C0FF", "rgba(96, 96, 192, 0.3)"),
+    "male inferior" => array("#C0C0EE", "rgba(96, 96, 192, 0.3)"),
     "male exterior" => array("#A0A0A0", "rgba(96, 96, 192, 0.3)"),
   );
 
@@ -131,21 +137,23 @@ class Dramagraph_Net
    * Produire fichier de nœuds et de relations
    * TODO, à vérifier
    */
-  public static function gephi( $pdo, $filename )
+  public static function gephi( $pdo, $playcode )
   {
-    $data = self::nodes( $pdo, $filename );
-    $f = $filename.'-nodes.csv';
+    $data = self::nodes( $pdo, $playcode );
+    $f = $playcode.'-nodes.csv';
     $w = fopen($f, 'w');
-    for ($i=0; $i<count($data); $i++) {
-      fwrite($w, implode("\t", $data[$i])."\n");
+    fwrite($w, "Id\tLabel\tWeight\n");
+    foreach ( $data as $key => $row ) {
+      fwrite($w, $key."\t".$row['label']."\t".$row['c']."\n");
     }
     fclose($w);
     echo $f.'  ';
-    $data = self::edges( $pdo, $filename );
-    $f = $filename.'-edges.csv';
+    $data = self::edges( $pdo, $playcode );
+    $f = $playcode.'-edges.csv';
     $w = fopen($f, 'w');
-    for ($i=0; $i<count($data); $i++) {
-      fwrite($w, implode("\t", $data[$i])."\n");
+    fwrite($w, "Source\tTarget\tWeight\n");
+    foreach ( $data as $key => $row ) {
+      fwrite($w, $row['source']."\t".$row['target']."\t".$row['c']."\n");
     }
     fclose($w);
     echo $f."\n";
@@ -176,7 +184,7 @@ class Dramagraph_Net
       else if ($role['status'] == 'superior') $class .= " superior";
       else if ($role['age'] == 'junior') $class .= " junior";
       else if ($role['age'] == 'veteran') $class .= " veteran";
-      $role['class'] = $class;
+      $role['class'] = trim($class);
       $role['rank'] = $rank;
       $data[$role['code']] = $role;
       $rank++;
@@ -258,7 +266,18 @@ class Dramagraph_Net
     }
     return $data;
   }
-
+  static function cli() {
+    $usage = '
+    usage    : php -f '.basename(__FILE__).' base.sqlite auteur_titre '."\n\n";
+    $timeStart = microtime(true);
+    array_shift($_SERVER['argv']); // shift first arg, the script filepath
+    if (!count($_SERVER['argv'])) exit($usage);
+    $sqlite = array_shift($_SERVER['argv']);
+    $pdo = new PDO('sqlite:'.$sqlite);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    $playcode = array_shift($_SERVER['argv']);
+    self::gephi( $pdo, $playcode );
+  }
 
 }
 

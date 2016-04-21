@@ -22,7 +22,6 @@ include(dirname(__FILE__).'/Table.php');
 html, body { height: 100%; }
 body { padding: 0 1px 0 0; margin: 0; }
 div.graph { height: 100%; }
-section.page { height: 100%; overflow: visible; }
     </style>
   </head>
   <body>
@@ -41,8 +40,10 @@ if ($play) {
   echo '  <select>';
   echo '<a href="#top">▲</a>';
   echo '</form>';
+  echo '<a id="a3"/>';
+  echo Dramagraph_Net::graph( $pdo, $playcode );
   echo '<section class="page" id="a1">';
-  echo '<form style=" ">';
+  echo '<form style="position: fixed; left: 0; top: 0; z-index: 3">';
   echo Dramagraph_Biblio::select( $pdo, $playcode );
   echo '</form>';
   echo Dramagraph_Table::roles( $pdo, $playcode );
@@ -50,14 +51,11 @@ if ($play) {
   echo '<section class="page"" id="a2">-';
   echo Dramagraph_Table::relations( $pdo, $playcode );
   echo '</section>';
-  echo '<section class="page"" id="a3">';
-  echo Dramagraph_Net::graph( $pdo, $playcode );
-  echo '</section>';
 }
 else {
   echo Dramagraph_Biblio::table( $pdo, null, "?play=%s");
 }
  ?>
-    <script type="text/javascript" src="http://oeuvres.github.io/Teinte/Sortable.js">//</script>
+    <script type="text/javascript" src="../Teinte/Sortable.js">//</script>
   </body>
 </html>
