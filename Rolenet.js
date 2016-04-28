@@ -387,7 +387,7 @@ var src = scripts[scripts.length-1].src;
 
 
 
-  window.Rolenet = function ( canvas, data ) {
+  window.Rolenet = function ( canvas, data, maxNodeSize ) {
     this.src = src; // store the global
     this.workerUrl = this.src.substr( 0, this.src.lastIndexOf("/")+1 )+"sigma/worker.js";
     this.canvas = document.getElementById(canvas);
@@ -425,10 +425,10 @@ var src = scripts[scripts.length-1].src;
         scale : scale, // effect of global size on graph objects
         // labelAlignment: 'center', // linkurous only and not compatible with drag node
         sideMargin: 1,
-        maxNodeSize: 30,
+        maxNodeSize: maxNodeSize,
         minNodeSize: 5,
         minEdgeSize: 1,
-        maxEdgeSize: 40,
+        maxEdgeSize: maxNodeSize,
         minArrowSize: 15,
         maxArrowSize: 20,
         borderSize: 2,

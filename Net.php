@@ -31,16 +31,19 @@ class Dramagraph_Net
   );
 
   /**
-   *
+   * Write the graph html
    */
   public static function graph( $pdo, $playcode )
   {
+    $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
+    $role = $pdo->query("SELECT * FROM role WHERE play = ".$play['id']." ORDER BY c DESC LIMIT 1")->fetch();
     $html = array();
     $id = 'graph_'.$playcode;
     $html[] = self::canvas( $id );
     $html[] = '<script> (function () { var data =';
     $html[] = self::sigma( $pdo, $playcode );
-    $html[] = ' var graph = new Rolenet("'.$id.'", data ); //';
+
+    $html[] = ' var graph = new Rolenet("'.$id.'", data, "'.( ceil($role['c']/900) ).'" ); //';
     $html[] = " })(); </script>\n";
     return implode("\n", $html);
   }
@@ -105,8 +108,8 @@ class Dramagraph_Net
       // position initiale en cercle, à 1h30
       $angle =  -M_PI - (M_PI*2/$count) *  ($i-1);
       // $angle =  2*M_PI/$count * ($i -1);
-      $x =  number_format(6.0*cos($angle), 4);
-      $y =  number_format(6.0*sin($angle), 4);
+      $x =  number_format( 6.0*cos($angle), 4 );
+      $y =  number_format( 6.0*sin($angle), 4 );
       /*
       // position initiale en ligne
       // $x = $i ;

@@ -19,18 +19,20 @@ class Dramagraph_Table
     $html[] = '<table class="sortable" align="center">';
     $html[] = '  <caption>Table des relations</caption>';
     $html[] = '  <tr>';
+    $html[] = '    <th class="nosort">Relation</th>';
+    $html[] = '    <th class="nosort"></th>';
+    $html[] = '    <th title="Nombre de scènes avec les deux personnages en présence">Scènes</th>';
     $html[] = '    <th title="Quantité de texte de la relation">Texte</th>';
     $html[] = '    <th title="Part de la relation dans le texte">% texte</th>';
-    $html[] = '    <th title="Nombre de scènes avec les deux personnages en présence">Scènes</th>';
     // $html[] = '    <th title="Nombre moyen de personnages parlants sur scène quand les deux sont ensemble">Occupation</th>';
-    $html[] = '    <th title="Nom de personnage">Pers. 1</th>';
-    $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
-    $html[] = '    <th title="Nombre de scènes">Scènes</th>';
-    $html[] = '    <th title="Nombre de répliques">Répliques</th>';
-    $html[] = '    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>';
-    $html[] = '    <th title="Nom de personnage">Pers. 2</th>';
-    $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
-    $html[] = '    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>';
+    // $html[] = '    <th title="Statistiques relatives de chaque peronnage">Pers. 1</th>';
+    // $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
+    // $html[] = '    <th title="Nombre de scènes">Scènes</th>';
+    // $html[] = '    <th title="Nombre de répliques">Répliques</th>';
+    // $html[] = '    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>';
+    // $html[] = '    <th title="Nom de personnage">Pers. 2</th>';
+    // $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
+    // $html[] = '    <th title="Taille moyenne des répliques du personnage dans la relation en lignes (60 signes))">Repl. moy.</th>';
     $html[] = '  </tr>';
     // $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     $sql = "SELECT
@@ -73,16 +75,23 @@ class Dramagraph_Table
           $m2sp = $row['sp'];
         }
         $html[] = '  <tr>';
+        $html[] = '    <td align="right">'.$cast[$m1]['label'].'<br/>'.$cast[$m2]['label'].'</td>';
+        $html[] = '    <td>';
+        $html[] = '        '.ceil( $m1c/60 ).' l. ('.ceil( 100 * $m1c / $c ).' %)';
+        $html[] = '        <br/>'.ceil( $m2c/60 ).' l. ('.ceil( 100 * $m2c / $c ).' %)';
+        $html[] = '    </td>';
+        $html[] = '    <td align="right">'.$confs.'</td>';
         $html[] = '    <td align="right">'.ceil( $c/60 ).' l.</td>';
         $html[] = '    <td align="right">'.ceil( 100 * $c / $play['c'] ).' %</td>';
-        $html[] = '    <td align="right">'.$confs.'</td>';
         // $html[] = '    <td align="right">'.$row['pspeakers']/$c.'</td>';
+        /*
         $html[] = '    <td>'.$cast[$m1]['label'].'</td>';
         $html[] = '    <td align="right">'.ceil( 100 * $m1c / $c ).' %</td>';
         $html[] = '    <td align="right">'.number_format( $m1c/$m1sp/60 , 1, ',', ' ').' l.</td>';
         $html[] = '    <td>'.$cast[$m2]['label'].'</td>';
         $html[] = '    <td align="right">'.ceil( 100 * $m2c / $c ).' %</td>';
         $html[] = '    <td align="right">'.number_format( $m2c/$m2sp/60 , 1, ',', ' ').' l.</td>';
+        */
         $html[] = '  </tr>';
         $m1 = null;
         $m2 = null;
@@ -91,16 +100,11 @@ class Dramagraph_Table
       // monologue
       if ( $row['m1'] == $row['m2'] ) {
         $html[] = '  <tr>';
+        $html[] = '    <td align="right">'.$cast[ $row['m1']]['label'].'</td>';
+        $html[] = '    <td/>';
+        $html[] = '    <td align="right">'.$row['confs'].'</td>';
         $html[] = '    <td align="right">'.ceil( $row['c']/60 ).' l.</td>';
         $html[] = '    <td align="right">'.ceil( 100 * $row['c'] / $play['c'] ).' %</td>';
-        $html[] = '    <td align="right">'.$row['confs'].'</td>';
-        // $html[] = '    <td/>';
-        $html[] = '    <td>'.$cast[$row['m1']]['label'].'</td>';
-        $html[] = '    <td align="right">100 %</td>';
-        $html[] = '    <td align="right">'.number_format( $row['c']/60/$row['sp'] , 1, ',', ' ').' l.</td>';
-        $html[] = '    <td>'.$cast[$row['m1']]['label'].'</td>';
-        $html[] = '    <td align="right">100 %</td>';
-        $html[] = '    <td align="right">'.number_format( $row['c']/60/$row['sp'] , 1, ',', ' ').' l.</td>';
         $html[] = '  </tr>';
         $c = 0;
         $m1 = null;
@@ -137,47 +141,47 @@ class Dramagraph_Table
     $html[] = '  <caption>Table des rôles</caption>';
     $html[] = '  <tr>';
     $html[] = '    <th title="Nom du personnage dans l’ordre de la distribution">Personnage</th>';
+    $html[] = '    <th title="Nombre de scènes où le personnage est présent">Scènes</th>';
     $html[] = '    <th title="Quantité de texte du personnage en lignes (60 signes)">Texte</th>';
     $html[] = '    <th title="Part du personnager dans le texte de la pièce">% texte</th>';
+    $html[] = '    <th title="Nombre de répliques du personnages">Répl.</th>';
     $html[] = '    <th title="Taille moyenne des répliques du personnage, en lignes (60 signes)">Répl. moy.</th>';
     // $html[] = '    <th title="Nombre de rôles interagissant avec le personnage">Interl.</th>';
-    $html[] = '    <th title="Nombre de scènes où le personnage est présent">Scènes</th>';
     $html[] = '    <th title="Présence du personnage en proportion du texte dit de la pièce">Prés.</th>';
     $html[] = '    <th title="Part du texte que le personnage prononce, durant son temps de présence">Txt. % prés.</th>';
-    // $html[] = '    <th title="Nombre de répliques du personnages">Répl.</th>';
     $html[] = '    <th title="Nombre moyen de personnages parlants sur scène au moment où le personnage est présent">Occupation</th>';
     $html[] = '  </tr>';
     $html[] = '  <tr>';
     $html[] = '    <td data-sort="0">[TOUS]</td>';
+    $html[] = '    <td align="right">'.$play['confs'].'</td>';
     $html[] = '    <td align="right">'.number_format($play['c']/60, 0, ',', ' ').' l.</td>';
     $html[] = '    <td align="right">100 %</td>';
+    $html[] = '    <td align="right">'.$play['sp'].'</td>';
     $html[] = '    <td align="right">'.number_format($play['c']/($play['sp']*60), 1, ',', ' ').' l.</td>';
     // $html[] = '    <td align="right" title="Nombre total de personnages">'.$play['roles'].'</td>';
-    $html[] = '    <td align="right">'.$play['confs'].'</td>';
-    $html[] = '    <td align="right">100 %</td>';
+    $html[] = '    <td align="right"></td>';
     // $html[] = '    <td align="right">'.number_format($play['entries']/$play['roles'], 1, ',', ' ').'</td>';
     $html[] = '    <td align="right">'.ceil(100 * $play['c']/$play['pspeakers'])." %</td>";
-    // $html[] = '    <td align="right">'.$play['sp'].'</td>';
     $html[] = '    <td align="right">'.number_format($play['pspeakers']/$play['c'], 1, ',', ' ').' pers.</td>';
     $html[] = '  </tr>';
     $i = 1;
     foreach ($pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY ord") as $role) {
       $html[] = "  <tr>";
       $html[] = '    <td data-sort="'.$i.'" title="'.$role['title'].'">'.$role['label']."</td>";
+      $html[] = '    <td align="right">'.$role['confs'].'</td>';
       $html[] = '    <td align="right">'.number_format($role['c']/60, 0, ',', ' ').' l.</td>';
       $html[] = '    <td align="right">'.ceil(100 * $role['c']/$play['c'])." %</td>";
+      $html[] = '    <td align="right">'.$role['sp']."</td>";
       if ($role['sp']) $html[] = '    <td align="right">'.number_format($role['c']/($role['sp']*60), 1, ',', ' ')." l.</td>";
       else $html[] = '<td align="right">0</td>';
 
       // $html[] = '    <td align="right">'.$role['targets']."</td>";
       /*
       */
-      $html[] = '    <td align="right">'.$role['confs'].'</td>';
       $html[] = '    <td align="right">'.ceil(100 * $role['presence']/$play['c'])." %</td>";
       // $html[] = '    <td align="right">'.$role['entries'].'</td>';
       if ($role['presence']) $html[] = '    <td align="right">'.ceil( 100 * $role['c']/$role['presence'])." %</td>";
       else $html[] = '    <td align="right">0</td>';
-      // $html[] = '    <td align="right">'.$role['sp']."</td>";
       // echo '    <td align="right">'.$node['ic']."</td>\n";
       // echo '    <td align="right">'.$node['isp']."</td>\n";
       // echo '    <td align="right">'.round($node['ic']/$node['isp'])."</td>\n";
