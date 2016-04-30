@@ -107,24 +107,33 @@ var src = scripts[scripts.length-1].src;
       settings('defaultLabelSize') :
       settings('defaultLabelSize') + settings('labelSizeRatio') * (nodeSize - settings('minNodeSize'));
     // default font ?
-    context.font = settings('fontStyle')+' '+fontSize+'px '+settings('font');
 
-    var width = Math.round(context.measureText(node.label).width);
     var height = parseInt(fontSize);
-    var x = Math.round(node[prefix + 'x'] - (width / 2) );
     var y = Math.round(node[prefix + 'y'] + nodeSize);
-    // bg color ?
-    /*
-    context.fillStyle = 'rgba(255, 255, 255, 0.6)';
-    context.fillRect(x-2, y - fontSize + 3, width+4, height);
-    */
+
+    var small = 25;
+    // bg color
+    if ( fontSize <= small) {
+      context.font = fontSize+'px '+settings('font');
+      context.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      var width = Math.round(context.measureText(node.label).width);
+      var x = Math.round(node[prefix + 'x'] - (width / 2) );
+      context.fillRect(x-2, y - fontSize + 3, width+4, height);
+    }
+    else {
+      context.font = settings('fontStyle')+' '+fontSize+'px '+settings('font');
+      var width = Math.round(context.measureText(node.label).width);
+      var x = Math.round(node[prefix + 'x'] - (width / 2) );
+    }
     // text color
     if (settings('labelColor') === 'node')
       context.fillStyle = (node.color || settings('defaultNodeColor'));
     else
       context.fillStyle = settings('defaultLabelColor');
+
     context.fillText( node.label, x, y);
-    if (settings('labelStrokeStyle')) {
+
+    if (settings('labelStrokeStyle') && fontSize > small) {
       context.strokeStyle = settings('labelStrokeStyle');
       context.strokeText(node.label, x, y);
     }
@@ -415,7 +424,7 @@ var src = scripts[scripts.length-1].src;
         labelThreshold: 0,
         labelSize:"proportional",
         labelSizeRatio: 1.5,
-        font: ' "Franklin Gothic Demi", sans-serif', // after fontSize
+        font: ' Tahoma, Geneva, sans-serif', // after fontSize
         fontStyle: ' bold ', // before fontSize
         /* marche mais trop grand avec les commentaires
         labelSize: "proportional",
