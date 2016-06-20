@@ -203,7 +203,7 @@ class Dramagraph_Net
     $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     // load a dic of rowid=>code for roles
     $cast = array();
-    foreach  ($pdo->query("SELECT id, code, label, c FROM role WHERE play = ".$play['id'], PDO::FETCH_ASSOC) as $row) {
+    foreach  ($pdo->query( "SELECT id, code, label, c FROM role WHERE play = ".$play['id'], PDO::FETCH_ASSOC ) as $row) {
       $cast[$row['id']] = $row;
     }
     $sql = "SELECT

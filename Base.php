@@ -7,9 +7,9 @@ include('../Teinte/Doc.php'); // dépendance déclarée
 
 if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
 else if (php_sapi_name() == "cli") {
-  Dramagraph_Load::cli();
+  Dramagraph_Base::cli();
 }
-class Dramagraph_Load {
+class Dramagraph_Base {
   /** Lien à une base SQLite, unique */
   public $pdo;
   /** fichier de la base sqlite */
@@ -485,7 +485,7 @@ class Dramagraph_Load {
     array_shift($_SERVER['argv']); // shift first arg, the script filepath
     if (!count($_SERVER['argv'])) exit($usage);
     $sqlite = array_shift($_SERVER['argv']);
-    $base = new Dramagraph_Load($sqlite);
+    $base = new Dramagraph_Base($sqlite);
     /*
     if (!count($_SERVER['argv'])) exit('
     action  ? (valid|insert|gephi)

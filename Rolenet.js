@@ -75,11 +75,9 @@ var src = scripts[scripts.length-1].src;
 
     context.closePath();
     context.fill();
-    /*
-    context.strokeStyle = "#000";
+    context.strokeStyle = "#999";
     context.lineWidth = 1;
     context.stroke();
-    */
     context.restore();
   };
 
@@ -346,8 +344,8 @@ var src = scripts[scripts.length-1].src;
       context.lineTo(bX - dX*2, bY - dY*2); // 5
       context.lineTo(bX - dX, bY - dY); // 6
       context.lineTo(sX - dX, sY - dY ); // 7
-      context.lineWidth = 1;
-      context.strokeStyle = '#BBB';
+      context.lineWidth = 0.5;
+      context.strokeStyle = '#999';
       context.stroke();
       context.closePath();
       if (settings('bw')) context.fillStyle = settings('defaultEdgeColor');
@@ -414,7 +412,7 @@ var src = scripts[scripts.length-1].src;
         type: 'canvas'
       },
       settings: {
-        defaultEdgeColor: 'rgba(128, 128, 128, 0.1)',
+        defaultEdgeColor: 'rgba(128, 128, 128, 0.2)',
         defaultNodeColor: "rgba(230, 230, 230, 0.7)",
         edgeColor: "default",
         drawLabels: true,
