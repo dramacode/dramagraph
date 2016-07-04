@@ -55,8 +55,7 @@ class Dramagraph_Base {
     if (is_string($p)) {
       $p = array( 'source'=>$p );
     }
-
-    if (STDERR) fwrite(STDERR, $p['source'] );
+    if (STDERR) fwrite(STDERR, $p['source'].'… ' );
     $doc = new Dramagraph_Doc( $p['source'] );
 
     // default is naked, do better for bibdramatique site
@@ -65,16 +64,18 @@ class Dramagraph_Base {
     // the value provided by caller wil override the one extracted from TEI source
     if ( !isset( $p['publisher'] ) ) $p['publisher'] = $play['publisher'];
     if ( !isset( $p['identifier'] ) ) $p['identifier'] = $play['identifier'];
+    if ( !isset( $p['source'] ) ) $p['source'] = null;
 
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, publisher, identifier,  author, title, date, created, issued, acts, verse, genre)
-              VALUES (?,    ?,         ?,           ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?);
+    INSERT INTO play (code, publisher, identifier, source,  author, title, date, created, issued, acts, verse, genre)
+              VALUES (?,    ?,         ?,          ?,       ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
       $p['publisher'],
       $p['identifier'],
+      $p['source'],
       $play['author'],
       $play['title'],
       $play['date'],

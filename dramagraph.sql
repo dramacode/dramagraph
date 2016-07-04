@@ -8,6 +8,7 @@ CREATE TABLE play (
   code       TEXT,    -- nom de fichier sans extension, unique pour la base
   publisher  TEXT,    -- URL de la source XML
   identifier TEXT,    -- URL du site de référence
+  source     TEXT,    -- URL du TEI
   author     TEXT,    -- auteur
   title      TEXT,    -- titre
   date       INTEGER, -- année pertinente
