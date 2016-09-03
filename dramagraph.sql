@@ -6,6 +6,7 @@ CREATE TABLE play (
   -- une pièce
   id         INTEGER, -- rowid auto
   code       TEXT,    -- nom de fichier sans extension, unique pour la base
+  filemtime  INTEGER, -- date de dernière modification du fichier pour update
   publisher  TEXT,    -- URL de la source XML
   identifier TEXT,    -- URL du site de référence
   source     TEXT,    -- URL du TEI
@@ -214,13 +215,17 @@ CREATE INDEX sp_ln ON sp(play, ln);
 CREATE TABLE edge (
   -- destinataires d’une réplique
   id INTEGER,           -- rowid auto
-  play INTEGER REFERENCES play(id), -- id pièce dans la base
-  source INTEGER REFERENCES role(id), -- id de role = source
-  target INTEGER REFERENCES role(id), -- id de role = target
-  sp   INTEGER REFERENCES sp(id),   -- id de réplique = source
+  source INTEGER REFERENCES role(id),  -- id de role = source
+  target INTEGER REFERENCES role(id),  -- id de role = target
+  play   INTEGER REFERENCES play(id),  -- id pièce dans la base
+  act    INTEGER REFERENCES act(id),   -- id d’acte
+  scene  INTEGER REFERENCES scene(id), -- id de scène
+  configuration   INTEGER REFERENCES configuration(id),   -- id de configuration
+  sp   INTEGER REFERENCES sp(id),      -- id de réplique
   PRIMARY KEY(id ASC)
 );
 CREATE INDEX edge_play ON edge(play);
+CREATE INDEX edge_configuration ON edge(configuration);
 CREATE INDEX edge_sp ON edge(sp);
 CREATE INDEX edge_source ON edge(source, target);
 CREATE INDEX edge_target ON edge(target, source);

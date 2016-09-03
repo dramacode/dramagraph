@@ -43,7 +43,7 @@ class Dramagraph_Net
     $html[] = '<script> (function () { var data =';
     $html[] = self::sigma( $pdo, $playcode );
 
-    $html[] = ' var graph = new Rolenet("'.$id.'", data, "'.( ceil($role['c']/900) ).'" ); //';
+    $html[] = ' var graph = new Rolenet("'.$id.'", data, '.( ceil($role['c']/900) ).'); //';
     $html[] = " })(); </script>\n";
     return implode("\n", $html);
   }
@@ -142,21 +142,21 @@ class Dramagraph_Net
    */
   public static function gephi( $pdo, $playcode )
   {
-    $data = self::nodes( $pdo, $playcode );
+    $data = self::nodes( $pdo, $playcode, 'act' );
     $f = $playcode.'-nodes.csv';
     $w = fopen($f, 'w');
-    fwrite($w, "Id\tLabel\tWeight\n");
+    fwrite($w, "Id,Label,Weight\n");
     foreach ( $data as $key => $row ) {
-      fwrite($w, $key."\t".$row['label']."\t".$row['c']."\n");
+      fwrite($w, $key.",".$row['label'].",".$row['c']."\n");
     }
     fclose($w);
     echo $f.'  ';
-    $data = self::edges( $pdo, $playcode );
+    $data = self::edges( $pdo, $playcode, 'act' );
     $f = $playcode.'-edges.csv';
     $w = fopen($f, 'w');
-    fwrite($w, "Source\tTarget\tWeight\n");
+    fwrite($w, "Source,Target,Weight\n");
     foreach ( $data as $key => $row ) {
-      fwrite($w, $row['source']."\t".$row['target']."\t".$row['c']."\n");
+      fwrite($w, $row['source'].",".$row['target'].",".$row['c']."\n");
     }
     fclose($w);
     echo $f."\n";
@@ -211,7 +211,7 @@ class Dramagraph_Net
       edge.target,
       count(sp) AS sp,
       sum(sp.c) AS c,
-      count(DISTINCT configuration) AS confs,
+      count(DISTINCT sp.configuration) AS confs,
       (SELECT c FROM role WHERE edge.source=role.id)+(SELECT c FROM role WHERE edge.target=role.id) AS sort
     FROM edge, sp
     WHERE edge.play = ? AND edge.sp = sp.id

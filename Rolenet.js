@@ -25,10 +25,10 @@ var src = scripts[scripts.length-1].src;
    */
   sigma.utils.dramaSelf = function(x , y, size) {
     return {
-      x1: x - size * 5,
+      x1: x - size * 6,
       y1: y,
       x2: x,
-      y2: y + size * 5
+      y2: y + size * 6
     };
   };
  /**
@@ -99,7 +99,7 @@ var src = scripts[scripts.length-1].src;
     context.save();
     var scale = (settings('scale'))?settings('scale'):1;
     // node size relative to global size
-    var nodeSize = node[prefix + 'size'] * scale;
+    var nodeSize = node[prefix + 'size'] * scale * 0.7;
     // fontSize relative to nodeSize
     var fontSize = (settings('labelSize') === 'fixed') ?
       settings('defaultLabelSize') :
@@ -107,21 +107,24 @@ var src = scripts[scripts.length-1].src;
     // default font ?
 
     var height = parseInt(fontSize);
-    var y = Math.round(node[prefix + 'y'] + nodeSize);
+    var y = Math.round(node[prefix + 'y'] + nodeSize * 0.6);
 
     var small = 25;
+    context.lineWidth = 1;
     // bg color
     if ( fontSize <= small) {
       context.font = fontSize+'px '+settings('font');
-      context.fillStyle = 'rgba(255, 255, 255, 0.6)';
       var width = Math.round(context.measureText(node.label).width);
       var x = Math.round(node[prefix + 'x'] - (width / 2) );
-      context.fillRect(x-2, y - fontSize + 3, width+4, height);
+      context.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      context.fillRect(x-fontSize*0.2, y - fontSize + fontSize/10, width+fontSize*0.4, height);
     }
     else {
       context.font = settings('fontStyle')+' '+fontSize+'px '+settings('font');
       var width = Math.round(context.measureText(node.label).width);
       var x = Math.round(node[prefix + 'x'] - (width / 2) );
+      context.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      context.fillRect(x-fontSize*0.2, y - fontSize + fontSize/10, width+fontSize*0.4, height);
     }
     // text color
     if (settings('labelColor') === 'node')
@@ -131,10 +134,12 @@ var src = scripts[scripts.length-1].src;
 
     context.fillText( node.label, x, y);
 
+    /* border text ?
     if (settings('labelStrokeStyle') && fontSize > small) {
       context.strokeStyle = settings('labelStrokeStyle');
       context.strokeText(node.label, x, y);
     }
+    */
     context.restore();
   };
 
@@ -271,10 +276,12 @@ var src = scripts[scripts.length-1].src;
         aX,
         aY,
         vX,
-        vY;
+        vY
+    ;
+    size= Math.max(size - 5, 0)  ;
     var scale = (settings('scale'))?settings('scale'):1;
     // calculate a size relative to global canvas
-    size = size * scale;
+    size = size * scale * 1.5;
     if (!color)
       switch (edgeColor) {
         case 'source':
@@ -292,7 +299,7 @@ var src = scripts[scripts.length-1].src;
     if (source.id === target.id) {
       if (settings('bw')) context.strokeStyle = settings('defaultEdgeColor');
       else context.strokeStyle = color;
-      context.lineWidth = size / 2;
+      context.lineWidth = size;
       context.beginPath();
       context.moveTo(sX, sY);
       cp = sigma.utils.dramaSelf(sX, sY, size);
@@ -302,48 +309,33 @@ var src = scripts[scripts.length-1].src;
     // target edge, arrow
     else {
 
-
-      var aSize = Math.max(size * 1.5, settings('minArrowSize'));
-      // distance from source to target
-      var d = Math.sqrt(Math.pow(tX - sX, 2) + Math.pow(tY - sY, 2));
-      // diff for arrow line
-      var dX = (tY - sY) * (size/2) / d;
-      var dY = -(tX - sX) * (size/2) / d;
-      var d2X = (tY - sY) * (2+size/2) / d;
-      var d2Y = -(tX - sX) * (2+size/2) / d;
-      // target point of arrow
-      var sSize = source[prefix + 'size'] * scale ;
-      var tSize = target[prefix + 'size'] * scale ;
-      // base of arrowhead
-      var bX = sX + (tX - sX) * (d - tSize - aSize) / d;
-      var bY = sY + (tY - sY) * (d - tSize - aSize) / d;
-
-      var aX = sX + (tX - sX) * ( d - tSize ) / d ;
-      var aY = sY + (tY - sY) * ( d - tSize ) / d ;
-      var a2X = sX + (tX - sX) * ( d - tSize - 2 ) / d;
-      var a2Y = sY + (tY - sY) * ( d - tSize - 2 ) / d ;
-      // diff for arrowhead base
-      var dbX = (tY - sY) * (size*1.5) / d;
-      var dbY = (tX - sX) * (size*1.5) / d;
-
       /*
-                  3
-              1---2 \
-        source       4 target
-              7---6 /
-                  5
+              1---2
+                   \
+        source      3 target
+                   /
+              5---4
       */
 
-
+      // distance from center of source to target
+      var d = Math.sqrt(Math.pow(tX - sX, 2) + Math.pow(tY - sY, 2)) ;
+      // source and target size
+      var sSize = source[prefix + 'size'] * scale ;
+      var tSize = target[prefix + 'size'] * scale ;
       context.beginPath();
       context.globalCompositeOperation='destination-over';
+      // start arrow outside the circle
+      var dX = (tY - sY) * (size/2) / d;
+      var dY = -(tX - sX) * (size/2) / d;
       context.moveTo(sX + dX, sY + dY); // 1
+      var bX = sX + (tX - sX) * (d - tSize - d*0.07 - size*0.5) / d;
+      var bY = sY + (tY - sY) * (d - tSize - d*0.07 - size*0.5) / d;
       context.lineTo(bX + dX, bY + dY); // 2
-      context.lineTo(bX + dX*2, bY + dY*2); // 3
+      var aX = sX + (tX - sX) * ( d - tSize - d*0.07 ) / d ;
+      var aY = sY + (tY - sY) * ( d - tSize - d*0.07 ) / d ;
       context.lineTo(aX , aY ); // 4
-      context.lineTo(bX - dX*2, bY - dY*2); // 5
       context.lineTo(bX - dX, bY - dY); // 6
-      context.lineTo(sX - dX, sY - dY ); // 7
+      context.lineTo(sX - dX, sY - dY ); // 5
       context.lineWidth = 0.5;
       context.strokeStyle = '#999';
       context.stroke();
@@ -354,37 +346,10 @@ var src = scripts[scripts.length-1].src;
 
       context.globalCompositeOperation='source-over';
       context.beginPath();
-      context.lineWidth = 1;
-      context.strokeStyle = '#000000';
+      context.lineWidth = 4;
+      context.strokeStyle = 'rgba(0, 0, 0, 0.7)';
       context.moveTo(bX + dX, bY + dY); // 2
-      context.lineTo(bX + dX*2, bY + dY*2); // 3
-      context.stroke();
-      context.closePath();
-
-      /*
-      context.beginPath();
-      context.lineWidth = 1;
-      context.strokeStyle = '#FFF';
-      context.moveTo(bX + (d2X*2), bY + (d2Y*2) ); // 3
-      context.lineTo(a2X , a2Y ); // 4
-      context.lineTo(bX - (d2X*2), bY - (d2Y*2)); // 5
-      context.stroke();
-      context.closePath();
-      */
-      /*
-      context.beginPath();
-      context.lineWidth = 0.5;
-      context.strokeStyle = '#000';
-      context.moveTo(bX + dX*2, bY + dY*2); // 3
       context.lineTo(aX , aY ); // 4
-      context.lineTo(bX - dX*2, bY - dY*2); // 5
-      context.stroke();
-      context.closePath();
-      */
-      context.beginPath();
-      context.lineWidth = 1;
-      context.strokeStyle = '#000000';
-      context.moveTo(bX - dX*2, bY - dY*2); // 5
       context.lineTo(bX - dX, bY - dY); // 6
       context.stroke();
       context.closePath();
@@ -403,8 +368,12 @@ var src = scripts[scripts.length-1].src;
     this.odata = data;
     //
     var height = this.canvas.offsetHeight;
+    // adjust maxnode size to screen height
+    var scale = Math.max( height, 150) / 700;
+    if ( !maxNodeSize ) maxNodeSize = height/30;
+    else maxNodeSize = maxNodeSize * scale;
     var width = this.canvas.offsetWidth;
-    var scale = Math.max( Math.min(height, width), 200) / 500;
+
     this.sigma = new sigma({
       graph: data,
       renderer: {
@@ -421,7 +390,7 @@ var src = scripts[scripts.length-1].src;
         labelStrokeStyle: "rgba(255, 255, 255, 0.7)",
         labelThreshold: 0,
         labelSize:"proportional",
-        labelSizeRatio: 1.5,
+        labelSizeRatio: 1.2,
         font: ' Tahoma, Geneva, sans-serif', // after fontSize
         fontStyle: ' bold ', // before fontSize
         /* marche mais trop grand avec les commentaires
@@ -429,15 +398,16 @@ var src = scripts[scripts.length-1].src;
         */
         height: height,
         width: width,
-        scale : scale, // effect of global size on graph objects
+        // scale : scale, // effect of global size on graph objects
         // labelAlignment: 'center', // linkurous only and not compatible with drag node
         sideMargin: 1,
         maxNodeSize: maxNodeSize,
         minNodeSize: 5,
         minEdgeSize: 1,
-        maxEdgeSize: maxNodeSize,
-        minArrowSize: 15,
-        maxArrowSize: 20,
+        maxEdgeSize: maxNodeSize*1.5,
+
+        // minArrowSize: 15,
+        // maxArrowSize: 20,
         borderSize: 2,
         outerBorderSize: 3, // stroke size of active nodes
         defaultNodeColor: "#FFF",
@@ -613,13 +583,13 @@ var src = scripts[scripts.length-1].src;
   Rolenet.stopDrag = function( e ) {
     var height = this.dragO.offsetHeight;
     var width = this.dragO.offsetWidth;
-    var scale = Math.max( Math.min(height, width), 200) / 500;
 
     this.removeEventListener( 'mousemove', Rolenet.doDrag, false );
     this.removeEventListener( 'mouseup', Rolenet.stopDrag, false );
     this.sigma.settings( 'height', height );
     this.sigma.settings( 'width', width );
-    this.sigma.settings( 'scale', scale );
+    // var scale = Math.max( height, 150) / 500;
+    // this.sigma.settings( 'scale', scale );
     this.sigma.refresh();
   };
 

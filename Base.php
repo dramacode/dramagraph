@@ -3,7 +3,7 @@
 setlocale(LC_ALL, 'fr_FR.utf8');
 mb_internal_encoding("UTF-8");
 foreach (array('Charline.php', 'Net.php', 'Table.php', 'Doc.php') as $file) include(dirname(__FILE__).'/'.$file);
-include('../Teinte/Doc.php'); // dépendance déclarée
+include(dirname(__FILE__).'/../Teinte/Doc.php'); // dépendance déclarée
 
 if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
 else if (php_sapi_name() == "cli") {
@@ -14,6 +14,9 @@ class Dramagraph_Base {
   public $pdo;
   /** fichier de la base sqlite */
   public $sqlitefile;
+  /** Test de date d’une pièce */
+  private $_sqlmtime;
+
 
   /**
    * Connexion à une base sqlite
@@ -21,6 +24,7 @@ class Dramagraph_Base {
   public function __construct($sqlitefile=null) {
     $this->sqlitefile = $sqlitefile;
     if ($sqlitefile) $this->connect($sqlitefile);
+    $this->_sqlmtime = $this->pdo->prepare("SELECT filemtime FROM play WHERE code = ?");
   }
   /**
    * Connexion à la base
@@ -50,17 +54,26 @@ class Dramagraph_Base {
   /**
    * Charger un XML en base
    */
-  public function insert($p) {
-    $time = microtime(true);
+  public function insert( $p ) {
     if (is_string($p)) {
       $p = array( 'source'=>$p );
     }
+
+    $time = microtime(true);
+    // test freshness
+    $code = pathinfo( $p['source'], PATHINFO_FILENAME);
+    $this->_sqlmtime->execute( array( $code ) );
+    list( $basemtime ) = $this->_sqlmtime->fetch();
+    $this->_sqlmtime->closeCursor();
+    $srcmtime = filemtime( $p['source'] );
+    if ($basemtime && $basemtime == $srcmtime) return;
+
     if (STDERR) fwrite(STDERR, $p['source'].'… ' );
     $doc = new Dramagraph_Doc( $p['source'] );
+    $play = $doc->meta();
 
     // default is naked, do better for bibdramatique site
     $doc->naked();
-    $play = $doc->meta();
     // the value provided by caller wil override the one extracted from TEI source
     if ( !isset( $p['publisher'] ) ) $p['publisher'] = $play['publisher'];
     if ( !isset( $p['identifier'] ) ) $p['identifier'] = $play['identifier'];
@@ -68,11 +81,12 @@ class Dramagraph_Base {
 
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, publisher, identifier, source,  author, title, date, created, issued, acts, verse, genre)
-              VALUES (?,    ?,         ?,          ?,       ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?);
+    INSERT INTO play (code, filemtime, publisher, identifier, source,  author, title, date, created, issued, acts, verse, genre)
+              VALUES (?,    ?,         ?,         ?,          ?,       ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
+      $play['filemtime'],
       $p['publisher'],
       $p['identifier'],
       $p['source'],
@@ -144,9 +158,9 @@ class Dramagraph_Base {
     INSERT INTO stage (play, act, scene, configuration, code, n, cn, wn, ln, c, w, text)
                VALUES (?,    ?,   ?,     ?,             ?,    ?, ?,  ?,  ?,  ?, ?, ?);
     ");
-    $intarget = $this->pdo->prepare("
-    INSERT INTO edge (play, sp, source, target)
-              VALUES (?,    ?,  ?,      ?);
+    $insedge = $this->pdo->prepare("
+    INSERT INTO edge (source, target, play, act, scene, configuration, sp )
+              VALUES (?,      ?,      ?,    ?,   ?,     ?,             ?);
     ");
     // première ligne, nom de colonne, à utiliser comme clé pour la collecte des lignes
     $keys = fgetcsv($stream, 0, "\t");
@@ -257,11 +271,14 @@ class Dramagraph_Base {
           if (!count($conf)); // erreur ?
           // monologue
           else if (1 == count($conf)) {
-            $intarget->execute(array(
+            $insedge->execute(array(
+              $sourceid,
+              $sourceid,
               $playid,
+              $actid,
+              $sceneid,
+              $confid,
               $spid,
-              $sourceid,
-              $sourceid,
             ));
           }
           //
@@ -270,11 +287,14 @@ class Dramagraph_Base {
             // destinataire principal de la réplique
             if ($data['target']) {
               $targetid = $cast[$data['target']]['id'];
-              $intarget->execute(array(
-                $playid,
-                $spid,
+              $insedge->execute(array(
                 $sourceid,
                 $targetid,
+                $playid,
+                $actid,
+                $sceneid,
+                $confid,
+                $spid,
               ));
               // ne doit pas arriver
               // if ($sourceid == $targetid) echo "\n––––– ".$data['label'].' : '.$data['text'].' ';
@@ -286,11 +306,14 @@ class Dramagraph_Base {
               if ($cast[$k]['id'] == $sourceid) continue;
               // déjà fait
               if ($cast[$k]['id'] == $targetid) continue;
-              $intarget->execute(array(
-                $playid,
-                $spid,
+              $insedge->execute(array(
                 $sourceid,
                 $cast[$k]['id'],
+                $playid,
+                $actid,
+                $sceneid,
+                $confid,
+                $spid,
               ));
 
               if (!--$i) break;

@@ -22,9 +22,8 @@ class Dramagraph_Table
     $html[] = '    <th class="nosort">Relation</th>';
     $html[] = '    <th class="nosort"></th>';
     $html[] = '    <th title="Nombre de scènes avec les deux personnages en présence">Scènes</th>';
-    $html[] = '    <th title="Quantité de texte de la relation">Texte</th>';
-    $html[] = '    <th title="Part de la relation dans le texte">% texte</th>';
-    // $html[] = '    <th title="Nombre moyen de personnages parlants sur scène quand les deux sont ensemble">Occupation</th>';
+    $html[] = '    <th title="Quantité de texte de la relation, et part dans la pièce">Texte</th>';
+    $html[] = '    <th title="Nombre moyen de personnages parlants sur scène quand les deux sont ensemble">Occupation</th>';
     // $html[] = '    <th title="Statistiques relatives de chaque peronnage">Pers. 1</th>';
     // $html[] = '    <th title="Part de ce personnage dans la relation">%</th>';
     // $html[] = '    <th title="Nombre de scènes">Scènes</th>';
@@ -42,15 +41,14 @@ class Dramagraph_Table
         edge.target,
         count(sp) AS sp,
         sum(sp.c) AS c,
-        count(DISTINCT configuration) AS confs,
-        (SELECT SUM(c * speakers) FROM configuration WHERE id IN (SELECT DISTINCT sp.configuration)) AS pspeakers
+        count(DISTINCT sp.configuration) AS confs
       FROM edge, sp
       WHERE edge.sp = sp.id AND edge.play = ".$play['id']."
       GROUP BY edge.source, edge.target
       ORDER BY m1, m2
     ";
     // SELECT SUM( c * speakers ) FROM configuration WHERE id IN (SELECT DISTINCT configuration FROM presence WHERE presence.configuration )
-    "SELECT SUM( c * speakers ) FROM configuration, presence WHERE presence.configuration = configuration.id ";
+    $qoccupation = $pdo->prepare( "SELECT 1.0*SUM(c*speakers)/SUM(c) FROM configuration WHERE id IN (SELECT DISTINCT configuration FROM edge WHERE (source=? AND target=?) OR (source=? and target=?))" );
     $m1 = null;
     $m1c = 0;
     $m1sp = 0;
@@ -81,9 +79,9 @@ class Dramagraph_Table
         $html[] = '        <br/>'.ceil( $m2c/60 ).' l. ('.ceil( 100 * $m2c / $c ).' %)';
         $html[] = '    </td>';
         $html[] = '    <td align="right">'.$confs.'</td>';
-        $html[] = '    <td align="right">'.ceil( $c/60 ).' l.</td>';
-        $html[] = '    <td align="right">'.ceil( 100 * $c / $play['c'] ).' %</td>';
-        // $html[] = '    <td align="right">'.$row['pspeakers']/$c.'</td>';
+        $html[] = '    <td align="right">'.ceil( $c/60 ).' l. ('.ceil( 100 * $c / $play['c'] ).' %)</td>';
+        $qoccupation->execute(array( $m1, $m2, $m2, $m1));
+        $html[] = '    <td align="right">'.number_format( current( $qoccupation->fetch() ), 1, ',', ' ').' pers.</td>';
         /*
         $html[] = '    <td>'.$cast[$m1]['label'].'</td>';
         $html[] = '    <td align="right">'.ceil( 100 * $m1c / $c ).' %</td>';
@@ -103,8 +101,8 @@ class Dramagraph_Table
         $html[] = '    <td align="right">'.$cast[ $row['m1']]['label'].'</td>';
         $html[] = '    <td/>';
         $html[] = '    <td align="right">'.$row['confs'].'</td>';
-        $html[] = '    <td align="right">'.ceil( $row['c']/60 ).' l.</td>';
-        $html[] = '    <td align="right">'.ceil( 100 * $row['c'] / $play['c'] ).' %</td>';
+        $html[] = '    <td align="right">'.ceil( $row['c']/60 ).' l. ('.ceil( 100 * $row['c'] / $play['c'] ).' %)</td>';
+        $html[] = '    <td align="right">1,0 pers.</td>';
         $html[] = '  </tr>';
         $c = 0;
         $m1 = null;

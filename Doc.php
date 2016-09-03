@@ -9,6 +9,8 @@ class Dramagraph_Doc {
   private $_xpath;
   /** Chemin original du fichier */
   public $file;
+  /** file freshness */
+  private $_filemtime;
   /** Précharger des transformations courantes */
   static $trans = array();
   /**
@@ -22,8 +24,11 @@ class Dramagraph_Doc {
     $this->_dom->substituteEntities=true;
     $options = LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOWARNING;
     if ($cont) $this->_dom->loadXML($cont, $options);
-    else $this->_dom->load($file, $options);
-    $this->file = $file;
+    else {
+      $this->_dom->load($file, $options);
+      $this->file = $file;
+      $this->_filemtime = filemtime($file);
+    }
   }
   /**
    * Set and return an XPath processor
@@ -119,6 +124,8 @@ class Dramagraph_Doc {
     if ($l > 2*$p) $meta['verse'] = true;
     else if ($p > 2*$l) $meta['verse'] = false;
     else $meta['verse'] = null;
+
+    $meta['filemtime'] = $this->_filemtime;
     return $meta;
   }
   /**

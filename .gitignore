@@ -3,3 +3,5 @@ edition_pdf.php
 *.sqlite
 *.csv
 donjuan*
+
+.DS_Store
