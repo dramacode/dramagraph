@@ -17,14 +17,14 @@ CREATE TABLE play (
   issued     INTEGER, -- année de publication
   roles      INTEGER, -- nombre de personnages en tout
   speakers   INTEGER, -- nombre de personnages parlants
-  proles     INTEGER, -- presence totale de tous les personnage en nombre de signes
-  pspeakers  INTEGER, -- présence totale des personnages parlants (Σ configuration(c*speakers))
-  entries    INTEGER, -- ??? nombre total d’entrées, pour moyennes
+  croles     INTEGER, -- presence totale de tous les personnage en nombre de signes
+  cspeakers  INTEGER, -- présence totale des personnages parlants (Σ configuration(c*speakers))
   acts       INTEGER, -- nombre d’actes, essentiellement 5, 3, 1 ; ajuster pour les prologues
   scenes     INTEGER, -- nombre de scènes
   confs      INTEGER, -- nombre de scènes
   verse      BOOLEAN, -- uniquement si majoritairement en vers, ne pas cocher si chanson mêlée à de la prose
-  genre      TEXT,    -- comedy|tragedy
+  genre      TEXT,    -- nom de genre
+  type       TEXT,    -- comedy|tragedy (terme normalisé)
   c          INTEGER, -- <c> (char) taille en caractères
   w          INTEGER, -- <w> (word) taille en mots
   l          INTEGER, -- <l> taille en vers
@@ -104,14 +104,14 @@ CREATE TABLE configuration (
   label    TEXT,    -- liste de codes de personnage
   roles    INTEGER, -- nombre de rôles présents
   speakers INTEGER, -- nombre de rôles parlants
-  cn       INTEGER, -- numéro du premier caractère
-  wn       INTEGER, -- numéro du premier mot
-  ln       INTEGER, -- numéro du premier vers
   spn      INTEGER, -- numéro de répliques
-  c        INTEGER, -- <c> (char) taille en caractères
-  w        INTEGER, -- <w> (word) taille en mots
-  l        INTEGER, -- <l> taille en vers
   sp       INTEGER, -- <sp> taille en répliques
+  ln       INTEGER, -- numéro du premier vers
+  l        INTEGER, -- <l> taille en vers
+  wn       INTEGER, -- numéro du premier mot
+  w        INTEGER, -- <w> (word) taille en mots
+  cn       INTEGER, -- numéro du premier caractère
+  c        INTEGER, -- <c> (char) taille en caractères
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX configuration_code ON configuration(play, code);
@@ -132,15 +132,17 @@ CREATE TABLE role (
   status    TEXT,     -- pour isoler les confidents, serviteurs, ou pédants
   targets   INTEGER,  -- nombre de destinataires
   sources   INTEGER,  -- nombre d’émetteurs
-  proles    INTEGER,  -- presence totale de tous les personnage en nombre de signes
-  pspeakers INTEGER,  -- présence totale des personnages parlants
-  confs     INTEGER,  -- nombre de configurations
-  presence  INTEGER,  -- temps de présence (en caractères)
-  entries   INTEGER,  -- nombre d’entrées en scène
   c         INTEGER,  -- out <c>, mombre de caractères dits
   w         INTEGER,  -- out <w>, mombre de mots dits
   l         INTEGER,  -- out <l>, nombre de vers dits
   sp        INTEGER,  -- out <sp>, nombre de répliques dites
+  confs     INTEGER,  -- nombre de configurations
+  confspeak INTEGER,  -- nombre de configurations où le personnage parle
+  entries   INTEGER,  -- nombre d’entrées en scène (TODO)
+  presence  INTEGER,  -- temps de présence (en caractères)
+  participation INTEGER,  -- temps de participation, scènes où le personnage parle (en caractères)
+  croles    INTEGER,  -- presence totale de tous les personnage en nombre de signes
+  cspeakers INTEGER,  -- nombre de personnages parlants durant les scènes où
   PRIMARY KEY(id ASC)
 );
 CREATE UNIQUE INDEX role_who ON role(play, code);

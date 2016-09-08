@@ -23,9 +23,11 @@ class Dramagraph_Doc {
     $this->_dom->formatOutput=true;
     $this->_dom->substituteEntities=true;
     $options = LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOWARNING;
-    if ($cont) $this->_dom->loadXML($cont, $options);
+    if ($cont) {
+      if ( !  $this->_dom->loadXML($cont, $options) ) throw new Exception('Unable to load XML');
+    }
     else {
-      $this->_dom->load($file, $options);
+      if ( !  $this->_dom->load($file, $options) ) throw new Exception('Unable to load document: ' . $file);
       $this->file = $file;
       $this->_filemtime = filemtime($file);
     }
@@ -112,9 +114,16 @@ class Dramagraph_Doc {
     $nl = $this->_xpath->query("/*/tei:teiHeader//tei:title");
     if ($nl->length) $meta['title'] = $nl->item(0)->textContent;
     else $meta['title'] = null;
-    $nl = $this->_xpath->query("/*/tei:teiHeader//tei:term[@type='genre']/@subtype");
-    if ($nl->length) $meta['genre'] = $nl->item(0)->nodeValue;
-    else $meta['genre'] = null;
+    // genre
+    $meta['genre'] = null;
+    $meta['type'] = null;
+    $nl = $this->_xpath->query("/*/tei:teiHeader//tei:term[@type='genre']");
+    if ($nl->length) {
+      $el = $nl->item(0);
+      $meta['genre'] = $el->textContent;
+      $type = $el->getAttribute ( "subtype" );
+      if ( $type ) $meta['type'] = $type;
+    }
 
     $meta['acts'] = $this->_xpath->evaluate("count(/*/tei:text/tei:body//tei:*[@type='act'])");
     if (!$meta['acts']) $meta['acts'] = $this->_xpath->evaluate("count(/*/tei:text/tei:body/*[tei:div|tei:div2])");
@@ -184,6 +193,8 @@ class Dramagraph_Doc {
       }
       $role['rend'] = ' '.$n->getAttribute ('rend').' '; // espace séparateur
       $role['sex'] = null;
+      // Théâtre Classique
+      $role['sex'] = $n->getAttribute ('sex');
       $role['age'] = null;
       $role['status'] = null;
       // TODO person/@*

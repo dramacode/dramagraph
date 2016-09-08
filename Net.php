@@ -105,18 +105,20 @@ class Dramagraph_Net
     $i = 1;
     foreach ($nodes as $code=>$node) {
       if (!$code) continue;
+      /*
       // position initiale en cercle, à 1h30
       $angle =  -M_PI - (M_PI*2/$count) *  ($i-1);
       // $angle =  2*M_PI/$count * ($i -1);
       $x =  number_format( 6.0*cos($angle), 4 );
       $y =  number_format( 6.0*sin($angle), 4 );
-      /*
-      // position initiale en ligne
-      // $x = $i ;
-      $y = 1;
-      // $x = -$i*(1-2*($i%2));
-      $x=$i;
       */
+      // position initiale en ligne verticale
+      // $x = $i ;
+      if ( $node['sex'] == 2 ) $x = -0.5*$count ;
+      else if ( $node['sex'] == 1 ) $x = 0.5 * $count;
+      else $x = 0.1 * ($i % 2); // légère variation si rien
+      // if ( $node['status'] == 'inferior' ) $x = 2*$x;
+      $y=$i;
       $col = "";
 
       if (isset(self::$colors[$node['class']])) {
@@ -172,7 +174,7 @@ class Dramagraph_Net
     $rank = 1;
 
     $qact = $pdo->prepare("SELECT act.* FROM presence, configuration, act WHERE act.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.act = act.id ");
-    foreach ($pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY role.c DESC") as $role) {
+    foreach ($pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY role.ord") as $role) {
       // role invisible dans les configurations
       if (!$role['sources']) continue;
       if ($acttype) {

@@ -54,22 +54,29 @@ class Dramagraph_Base {
   /**
    * Charger un XML en base
    */
-  public function insert( $p ) {
+  public function insert( $p, $force = FALSE ) {
     if (is_string($p)) {
       $p = array( 'source'=>$p );
     }
 
     $time = microtime(true);
     // test freshness
-    $code = pathinfo( $p['source'], PATHINFO_FILENAME);
-    $this->_sqlmtime->execute( array( $code ) );
-    list( $basemtime ) = $this->_sqlmtime->fetch();
-    $this->_sqlmtime->closeCursor();
-    $srcmtime = filemtime( $p['source'] );
-    if ($basemtime && $basemtime == $srcmtime) return;
+    if ( !$force ) {
+      $code = pathinfo( $p['source'], PATHINFO_FILENAME);
+      $this->_sqlmtime->execute( array( $code ) );
+      list( $basemtime ) = $this->_sqlmtime->fetch();
+      $this->_sqlmtime->closeCursor();
+      $srcmtime = filemtime( $p['source'] );
+      if ($basemtime && $basemtime == $srcmtime) return;
+    }
 
     if (STDERR) fwrite(STDERR, $p['source'].'… ' );
-    $doc = new Dramagraph_Doc( $p['source'] );
+    try {
+      $doc = new Dramagraph_Doc( $p['source'] );
+    }
+    catch (Exception $e) {
+      return;
+    }
     $play = $doc->meta();
 
     // default is naked, do better for bibdramatique site
@@ -81,8 +88,8 @@ class Dramagraph_Base {
 
     $this->pdo->exec("DELETE FROM play WHERE code = ".$this->pdo->quote($play['code']));
     $q = $this->pdo->prepare("
-    INSERT INTO play (code, filemtime, publisher, identifier, source,  author, title, date, created, issued, acts, verse, genre)
-              VALUES (?,    ?,         ?,         ?,          ?,       ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?);
+    INSERT INTO play (code, filemtime, publisher, identifier, source,  author, title, date, created, issued, acts, verse, genre, type)
+              VALUES (?,    ?,         ?,         ?,          ?,       ?,      ?,     ?,    ?,       ?,      ?,    ?,     ?,     ?);
     ");
     $q->execute(array(
       $play['code'],
@@ -98,6 +105,7 @@ class Dramagraph_Base {
       $play['acts'],
       $play['verse'],
       $play['genre'],
+      $play['type'],
     ));
     $playid = $this->pdo->lastInsertId();
     // roles
@@ -130,20 +138,21 @@ class Dramagraph_Base {
 
 
     $csv = $doc->csv();
+    file_put_contents("test.csv", $csv);
     // placer la chaîne dans un stream pour profiter du parseur fgetscsv
     $stream = fopen('php://memory', 'w+');
     fwrite($stream, $csv);
     rewind($stream);
     $inact = $this->pdo->prepare("
-    INSERT INTO act (play, code, n, label, type, cn, wn, ln)
-            VALUES  (?,    ?,    ?, ?,     ?,    ?,  ?,  ?);
+    INSERT INTO act (play, code, n, label, type, ln, l, wn, cn)
+            VALUES  (?,    ?,    ?, ?,     ?,    ?,  ?,  ?,  ?);
     ");
     $inscene = $this->pdo->prepare("
-    INSERT INTO scene (play, act, code, n, label, type, cn, wn, ln)
-               VALUES (?,    ?,   ?,    ?, ?,     ?,    ?,  ?,  ?);
+    INSERT INTO scene (play, act, code, n, label, type, ln, l, wn, cn)
+               VALUES (?,    ?,   ?,    ?, ?,     ?,    ?,  ?,  ?,  ?);
     ");
     $inconf = $this->pdo->prepare("
-    INSERT INTO configuration (play, act, scene, code, n, label, cn, wn, ln)
+    INSERT INTO configuration (play, act, scene, code, n, label, ln, wn, cn)
                        VALUES (?,    ?,   ?,     ?,   ?,  ?,     ?,  ?,  ?);
     ");
     $inpresence = $this->pdo->prepare("
@@ -151,11 +160,11 @@ class Dramagraph_Base {
                   VALUES (?,    ?,             ?,    ?);
     ");
     $insp = $this->pdo->prepare("
-    INSERT INTO sp (play, act, scene, configuration, role, code, cn, wn, ln, c, w, l, text)
-            VALUES (?,    ?,   ?,     ?,             ?,    ?,    ?,  ?,  ?,  ?, ?, ?, ?);
+    INSERT INTO sp (play, act, scene, configuration, role, code, ln, l, wn, w, cn, c, text)
+            VALUES (?,    ?,   ?,     ?,             ?,    ?,    ?,  ?, ?,  ?, ?,  ?, ?);
     ");
     $instage = $this->pdo->prepare("
-    INSERT INTO stage (play, act, scene, configuration, code, n, cn, wn, ln, c, w, text)
+    INSERT INTO stage (play, act, scene, configuration, code, n, ln, wn, cn, w, c, text)
                VALUES (?,    ?,   ?,     ?,             ?,    ?, ?,  ?,  ?,  ?, ?, ?);
     ");
     $insedge = $this->pdo->prepare("
@@ -171,7 +180,8 @@ class Dramagraph_Base {
     $ln = null;
     $actid = null;
     $sceneid = null;
-    $conf = array();
+    $conf = array(); // personnages présents
+    $speakers = array(); // personnages parlants
     $confid = null; // peut ne pas commencer tout de suite
     while (($values = fgetcsv($stream, 0, "\t")) !== FALSE) {
       // fabriquer un tableau clé valeur avec la ligne csv
@@ -193,9 +203,9 @@ class Dramagraph_Base {
             $data['code'],
             $data['n'],
             $data['label'],
-            $cn,
-            $wn,
             $ln,
+            $wn,
+            $cn,
           ));
           $confid = $this->pdo->lastInsertId();
         }
@@ -203,6 +213,8 @@ class Dramagraph_Base {
           if (STDERR) fwrite(STDERR, "\n\n      NOT UNIQUE scene ? ".$data['code']."\n".$e."\n\n");
         }
         // record the availabe roles for this configuration
+        $conf = array();
+        $speakers = array();
         if ($data['label']) {
           $oldconf = $conf;
           // space separated who codes
@@ -226,8 +238,8 @@ class Dramagraph_Base {
               ));
             }
           }
+          $speakers = array_flip(explode(' ', $data['target']));
         }
-        else $conf = array();
       }
       // réplique
       else if ($data['object'] == 'sp' ) {
@@ -248,12 +260,12 @@ class Dramagraph_Base {
             $confid,
             $sourceid,
             $data['code'],
-            $cn,
-            $wn,
             $ln,
-            $data['c'],
-            $data['w'],
             $data['l'],
+            $wn,
+            $data['w'],
+            $cn,
+            $data['c'],
             $data['text'], // text
           );
           $insp->execute($row);
@@ -268,7 +280,9 @@ class Dramagraph_Base {
         $target = '';
         try {
           // ajouter les destinataires de la réplique, dépend de la conf
-          if (!count($conf)); // erreur ?
+          if (!count($conf)) { // erreur ?
+            if ( STDERR ) fwrite( STDERR, "<sp> not in configuration [".$data['code']."]\n" );
+          }
           // monologue
           else if (1 == count($conf)) {
             $insedge->execute(array(
@@ -284,7 +298,7 @@ class Dramagraph_Base {
           //
           else {
             $targetid = null;
-            // destinataire principal de la réplique
+            // destinataire principal de la réplique (le suivant)
             if ($data['target']) {
               $targetid = $cast[$data['target']]['id'];
               $insedge->execute(array(
@@ -300,7 +314,8 @@ class Dramagraph_Base {
               // if ($sourceid == $targetid) echo "\n––––– ".$data['label'].' : '.$data['text'].' ';
             }
             $i = 1;
-            foreach ($conf as $k=>$null) {
+            // on considère que l’on ne parle pas à un muet
+            foreach ($speakers as $k=>$null) {
               if (!isset($cast[$k])) continue; // error
               // ne se parle pas si plus d’une personne
               if ($cast[$k]['id'] == $sourceid) continue;
@@ -337,9 +352,10 @@ class Dramagraph_Base {
             $data['n'],
             $data['label'],
             $data['type'],
-            $cn,
-            $wn,
             $ln,
+            $data['l'],
+            $wn,
+            $cn,
           ));
           $sceneid = $this->pdo->lastInsertId();
         }
@@ -361,9 +377,10 @@ class Dramagraph_Base {
             $data['n'],
             $data['label'],
             $data['type'],
-            $cn,
-            $wn,
             $ln,
+            $data['l'],
+            $wn,
+            $cn,
           ));
           $actid = $this->pdo->lastInsertId();
         }
@@ -381,11 +398,11 @@ class Dramagraph_Base {
           $confid,
           $data['code'],
           $data['n'],
-          $cn,
-          $wn,
           $ln,
-          $data['c'],
+          $wn,
+          $cn,
           $data['w'],
+          $data['c'],
           $data['text'],
         ));
       }
@@ -421,10 +438,11 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE play SET scenes = (SELECT COUNT(*) FROM scene WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET confs = (SELECT COUNT(*) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET roles = (SELECT COUNT(*) FROM role WHERE play = $playid) WHERE id = $playid;");
-    $this->pdo->exec("UPDATE play SET entries = (SELECT SUM(entries) FROM role WHERE play = $playid) WHERE id = $playid;");
+    // ???
+    // $this->pdo->exec("UPDATE play SET entries = (SELECT SUM(entries) FROM role WHERE play = $playid) WHERE id = $playid;");
 
     $this->pdo->exec("UPDATE act SET sp = (SELECT COUNT(*) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
+    // $this->pdo->exec("UPDATE act SET l = (SELECT SUM(l) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET w = (SELECT SUM(w) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET c = (SELECT SUM(c) FROM sp WHERE sp.act = act.id ) WHERE play = $playid;");
     $this->pdo->exec("UPDATE act SET confs = (SELECT COUNT(DISTINCT configuration) FROM sp WHERE sp.act = act.id) WHERE play = $playid;");
@@ -432,7 +450,7 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE scene SET sp = (SELECT COUNT(*) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET c = (SELECT SUM(c) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET w = (SELECT SUM(w) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE scene SET l = (SELECT SUM(l) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
+    // $this->pdo->exec("UPDATE scene SET l = (SELECT SUM(l) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE scene SET confs = (SELECT COUNT(DISTINCT configuration) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
 
     $this->pdo->exec("UPDATE presence SET c = (SELECT SUM(c) FROM sp WHERE sp.configuration = presence.configuration AND sp.role = presence.role) WHERE play = $playid;");
@@ -444,24 +462,26 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE configuration SET roles = (SELECT COUNT(*) FROM presence WHERE presence.configuration = configuration.id) WHERE play = $playid;");
 
 
-    $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM edge WHERE edge.source = role.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET sources = (SELECT COUNT(DISTINCT source) FROM edge WHERE edge.target = role.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET confs = (SELECT COUNT(DISTINCT configuration) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET confs = (SELECT COUNT(*) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET confspeak = (SELECT COUNT(*) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET presence = (SELECT SUM(configuration.c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id) WHERE play = $playid ");
 
     $this->pdo->exec("UPDATE role SET sp = (SELECT COUNT(*) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET presence = (SELECT SUM(configuration.c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id) WHERE play = $playid ");
+    $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM edge WHERE edge.source = role.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET sources = (SELECT COUNT(DISTINCT source) FROM edge WHERE edge.target = role.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET participation = (SELECT SUM(configuration.c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid ");
     // vu, des faux rôles
     // $this->pdo->exec("DELETE FROM role WHERE play = $playid AND presence IS NULL");
-    $this->pdo->exec("UPDATE play SET proles = (SELECT SUM(c * roles) FROM configuration WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE play SET croles = (SELECT SUM(c * roles) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->commit();
     // stats needing a commit
     $this->pdo->exec("UPDATE configuration SET speakers = (SELECT COUNT(*) FROM presence WHERE presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE play SET pspeakers = (SELECT SUM(c * speakers) FROM configuration WHERE play = $playid) WHERE id = $playid;");
-    $this->pdo->exec("UPDATE role SET pspeakers = (SELECT SUM(configuration.c * configuration.speakers) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET proles = (SELECT SUM(configuration.c * configuration.roles) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id ) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE play SET cspeakers = (SELECT SUM(c * speakers) FROM configuration WHERE play = $playid) WHERE id = $playid;");
+    $this->pdo->exec("UPDATE role SET cspeakers = (SELECT SUM(configuration.c * configuration.speakers) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET croles = (SELECT SUM(configuration.c * configuration.roles) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id ) WHERE play = $playid;");
   }
   /**
    * Insérer des contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
@@ -518,10 +538,13 @@ class Dramagraph_Base {
     */
     $action = "insert";
     if ($action == 'insert') {
-      if (!count($_SERVER['argv'])) exit('
-    insert requires a file or a glob expression to insert XML/TEI play file
-');
+      $force = false;
+      if (!count($_SERVER['argv'])) exit("\n  insert requires a file or a glob expression to insert XML/TEI play file\n");
       foreach ($_SERVER['argv'] as $glob) {
+        if ( $glob == 'force' ) {
+          $force = true;
+          continue;
+        }
         foreach(glob($glob) as $file) {
           $ext = pathinfo ($file, PATHINFO_EXTENSION);
           // seems a list of uri
@@ -533,14 +556,14 @@ class Dramagraph_Base {
               if ( count( $keys ) > count( $values ) ) // less values than keys, fill for a good combine
                 $values = array_merge( $values, array_fill( 0, count( $keys ) - count( $values ), null ) ) ;
               $row = array_combine($keys, $values);
-              $base->insert($row);
+              $base->insert($row, $force);
             }
             fclose($handle);
             // first
           }
           // spécifique Molière
           else if (preg_match('@-livret\.@', $file)) continue;
-          else $base->insert($file);
+          else $base->insert($file, $force);
         }
       }
       $base->pdo->exec("VACUUM");

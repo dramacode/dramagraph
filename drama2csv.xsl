@@ -38,17 +38,17 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:value-of select="$tab"/>
       <xsl:text>type</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>c</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:text>w</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:text>l</xsl:text>
+      <xsl:text>target</xsl:text>
       <xsl:value-of select="$tab"/>
       <xsl:text>ln</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>text</xsl:text>      
+      <xsl:text>l</xsl:text>
       <xsl:value-of select="$tab"/>
-      <xsl:text>target</xsl:text>
+      <xsl:text>w</xsl:text>
+      <xsl:value-of select="$tab"/>
+      <xsl:text>c</xsl:text>
+      <xsl:value-of select="$tab"/>
+      <xsl:text>text</xsl:text>
       <xsl:value-of select="$lf"/>
       <xsl:apply-templates select="/*/tei:text/tei:body/*[.//tei:sp]"/>
     </root>
@@ -95,7 +95,7 @@ Ramasser des informations chiffrées d’une pièce
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <!-- object, type, code, n, l, ln, w, c, source, target, text  -->
+    <!-- object	code	n	label	type	target	c	w	l	ln	text  -->
     <xsl:text>div1</xsl:text>
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="$code"/>
@@ -105,6 +105,12 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$label"/>
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
+    <xsl:value-of select="$tab"/>
+    <!-- target -->
+    <xsl:value-of select="$tab"/>
+    <!-- ln -->
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="count(.//tei:l[not(@part) or @part='I' or @part='i'])"/>
     <xsl:value-of select="$lf"/>
     <!-- Si pas de scène et pas de conf, créer une configuration auto -->
     <xsl:if test="tei:sp and not(.//tei:listPerson)">
@@ -127,6 +133,8 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:value-of select="normalize-space($txt)"/>
       <xsl:value-of select="$tab"/>
       <xsl:text>auto</xsl:text>
+      <xsl:value-of select="$tab"/>
+      <xsl:value-of select="normalize-space($txt)"/>
       <xsl:value-of select="$lf"/>
     </xsl:if>
     <xsl:apply-templates select="*">
@@ -180,6 +188,12 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$label"/>
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
+    <xsl:value-of select="$tab"/>
+    <!-- target -->
+    <xsl:value-of select="$tab"/>
+    <!-- ln -->
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="count(.//tei:l[not(@part) or @part='I' or @part='i'])"/>
     <xsl:value-of select="$lf"/>
     <!--
       Si pas de configuration pour la scène, en créer
@@ -238,7 +252,7 @@ Ramasser des informations chiffrées d’une pièce
         <xsl:number count="tei:listPerson[@type='configuration']" level="any"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:number count="tei:listPerson" level="any"/>        
+        <xsl:number count="tei:listPerson" level="any"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:value-of select="$tab"/>
@@ -256,6 +270,20 @@ Ramasser des informations chiffrées d’une pièce
       </xsl:for-each>  
     </xsl:variable>
     <xsl:value-of select="normalize-space($txt)"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:text>listPerson</xsl:text>
+    <xsl:value-of select="$tab"/>
+    <xsl:variable name="txt2">
+      <xsl:variable name="context" select="ancestor::*[self::tei:div or self::tei:div2 or self::tei:div1 ][1]"/>
+      <xsl:for-each select="key('roles', 'roles')">
+        <xsl:variable name="who" select="."/>
+        <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$who"/>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:value-of select="normalize-space($txt2)"/>
     <xsl:value-of select="$lf"/>
   </xsl:template>
   <!-- Didascalie -->
@@ -285,6 +313,12 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
     <xsl:value-of select="$tab"/>
+    <!-- target -->
+    <xsl:value-of select="$tab"/>
+    <!-- l -->
+    <xsl:value-of select="$tab"/>
+    <!-- ln, verse index -->
+    <xsl:value-of select="$tab"/>
     <xsl:variable name="txt">
       <xsl:variable name="raw">
         <xsl:apply-templates mode="txt"/>
@@ -299,13 +333,10 @@ Ramasser des informations chiffrées d’une pièce
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:value-of select="string-length($txt)"/>
-    <xsl:value-of select="$tab"/>
     <!-- words, compter les mots, algo bête, nombre d’espaces et d’apostrophes  -->
     <xsl:value-of select="1 + string-length($txt) - string-length(translate($txt, concat(' ’', $apos), ''))"/>
-    <!-- no verses waited -->
     <xsl:value-of select="$tab"/>
-    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="string-length($txt)"/>
     <xsl:value-of select="$tab"/>
     <xsl:text>"</xsl:text>
     <xsl:value-of select="translate($txt, $quot, '＂')"/>
@@ -375,28 +406,6 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$who"/>
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="@type"/>
-    <xsl:value-of select="$tab"/>
-    <xsl:variable name="txt">
-      <xsl:apply-templates select="*" mode="txt"/>
-    </xsl:variable>
-    <!-- chars -->
-    <xsl:value-of select="string-length($txt)"/>
-    <xsl:value-of select="$tab"/>
-    <!-- words, compter les mots, algo bête, nombre d’espaces et d’apostrophes  -->
-    <xsl:value-of select="1 + string-length($txt) - string-length(translate($txt, concat(' ’', $apos), ''))"/>
-    <xsl:value-of select="$tab"/>
-    <!-- verses -->
-    <xsl:variable name="countl" select="count(.//tei:l)"/>
-    <xsl:if test="$countl &gt; 0">
-      <xsl:value-of select="$countl"/>
-    </xsl:if>
-    <xsl:value-of select="$tab"/>
-    <!-- verse index -->
-    <xsl:value-of select="tei:l[@n][1]/@n"/>
-    <xsl:value-of select="$tab"/>
-    <xsl:text>"</xsl:text>
-    <xsl:value-of select="translate($txt, $quot, '＂')"/>
-    <xsl:text>"</xsl:text>
     <!-- prefered target -->
     <xsl:value-of select="$tab"/>
     <xsl:choose>
@@ -406,7 +415,31 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:when test="$who-prev != '' and $who != $who-prev">
         <xsl:value-of select="$who-prev"/>
       </xsl:when>
+      <!-- monologue d’une seule tirade -->
+      <xsl:otherwise>
+        <xsl:value-of select="$who"/>
+      </xsl:otherwise>
     </xsl:choose>
+    <xsl:value-of select="$tab"/>
+    <!-- verse index -->
+    <xsl:value-of select=".//tei:l[@n][1]/@n"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:if test=".//tei:l">
+      <xsl:value-of select="count(.//tei:l[not(@part) or @part='I' or @part='i'])"/>
+    </xsl:if>
+    <xsl:value-of select="$tab"/>
+    <xsl:variable name="txt">
+      <xsl:apply-templates select="*" mode="txt"/>
+    </xsl:variable>
+    <!-- words, compter les mots, algo bête, nombre d’espaces et d’apostrophes  -->
+    <xsl:value-of select="1 + string-length($txt) - string-length(translate($txt, concat(' ’', $apos), ''))"/>
+    <xsl:value-of select="$tab"/>
+    <!-- chars -->
+    <xsl:value-of select="string-length($txt)"/>
+    <xsl:value-of select="$tab"/>
+    <xsl:text>"</xsl:text>
+    <xsl:value-of select="translate($txt, $quot, '＂')"/>
+    <xsl:text>"</xsl:text>
     <xsl:value-of select="$lf"/>
     <!-- find <stage> and <listPerson> -->
     <xsl:apply-templates select="*[not(self::tei:speaker)]"/>
