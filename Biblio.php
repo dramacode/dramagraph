@@ -35,7 +35,7 @@ class Dramagraph_Biblio {
       $cell = array();
       foreach ($cols as $key) {
         if ( 'spavg' == $key ) $cell[] = $row['c']/$row['sp']/60;
-        else if ( 'roleavg' == $key ) $cell[] = $row['pspeakers']/$row['c'];
+        else if ( 'roleavg' == $key ) $cell[] = $row['cspeakers']/$row['c'];
         else $cell[] = $row[$key];
       }
       $csv[] = implode( "\t", $cell );
@@ -138,7 +138,7 @@ class Dramagraph_Biblio {
         else if ( 'role' == $key)
           echo '          <td align="right">'.$row['roles'].'</td>';
         else if ( 'roleavg' == $key)
-          echo '          <td align="right">'.number_format($row['pspeakers']/$row['c'], 1, ',', ' ').' pers.</td>';
+          echo '          <td align="right">'.number_format($row['cspeakers']/$row['c'], 1, ',', ' ').' pers.</td>';
         else if ( 'publisher' == $key) {
           if ( $pos = strpos( $row['publisher'], '(' ) ) $row['publisher'] = trim( substr( $row['publisher'], 0, $pos) );
           if ($row['identifier']) echo '          <td><a href="'.$row['identifier'].'">'.$row['publisher'].'</a></td>'."\n";
