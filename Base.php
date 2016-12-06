@@ -66,7 +66,8 @@ class Dramagraph_Base {
       $this->_sqlmtime->execute( array( $code ) );
       list( $basemtime ) = $this->_sqlmtime->fetch();
       $this->_sqlmtime->closeCursor();
-      $srcmtime = filemtime( $p['source'] );
+      if ( strpos( $p['source'], 'http') === 0 ) $srcmtime = 0;
+      else $srctime = filemtime( $p['source'] );
       if ($basemtime && $basemtime == $srcmtime) return;
     }
 
