@@ -24,7 +24,7 @@ body { padding: 0 1px 0 0; margin: 0; }
 div.graph { height: 95%; }
     </style>
   </head>
-  <body>
+  <body id="top">
 <?php
 $sqlite = "test.sqlite";
 $pdo = new PDO('sqlite:'.$sqlite);
@@ -34,27 +34,20 @@ $play = $pdo->query("SELECT * FROM play WHERE code = ".$pdo->quote( $playcode ))
 if ($play) {
   $qobj = $pdo->prepare("SELECT cont FROM object WHERE playcode = ? AND type = ?");
 
-  echo '<form>';
+  echo '<form style="position: fixed; z-index: 3; background: rgba(255, 255, 255, 0.8); font-family: sans-serif; left:0; right: 0; top: 0;  ">';
   echo Dramagraph_Biblio::select( $pdo, $playcode );
+  echo ' <a href="#tables">Tables</a>';
+  echo ' | <a href="#text">Texte</a>';
+  echo ' | <a href="#top">Graphe</a>';
   echo '</form>';
-  echo '<form style="position: fixed; right: 0; top: 0; z-index: 3;">';
-  echo '  <select onchange="location.hash = \'#\'+this.options[this.selectedIndex].value; ">';
-  echo '    <option value="a1">Rôles</option>';
-  echo '    <option value="a2">Relations</option>';
-  echo '    <option value="a3">graphe</option>';
-  echo '    <option value="a4">texte</option>';
-  echo '  <select>';
-  echo '<a href="#top">▲</a>';
-  echo '</form>';
-  echo '<a id="a3"></a>';
   echo Dramagraph_Net::graph( $pdo, $playcode );
-  echo '<section class="page" id="a1">';
+  echo '<section class="page" id="tables"> <p> </p>';
   echo Dramagraph_Table::roles( $pdo, $playcode );
   echo '</section>';
   echo '<section class="page"" id="a2">';
   echo Dramagraph_Table::relations( $pdo, $playcode );
   echo '</section>';
-  echo '<section class="page"" id="a4" style="height: 100%;  ">
+  echo '<section class="page"" id="text" style="height: 100%; margin-left: auto; margin-right: auto; width: 1050px;  ">
   <aside style="height: 100%; width: 250px; overflow: auto; float: left; ">
   ';
   $qobj->execute( array( $playcode, 'charline' ) );
