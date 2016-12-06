@@ -34,7 +34,7 @@ $play = $pdo->query("SELECT * FROM play WHERE code = ".$pdo->quote( $playcode ))
 if ($play) {
   $qobj = $pdo->prepare("SELECT cont FROM object WHERE playcode = ? AND type = ?");
 
-  echo '<form style="position: fixed; z-index: 3; background: rgba(255, 255, 255, 0.8); font-family: sans-serif; left:0; right: 0; top: 0;  ">';
+  echo '<form style="position: fixed; z-index: 3; background: rgba(255, 255, 255, 0.8); font-family: sans-serif; left:0; right: 0; top: 0;  ">  <a href=".?">◤</a> ';
   echo Dramagraph_Biblio::select( $pdo, $playcode );
   echo ' <a href="#tables">Tables</a>';
   echo ' | <a href="#text">Texte</a>';
@@ -66,6 +66,6 @@ else {
   echo Dramagraph_Biblio::table( $pdo, null, "?play=%s");
 }
  ?>
-    <script type="text/javascript" src="../Teinte/Sortable.js">//</script>
+    <script type="text/javascript" src="http://oeuvres.github.io/Teinte/Sortable.js">//</script>
   </body>
 </html>

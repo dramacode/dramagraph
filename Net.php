@@ -129,7 +129,7 @@ class Dramagraph_Net
       }
       // $json_options = JSON_UNESCAPED_UNICODE; // incompatible 5.3
       $json_options = null;
-      $html[] = "    {id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x: $x, y: $y".$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"},';
+      $html[] = "    {id:'".$node['code']."', label:".json_encode($node['label'],  $json_options).", size:".(0+$node['c']).", x:". number_format ($x, 1, '.', '').", y: ".number_format ($y, 1, '.', '').$col.", title: ".json_encode($node['title'],  $json_options).', type:"drama"},';
       $i++;
     }
     $html[] = "  ]";
