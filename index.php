@@ -39,6 +39,7 @@ if ($play) {
   echo ' <a href="#tables">Tables</a>';
   echo ' | <a href="#text">Texte</a>';
   echo ' | <a href="#top">Graphe</a>';
+  echo ' | <a href="data.php">Données</a>';
   echo '</form>';
   echo Dramagraph_Net::graph( $pdo, $playcode );
   echo '<section class="page" id="tables"> <p> </p>';
@@ -63,6 +64,7 @@ if ($play) {
 </section>';
 }
 else {
+  echo ' <a href="data.php">Données</a>';
   echo Dramagraph_Biblio::table( $pdo, null, "?play=%s");
 }
  ?>

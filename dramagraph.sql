@@ -158,9 +158,10 @@ CREATE TABLE presence (
   role     INTEGER REFERENCES role(id), -- id de rôle
   type     TEXT,  -- type de présence (mort, inconscient…)
   c        INT, -- nombre de caractères prononcés par le rôle dans cette configuration
+  sp       INT, -- nombre de répliques de ce rôle dans cette configuration
   PRIMARY KEY(id ASC)
 );
-CREATE INDEX presence_play ON presence(play);
+CREATE INDEX presence_play ON presence(play, configuration, sp);
 CREATE UNIQUE INDEX presence_role ON presence(role, configuration);
 CREATE UNIQUE INDEX presence_configuration ON presence(configuration, role);
 

@@ -67,7 +67,7 @@ class Dramagraph_Base {
       list( $basemtime ) = $this->_sqlmtime->fetch();
       $this->_sqlmtime->closeCursor();
       if ( strpos( $p['source'], 'http') === 0 ) $srcmtime = 0;
-      else $srctime = filemtime( $p['source'] );
+      else $srcmtime = filemtime( $p['source'] );
       if ($basemtime && $basemtime == $srcmtime) return;
     }
 
@@ -455,6 +455,7 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE scene SET confs = (SELECT COUNT(DISTINCT configuration) FROM sp WHERE sp.scene = scene.id) WHERE play = $playid;");
 
     $this->pdo->exec("UPDATE presence SET c = (SELECT SUM(c) FROM sp WHERE sp.configuration = presence.configuration AND sp.role = presence.role) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE presence SET sp = (SELECT count(*) FROM sp WHERE sp.configuration = presence.configuration AND sp.role = presence.role) WHERE play = $playid;");
 
     $this->pdo->exec("UPDATE configuration SET sp = (SELECT COUNT(*) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE configuration SET c = (SELECT SUM(c) FROM sp WHERE sp.configuration = configuration.id) WHERE play = $playid;");

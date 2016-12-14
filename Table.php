@@ -61,7 +61,7 @@ class Dramagraph_Table
     foreach ( $pdo->query( $sql, PDO::FETCH_ASSOC ) as $row ) {
       // $m1 != null && $m2 != null &&
       // 2e ligne
-      if ( $m1 == $row['m1'] && $m2 == $row['m2'] ) {
+      if ( $m1 && $m2 && $m1 == $row['m1'] && $m2 == $row['m2'] ) {
         $c = $c + $row['c'];
         if ( $row['confs'] > $confs ) $confs = $row['confs'];
         if ( $row['source'] == $m1 ) {
@@ -104,7 +104,7 @@ class Dramagraph_Table
         $confs = 0;
       }
       // monologue
-      if ( $row['m1'] == $row['m2'] ) {
+      if ( $row['m1'] && $row['m1'] == $row['m2'] ) {
         $html[] = '  <tr>';
         $html[] = '    <td align="right">'.$cast[ $row['m1']]['label'].'</td>';
         $html[] = '    <td>'.ceil( $row['c']/60 ).' l.'

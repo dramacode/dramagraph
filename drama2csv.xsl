@@ -6,7 +6,7 @@ Ramasser des informations chiffrées d’une pièce
   <!-- CSV -->
   <xsl:output method="text" encoding="UTF-8" indent="yes"/>
   <!-- Lister les rôles en tête, pour des listes par scènes -->
-  <xsl:key name="roles" match="tei:role/@xml:id|tei:person/@xml:id" use="'roles'"/>
+  <xsl:key name="roles" match="tei:role[@xml:id]|tei:person[@xml:id]" use="'roles'"/>
   <!-- Nom du fichier de pièce procédé -->
   <xsl:param name="filename"/>
   <!-- mode -->
@@ -114,33 +114,15 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$lf"/>
     <!-- Si pas de scène et pas de conf, créer une configuration auto -->
     <xsl:if test="tei:sp and not(.//tei:listPerson)">
-      <xsl:text>configuration</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:value-of select="$code"/>
-      <xsl:value-of select="$tab"/>
-      <!-- n -->
-      <xsl:value-of select="$tab"/>
-      <xsl:variable name="txt">
-        <xsl:variable name="context" select="."/>
-        <xsl:for-each select="key('roles', 'roles')">
-          <xsl:variable name="who" select="."/>
-          <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
-            <xsl:text> </xsl:text>
-            <xsl:value-of select="$who"/>
-          </xsl:if>
-        </xsl:for-each>
-      </xsl:variable>
-      <xsl:value-of select="normalize-space($txt)"/>
-      <xsl:value-of select="$tab"/>
-      <xsl:text>auto</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:value-of select="normalize-space($txt)"/>
-      <xsl:value-of select="$lf"/>
+      <xsl:call-template name="conf">
+        <xsl:with-param name="code" select="$code"/>
+      </xsl:call-template>
     </xsl:if>
     <xsl:apply-templates select="*">
       <xsl:with-param name="act" select="$code"/>
     </xsl:apply-templates>
   </xsl:template>
+
   <!-- Scène -->
   <xsl:template match="tei:body/tei:div1/tei:div2 | tei:body/tei:div/tei:div">
     <xsl:param name="act"/>
@@ -199,31 +181,75 @@ Ramasser des informations chiffrées d’une pièce
       Si pas de configuration pour la scène, en créer
       -->
     <xsl:if test="not(.//tei:listPerson)">
-      <xsl:text>configuration</xsl:text>
-      <xsl:value-of select="$tab"/>
-      <xsl:value-of select="$code"/>
-      <xsl:value-of select="$tab"/>
-      <!-- n -->
-      <xsl:value-of select="$tab"/>
-      <xsl:variable name="txt">
-        <xsl:variable name="context" select="."/>
-        <xsl:for-each select="key('roles', 'roles')">
-          <xsl:variable name="who" select="."/>
-          <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
-            <xsl:text> </xsl:text>
-            <xsl:value-of select="$who"/>
-          </xsl:if>
-        </xsl:for-each>
-      </xsl:variable>
-      <xsl:value-of select="normalize-space($txt)"/>
-      <xsl:value-of select="$tab"/>
-      <xsl:text>auto</xsl:text>
-      <xsl:value-of select="$lf"/>
+      <xsl:call-template name="conf">
+        <xsl:with-param name="code" select="$code"/>
+      </xsl:call-template>
     </xsl:if>
     <xsl:apply-templates select="*">
       <xsl:with-param name="act" select="$act"/>
       <xsl:with-param name="scene" select="$code"/>
     </xsl:apply-templates>
+  </xsl:template>
+  
+  <!-- Conf auto -->
+  <xsl:template name="conf">
+    <xsl:param name="code"/>
+    <xsl:text>configuration</xsl:text>
+    <xsl:value-of select="$tab"/>
+    <xsl:value-of select="$code"/>
+    <xsl:value-of select="$tab"/>
+    <!-- n -->
+    <xsl:value-of select="$tab"/>
+    <!--
+    <xsl:variable name="txt">
+      <xsl:variable name="context" select="."/>
+      <xsl:for-each select="key('roles', 'roles')">
+        <xsl:variable name="who" select="@xml:id"/>
+        <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$who"/>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:value-of select="normalize-space($txt)"/>
+    -->
+    <xsl:variable name="whochain">
+      <xsl:for-each select="tei:sp">
+        <xsl:value-of select="@who"/>
+        <xsl:text> </xsl:text>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:call-template name="confexpl">
+      <xsl:with-param name="who" select="concat( normalize-space($whochain), ' ')"/>
+    </xsl:call-template> 
+    <xsl:value-of select="$tab"/>
+    <xsl:text>auto</xsl:text>
+    <xsl:value-of select="$lf"/>
+    
+    
+  </xsl:template>
+  
+  <xsl:template name="confexpl">
+    <xsl:param name="who"/>
+    <xsl:param name="done"/>
+    <xsl:variable name="id" select="substring-before($who, ' ')"/>
+    <xsl:choose>
+      <xsl:when test="normalize-space($who) = ''"/>
+      <xsl:when test="contains ($done, concat(' ', $id, ' '))">
+        <xsl:call-template name="confexpl">
+          <xsl:with-param name="who" select="substring-after($who, ' ')"/>
+          <xsl:with-param name="done" select="concat($done, ' ', $id, ' ')"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$id"/>
+        <xsl:text> </xsl:text>
+        <xsl:call-template name="confexpl">
+          <xsl:with-param name="who" select="substring-after($who, ' ')"/>
+          <xsl:with-param name="done" select="concat($done, ' ', $id, ' ')"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <!-- configuration -->
@@ -276,7 +302,7 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:variable name="txt2">
       <xsl:variable name="context" select="ancestor::*[self::tei:div or self::tei:div2 or self::tei:div1 ][1]"/>
       <xsl:for-each select="key('roles', 'roles')">
-        <xsl:variable name="who" select="."/>
+        <xsl:variable name="who" select="@xml:id"/>
         <xsl:if test="$context/tei:sp[contains(concat(' ', @who, ' '), concat(' ', $who, ' '))]">
           <xsl:text> </xsl:text>
           <xsl:value-of select="$who"/>
