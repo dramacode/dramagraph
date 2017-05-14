@@ -238,7 +238,7 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:when test="contains ($done, concat(' ', $id, ' '))">
         <xsl:call-template name="confexpl">
           <xsl:with-param name="who" select="substring-after($who, ' ')"/>
-          <xsl:with-param name="done" select="concat($done, ' ', $id, ' ')"/>
+          <xsl:with-param name="done" select="$done"/>
         </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
