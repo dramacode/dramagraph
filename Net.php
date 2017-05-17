@@ -112,13 +112,13 @@ class Dramagraph_Net
       $x =  number_format( 6.0*cos($angle), 4 );
       $y =  number_format( 6.0*sin($angle), 4 );
       */
-      // position initiale en ligne verticale
+      // position initiale en ligne horizontale, pour éloigner à droire les pers secondaires
       // $x = $i ;
-      if ( $node['sex'] == 2 ) $x = -0.5*$count ;
-      else if ( $node['sex'] == 1 ) $x = 0.5 * $count;
-      else $x = 0.1 * ($i % 2); // légère variation si rien
+      if ( $node['sex'] == 2 ) $y = -0.5*$count ;
+      else if ( $node['sex'] == 1 ) $y = 0.5 * $count;
+      else $y = 0.1 * ($i % 2); // légère variation si rien
       // if ( $node['status'] == 'inferior' ) $x = 2*$x;
-      $y=$i;
+      $x=$i;
       $col = "";
 
       if (isset(self::$colors[$node['class']])) {

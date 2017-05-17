@@ -192,6 +192,7 @@ class Dramagraph_Base {
       else {
         $data = array_combine($keys, $values);
       }
+      // echo " ——— ".$data['object']."\n";
       // configuration
       if ($data['object'] == 'configuration' ) {
         $confid = null;
@@ -316,7 +317,7 @@ class Dramagraph_Base {
             }
             $i = 1;
             // on considère que l’on ne parle pas à un muet
-            foreach ($speakers as $k=>$null) {
+            foreach ( $speakers as $k=>$null ) {
               if (!isset($cast[$k])) continue; // error
               // ne se parle pas si plus d’une personne
               if ($cast[$k]['id'] == $sourceid) continue;
@@ -331,7 +332,7 @@ class Dramagraph_Base {
                 $confid,
                 $spid,
               ));
-
+              // echo $k."\n";
               if (!--$i) break;
             }
           }
@@ -547,7 +548,7 @@ class Dramagraph_Base {
           $force = true;
           continue;
         }
-        foreach(glob($glob) as $file) {
+        foreach( glob($glob) as $file ) {
           $ext = pathinfo ($file, PATHINFO_EXTENSION);
           // seems a list of uri
           if ($ext == 'csv' || $ext == "txt") {
