@@ -192,7 +192,6 @@ class Dramagraph_Base {
       else {
         $data = array_combine($keys, $values);
       }
-      // echo " ——— ".$data['object']."\n";
       // configuration
       if ($data['object'] == 'configuration' ) {
         $confid = null;
@@ -214,6 +213,7 @@ class Dramagraph_Base {
         catch (Exception $e) {
           if (STDERR) fwrite(STDERR, "\n\n      NOT UNIQUE scene ? ".$data['code']."\n".$e."\n\n");
         }
+        // echo " ——— ".$data['code']."\n";
         // record the availabe roles for this configuration
         $conf = array();
         $speakers = array();

@@ -266,7 +266,7 @@ Ramasser des informations chiffrées d’une pièce
       </xsl:when>
       <xsl:otherwise>
         <xsl:text>listperson</xsl:text>
-        <xsl:number count="tei:listPerson" level="any"/>        
+        <xsl:number count="tei:listPerson" level="any"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:value-of select="$tab"/>
@@ -299,6 +299,7 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:text>listPerson</xsl:text>
     <xsl:value-of select="$tab"/>
+    <!-- ???
     <xsl:variable name="txt2">
       <xsl:variable name="context" select="ancestor::*[self::tei:div or self::tei:div2 or self::tei:div1 ][1]"/>
       <xsl:for-each select="key('roles', 'roles')">
@@ -309,7 +310,8 @@ Ramasser des informations chiffrées d’une pièce
         </xsl:if>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:value-of select="normalize-space($txt2)"/>
+    -->
+    <xsl:value-of select="normalize-space($txt)"/>
     <xsl:value-of select="$lf"/>
   </xsl:template>
   <!-- Didascalie -->
