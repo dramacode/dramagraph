@@ -59,8 +59,10 @@ class Dramagraph_Net
       <div style="position: absolute; bottom: 0; right: 2px; z-index: 2; ">
         <button class="colors but" title="Gris ou couleurs">◐</button>
         <button class="shot but" type="button" title="Prendre une photo">📷</button>
+        <button class="turnleft but" type="button" title="Rotation vers la gauche">⤴</button>
+        <button class="turnright but" type="button" title="Rotation vers la droite">⤵</button>
         <button class="zoomin but" style="cursor: zoom-in; " type="button" title="Grossir">+</button>
-        <button class="zoomout but" style="cursor: zoom-out; " type="button" title="Diminuer">-</button>
+        <button class="zoomout but" style="cursor: zoom-out; " type="button" title="Diminuer">–</button>
         <button class="but restore" type="button" title="Recharger">O</button>
         <button class="mix but" type="button" title="Mélanger le graphe">♻</button>
         <button class="grav but" type="button" title="Démarrer ou arrêter la gravité">►</button>

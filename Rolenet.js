@@ -2,7 +2,7 @@
 var scripts = document.getElementsByTagName("script");
 var src = scripts[scripts.length-1].src;
 
-// sigma autoloader FAILED, synchronism problem, scipt tags in html file is easier than everything
+// sigma autoloader FAILED, synchronism problem, script tags in html file is easier than everything
 ;(function() {
   'use strict';
   /*
@@ -55,8 +55,8 @@ var src = scripts[scripts.length-1].src;
    */
   sigma.canvas.nodes.drama = function(node, context, settings) {
     context.save();
-    // a fefault ratio % size of canvas
-    var scale = (settings('scale'))?settings('scale'):1;
+    // a default ratio % size of canvas
+    var scale = settings('scale') || 1;
     var prefix = settings('prefix') || '';
 
     if ( settings('bw') ) context.fillStyle = settings('defaultNodeColor');
@@ -468,6 +468,20 @@ var src = scripts[scripts.length-1].src;
       els[0].net = this;
       els[0].onclick = function() {
         var c = this.net.sigma.camera; c.goTo({ratio: c.ratio * c.settings('zoomingRatio')});
+      };
+    }
+    var els = this.canvas.getElementsByClassName( 'turnleft' );
+    if (els.length) {
+      els[0].net = this;
+      els[0].onclick = function() {
+        var c = this.net.sigma.camera; c.goTo({ angle: c.angle+( Math.PI*15/180) });
+      };
+    }
+    var els = this.canvas.getElementsByClassName( 'turnright' );
+    if (els.length) {
+      els[0].net = this;
+      els[0].onclick = function() {
+        var c = this.net.sigma.camera; c.goTo({ angle: c.angle-( Math.PI*22.5/180) });
       };
     }
 
