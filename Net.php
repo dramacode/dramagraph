@@ -42,8 +42,8 @@ class Dramagraph_Net
     $html[] = self::canvas( $id );
     $html[] = '<script> (function () { var data =';
     $html[] = self::sigma( $pdo, $playcode );
-
-    $html[] = ' var graph = new Rolenet("'.$id.'", data, '.( ceil($role['c']/900) ).'); //';
+    // , '.( ceil($role['c']/900) ).' ne plus fixer la taille maximale du nœud selon la taille du texte
+    $html[] = ' var graph = new Rolenet("'.$id.'", data ); //';
     $html[] = " })(); </script>\n";
     return implode("\n", $html);
   }
@@ -78,8 +78,9 @@ class Dramagraph_Net
    */
   public static function sigma( $pdo, $playcode )
   {
-    $nodes = self::nodes( $pdo, $playcode, 'act' );
-    $edges = self::edges( $pdo, $playcode, 'act' );
+    // filtrer les nœuds qui sont dans les interludes
+    $nodes = self::nodes( $pdo, $playcode, 'scene' );
+    $edges = self::edges( $pdo, $playcode );
     $html = array();
     $html[] = "{ ";
     $html[] = "  edges: [";
@@ -169,19 +170,24 @@ class Dramagraph_Net
   /**
    * Liste de nœuds, pour le graphe, on filtre selon le type d'acte
    */
-  public static function nodes($pdo, $playcode, $acttype=null)
+  public static function nodes( $pdo, $playcode, $scenetype=null )
   {
     $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     $data = array();
     $rank = 1;
+    $qtype = $pdo->prepare("SELECT scene.* FROM presence, configuration, scene WHERE scene.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.scene = scene.id ");
+    // vérifier que le type de scene existe (pb pour les pièce avec juste des actes)
+    $qcount = $pdo->prepare( "SELECT count(*) FROM scene WHERE play = ? AND type = ?");
+    $qcount->execute(array( $play['id'],  $scenetype) );
+    list( $count ) = $qcount->fetch();
+    if ( !$count ) $scenetype = null;
 
-    $qact = $pdo->prepare("SELECT act.* FROM presence, configuration, act WHERE act.type = ? AND presence.role = ? AND presence.configuration = configuration.id AND configuration.act = act.id ");
     foreach ($pdo->query("SELECT * FROM role WHERE role.play = ".$play['id']." ORDER BY role.ord") as $role) {
       // role invisible dans les configurations
       if (!$role['sources']) continue;
-      if ($acttype) {
-        $qact->execute(array($acttype, $role['id']));
-        if (!$qact->fetch()) continue;
+      if ( $scenetype ) {
+        $qtype->execute(array($scenetype, $role['id']));
+        if (!$qtype->fetch()) continue;
       }
       $class = "";
       if ($role['sex'] == 2) $class = "female";
@@ -202,7 +208,7 @@ class Dramagraph_Net
   /**
    * Relations paroles entre les rôles
    */
-  public static function edges( $pdo, $playcode, $acttype = null )
+  public static function edges( $pdo, $playcode )
   {
     $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     // load a dic of rowid=>code for roles

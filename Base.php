@@ -345,7 +345,7 @@ class Dramagraph_Base {
       else if ($data['object'] == 'div2' || $data['type'] == 'scene' ) {
         $sceneid = null;
         // ne pas annuler la configuration, peut courir entre les actes et les scènes
-        if (!$data['type']) $data['type'] = null;
+        if (!$data['type']) $data['type'] = "scene";
         try {
           $inscene->execute(array(
             $playid,
