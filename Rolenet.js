@@ -370,7 +370,7 @@ var src = scripts[scripts.length-1].src;
     var height = this.canvas.offsetHeight;
     // adjust maxnode size to screen height
     var scale = Math.max( height, 150) / 700;
-    if ( !maxNodeSize ) maxNodeSize = height/30;
+    if ( !maxNodeSize ) maxNodeSize = height/25;
     else maxNodeSize = maxNodeSize * scale;
     var width = this.canvas.offsetWidth;
 
@@ -544,14 +544,14 @@ var src = scripts[scripts.length-1].src;
       // adjustSizes: true, // avec iterationsPerRender, resserre trop le réseau
       // linLogMode: true, // oui avec gravité > 1
       gravity: 0.8, // <1 pour le Tartuffe
-      // edgeWeightInfluence: 0.1, // demande iterationsPerRender, désorganise
-      // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
+      // edgeWeightInfluence: 1, // demande iterationsPerRender, désorganise
+      outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
       // barnesHutOptimize: true, // tartuffe instable
       // barnesHutTheta: 0.1,  // pas d’effet apparent sur si petit graphe
       // scalingRatio: 2, // non, pas compris
-      // outboundAttractionDistribution: true, // pas avec beaucoup de petits rôles
       // strongGravityMode: true, // instable, nécessaire avec outboundAttractionDistribution
-      iterationsPerRender : 20, // important
+      startingIterations : 100,
+      iterationsPerRender : 50, // important
     };
     if (window.Worker) {
       pars.worker = true;

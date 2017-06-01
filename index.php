@@ -41,6 +41,7 @@ if ($play) {
   echo ' | <a href="#top">Graphe</a>';
   echo ' | <a href="data.php">Données</a>';
   echo '</form>';
+  echo '<p/>';
   echo Dramagraph_Net::graph( $pdo, $playcode );
   echo '<section class="page" id="tables"> <p> </p>';
   echo Dramagraph_Table::roles( $pdo, $playcode );
