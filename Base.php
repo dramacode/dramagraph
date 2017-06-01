@@ -139,7 +139,7 @@ class Dramagraph_Base {
 
 
     $csv = $doc->csv();
-    file_put_contents("test.csv", $csv);
+    file_put_contents("test-play.csv", $csv);
     // placer la chaîne dans un stream pour profiter du parseur fgetscsv
     $stream = fopen('php://memory', 'w+');
     fwrite($stream, $csv);
@@ -225,13 +225,15 @@ class Dramagraph_Base {
           foreach ($conf as $k=>$v) {
             // a stage entry
             if (!isset($oldconf[$k])) {
-              if (!isset($cast[$k]['entries']) || !$cast[$k]['entries']) $cast[$k]['entries'] = 1;
+              if ( !isset($cast[$k]) ); // bug @who
+              else if (!isset($cast[$k]['entries']) || !$cast[$k]['entries']) $cast[$k]['entries'] = 1;
               else $cast[$k]['entries']++;
             }
-            if (STDERR && !isset($cast[$k])) {
-              fwrite(STDERR, 'person/@corresp="'.$k. '" unknown role ['.$data['code']."]\n");
+            if (STDERR && ( !isset($cast[$k]) || !isset($cast[$k]['id']) ) ) {
+              fwrite(STDERR, "\n".'person/@corresp="'.$k. '" unknown role ['.$data['code']."]");
             }
             else {
+              if ( !isset($cast[$k]['id']) ) print_r( $cast );
               $inpresence->execute(array(
                 $playid,
                 $confid,
@@ -245,8 +247,14 @@ class Dramagraph_Base {
       }
       // réplique
       else if ($data['object'] == 'sp' ) {
-        if (!isset($cast[$data['label']]) && STDERR) fwrite(STDERR, "sp/@who not in castlist ".$data['label']. " [".$data['code']."]\n");
-        if (!isset($conf[$data['label']]) && STDERR) fwrite(STDERR, 'sp/@who="'.$data['label'].'" not in configuration '.$confid.' ("'.implode('", "', array_keys($conf)).'")  ['.$data['code']."]\n");
+        if (!isset($cast[$data['label']]) && STDERR) {
+          fwrite(STDERR, "\nsp/@who not in castlist ".$data['label']. " [".$data['code']."]");
+          continue;
+        }
+        if (!isset($conf[$data['label']]) && STDERR) {
+          fwrite(STDERR, 'sp/@who="'.$data['label'].'" not in configuration '.$confid.' ("'.implode('", "', array_keys($conf)).'")  ['.$data['code']."]\n");
+          continue;
+        }
         if (!$data['c']) {
           if (STDERR) fwrite(STDERR, "Empty <sp> [".$data['code']."]\n");
           continue;
@@ -301,7 +309,9 @@ class Dramagraph_Base {
           else {
             $targetid = null;
             // destinataire principal de la réplique (le suivant)
-            if ($data['target']) {
+            if ( !$data['target'] );
+            else if ( !isset( $cast[$data['target']] ) ); // @who error
+            else {
               $targetid = $cast[$data['target']]['id'];
               $insedge->execute(array(
                 $sourceid,
@@ -510,9 +520,9 @@ class Dramagraph_Base {
     // text
     $teinte = new Teinte_Doc($dom);
     $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));
-    $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc('nav') ));
-    $insert->execute(array( $playid, $playcode, 'tocfront', null, $teinte->toc('front') ));
-    $insert->execute(array( $playid, $playcode, 'tocback', null, $teinte->toc('back') ));
+    $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc() ));
+    // $insert->execute(array( $playid, $playcode, 'tocfront', null, $teinte->toc('front') ));
+    // $insert->execute(array( $playid, $playcode, 'tocback', null, $teinte->toc('back') ));
 
     $this->pdo->commit();
   }
@@ -551,11 +561,16 @@ class Dramagraph_Base {
         foreach( glob($glob) as $file ) {
           $ext = pathinfo ($file, PATHINFO_EXTENSION);
           // seems a list of uri
-          if ($ext == 'csv' || $ext == "txt") {
+          if ( $ext == 'tsv' || $ext == 'csv' || $ext == "txt") {
+            if ( $ext == 'tsv' ) $sep = "\t";
+            else if ( $ext == 'csv') $sep = ";";
+            else if ( $ext == "txt" ) $sep = ",";
             $handle = fopen($file, "r");
-            $keys = fgetcsv($handle, 0, "\t");
+            $keys = fgetcsv($handle, 0, $sep);
             while (($values = fgetcsv($handle, 0, "\t")) !== FALSE) {
               if ( count( $values ) < 1) continue;
+              if ( count( $values ) == 1 && !$values[0] ) continue;
+              if ( $values[0][0] == '#' ) continue;
               if ( count( $keys ) > count( $values ) ) // less values than keys, fill for a good combine
                 $values = array_merge( $values, array_fill( 0, count( $keys ) - count( $values ), null ) ) ;
               $row = array_combine($keys, $values);

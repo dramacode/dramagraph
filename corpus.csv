@@ -1,4 +1,5 @@
 source
+
 http://dramacode.github.io/moliere/moliere_amants-magnifiques.xml
 http://dramacode.github.io/moliere/moliere_amour-medecin.xml
 http://dramacode.github.io/moliere/moliere_amphitryon.xml
@@ -8,18 +9,16 @@ http://dramacode.github.io/moliere/moliere_comtesse-escarbagnas.xml
 http://dramacode.github.io/moliere/moliere_critique-ecole-des-femmes.xml
 http://dramacode.github.io/moliere/moliere_depit-amoureux.xml
 http://dramacode.github.io/moliere/moliere_dom-garcie-de-navarre.xml
-http://dramacode.github.io/moliere/moliere_dom-juan.xml
 http://dramacode.github.io/moliere/moliere_ecole-des-femmes.xml
 http://dramacode.github.io/moliere/moliere_ecole-des-maris.xml
 http://dramacode.github.io/moliere/moliere_etourdi.xml
 http://dramacode.github.io/moliere/moliere_facheux.xml
 http://dramacode.github.io/moliere/moliere_femmes-savantes.xml
-http://dramacode.github.io/moliere/moliere_festin-de-pierre-1683.xml
+http://dramacode.github.io/moliere/moliere_festin-de-pierre.xml
 http://dramacode.github.io/moliere/moliere_fourberies-scapin.xml
 http://dramacode.github.io/moliere/moliere_george-dandin.xml
 http://dramacode.github.io/moliere/moliere_impromptu-versailles.xml
 http://dramacode.github.io/moliere/moliere_jalousie-barbouille.xml
-http://dramacode.github.io/moliere/moliere_malade-imaginaire-1675.xml
 http://dramacode.github.io/moliere/moliere_malade-imaginaire.xml
 http://dramacode.github.io/moliere/moliere_mariage-force.xml
 http://dramacode.github.io/moliere/moliere_medecin-malgre-lui.xml
@@ -48,9 +47,7 @@ http://dramacode.github.io/tcp5/corneillep_agesilas.xml
 http://dramacode.github.io/tcp5/corneillep_andromede.xml
 http://dramacode.github.io/tcp5/corneillep_attila.xml
 http://dramacode.github.io/tcp5/corneillep_cid.xml
-http://dramacode.github.io/tcp5/corneillep_cid37.xml
 http://dramacode.github.io/tcp5/corneillep_cinna.xml
-http://dramacode.github.io/tcp5/corneillep_cinna43.xml
 http://dramacode.github.io/tcp5/corneillep_clitandre.xml
 http://dramacode.github.io/tcp5/corneillep_donsanche.xml
 http://dramacode.github.io/tcp5/corneillep_galeriedupalais.xml
@@ -58,7 +55,6 @@ http://dramacode.github.io/tcp5/corneillep_heraclius.xml
 http://dramacode.github.io/tcp5/corneillep_horace.xml
 http://dramacode.github.io/tcp5/corneillep_illusioncomique.xml
 http://dramacode.github.io/tcp5/corneillep_medee.xml
-http://dramacode.github.io/tcp5/corneillep_medee39.xml
 http://dramacode.github.io/tcp5/corneillep_melite.xml
 http://dramacode.github.io/tcp5/corneillep_menteur.xml
 http://dramacode.github.io/tcp5/corneillep_mortpompee.xml
@@ -79,7 +75,6 @@ http://dramacode.github.io/tcp5/corneillep_theodore.xml
 http://dramacode.github.io/tcp5/corneillep_tite.xml
 http://dramacode.github.io/tcp5/corneillep_toison.xml
 http://dramacode.github.io/tcp5/corneillep_veuve.xml
-http://dramacode.github.io/tcp5/corneillep_veuve34.xml
 http://dramacode.github.io/tcp5/corneillet_amouralamode.xml
 http://dramacode.github.io/tcp5/corneillet_ariane.xml
 http://dramacode.github.io/tcp5/corneillet_berenice.xml
@@ -116,9 +111,7 @@ http://dramacode.github.io/tcp5/gillet_campagnard.xml
 http://dramacode.github.io/tcp5/letellier_domjuan.xml
 http://dramacode.github.io/tcp5/moliere_tartuffe64.xml
 http://dramacode.github.io/tcp5/racine_alexandre.xml
-http://dramacode.github.io/tcp5/racine_alexandre66.xml
 http://dramacode.github.io/tcp5/racine_andromaque.xml
-http://dramacode.github.io/tcp5/racine_andromaque68.xml
 http://dramacode.github.io/tcp5/racine_athalie.xml
 http://dramacode.github.io/tcp5/racine_bajazet.xml
 http://dramacode.github.io/tcp5/racine_berenice.xml
@@ -127,11 +120,8 @@ http://dramacode.github.io/tcp5/racine_esther.xml
 http://dramacode.github.io/tcp5/racine_iphigenie.xml
 http://dramacode.github.io/tcp5/racine_mithridate.xml
 http://dramacode.github.io/tcp5/racine_phedre.xml
-http://dramacode.github.io/tcp5/racine_phedre77.xml
 http://dramacode.github.io/tcp5/racine_plaideurs.xml
-http://dramacode.github.io/tcp5/racine_plaideurs69.xml
 http://dramacode.github.io/tcp5/racine_thebaide.xml
-http://dramacode.github.io/tcp5/racine_thebaide64.xml
 http://dramacode.github.io/tcp5/rosimond_avocatsavetier.xml
 http://dramacode.github.io/tcp5/rosimond_festindepierre.xml
 http://dramacode.github.io/tcp5/rotrou_agesilan.xml
@@ -271,3 +261,41 @@ http://dramacode.github.io/bibdramatique/scudery_vassalgenereux.xml
 http://dramacode.github.io/bibdramatique/somaize_precieusesridicules.xml
 http://dramacode.github.io/bibdramatique/somaize_procesprecieuses.xml
 http://dramacode.github.io/bibdramatique/somaize_veritablesprecieuses.xml
+
+# Shakespeare
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-tem.xml
+# http://firstfolio.bodleian.ox.ac.uk/download/xml/F-tgv.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-wiv.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-mm.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-err.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-ado.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-lll.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-mnd.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-mv.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-ayl.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-shr.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-aww.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-tn.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-wt.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-jn.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-r2.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-1h4.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-2h4.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-h5.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-1h6.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-2h6.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-3h6.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-r3.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-h8.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-tro.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-cor.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-tit.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-rom.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-tim.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-jc.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-mac.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-ham.xml
+# http://firstfolio.bodleian.ox.ac.uk/download/xml/F-lr.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-oth.xml
+# http://firstfolio.bodleian.ox.ac.uk/download/xml/F-ant.xml
+http://firstfolio.bodleian.ox.ac.uk/download/xml/F-cym.xml

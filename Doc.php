@@ -8,7 +8,7 @@ class Dramagraph_Doc {
   /** Processeur xpath */
   private $_xpath;
   /** Chemin original du fichier */
-  public $file;
+  public $url;
   /** file freshness */
   private $_filemtime;
   /** Précharger des transformations courantes */
@@ -16,7 +16,7 @@ class Dramagraph_Doc {
   /**
    * Charger un fichier XML
    */
-  public function __construct($file, $cont=null)
+  public function __construct( $url, $cont=null )
   {
     $this->_dom = new DOMDocument();
     $this->_dom->preserveWhiteSpace = false;
@@ -24,12 +24,12 @@ class Dramagraph_Doc {
     $this->_dom->substituteEntities=true;
     $options = LIBXML_NOENT | LIBXML_NONET | LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_COMPACT | LIBXML_PARSEHUGE | LIBXML_NOWARNING;
     if ($cont) {
-      if ( !  $this->_dom->loadXML($cont, $options) ) throw new Exception('Unable to load XML');
+      if ( !$this->_dom->loadXML( $cont, $options ) ) throw new Exception('Unable to load XML');
     }
     else {
-      if ( !  $this->_dom->load($file, $options) ) throw new Exception('Unable to load document: ' . $file);
-      $this->file = $file;
-      if ( strpos($file, 'http') !== 0 ) $this->_filemtime = filemtime($file);
+      if ( !$this->_dom->load( $url, $options ) ) throw new Exception('Unable to load document: ' . $file);
+      $this->url = $url;
+      if ( strpos( $url, 'http') !== 0 ) $this->_filemtime = filemtime( $utl );
     }
   }
   /**
@@ -72,15 +72,17 @@ class Dramagraph_Doc {
   {
     $this->xpath();
     $meta = array();
-    $meta['code'] = pathinfo($this->file, PATHINFO_FILENAME);
+    $meta['code'] = pathinfo( $this->url, PATHINFO_FILENAME );
     // author
     $nl = $this->_xpath->query("/*/tei:teiHeader//tei:author");
-    if (!$nl->length)
+    if (!$nl->length) {
       $meta['author'] = null;
-    else if ($nl->item(0)->hasAttribute("key"))
-      $meta['author'] = $nl->item(0)->getAttribute("key");
-    else
+    }
+    else {
       $meta['author'] = $nl->item(0)->textContent;
+      if ( !$meta['author'] && $nl->item(0)->hasAttribute("key") )
+        $meta['author'] = $nl->item(0)->getAttribute("key");
+    }
     if (($pos = strpos($meta['author'], '('))) $meta['author'] = trim(substr($meta['author'], 0, $pos));
     // publisher
     $nl = $this->_xpath->query("/*/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:publisher");
@@ -175,8 +177,19 @@ class Dramagraph_Doc {
 
       $role['label'] = $n->getAttribute ('n');
       if (!$role['label']) {
-        $role['label'] = rtrim( $this->elValue($n), ' ,');
+        $tlist = $this->_xpath->query("tei:persName", $n);
+        if ( $tlist->length ) $role['label'] = trim( $tlist[0]->textContent );
+        else {
+          $text = array();
+          $tlist = $this->_xpath->query(".//text()[not(ancestor::tei:note)]", $n);
+          foreach ( $tlist as $t ) {
+            $text[] = $t->wholeText;
+          }
+          $role['label'] = trim( implode('', $text) );
+        }
       }
+      // before comma if description
+      $role['label'] = preg_replace( '@[,(\.].*@u', '', $role['label']);
       if (!$role['label']) $role['label'] = $role['code'];
 
       $nl = @$n->parentNode->getElementsByTagName("roleDesc");

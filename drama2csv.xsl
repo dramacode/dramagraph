@@ -53,8 +53,15 @@ Ramasser des informations chiffrées d’une pièce
       <xsl:apply-templates select="/*/tei:text/tei:body/*[.//tei:sp]"/>
     </root>
   </xsl:template>
+  <!-- ex Bodleain -->
+  <xsl:template match="tei:div[@type='play']" priority="3">
+    <xsl:for-each select="tei:div">
+      <xsl:call-template name="act"/>
+    </xsl:for-each>
+  </xsl:template>
+  
   <!-- Acte, some <div> may not have <sp> (intermede, etc) -->
-  <xsl:template match="tei:body/tei:div1 | tei:body/tei:div">
+  <xsl:template match="tei:body/tei:div1 | tei:body/tei:div" name="act">
     <xsl:variable name="code">
       <xsl:choose>
         <xsl:when test="@xml:id">
@@ -112,19 +119,32 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="count(.//tei:l[not(@part) or @part='I' or @part='i'])"/>
     <xsl:value-of select="$lf"/>
-    <!-- Si pas de scène et pas de conf, créer une configuration auto -->
-    <xsl:if test="tei:sp and not(.//tei:listPerson)">
-      <xsl:call-template name="conf">
-        <xsl:with-param name="code" select="$code"/>
-      </xsl:call-template>
-    </xsl:if>
-    <xsl:apply-templates select="*">
-      <xsl:with-param name="act" select="$code"/>
-    </xsl:apply-templates>
+    
+    <xsl:choose>
+      <!-- Si répliques, pas de scènes  -->
+      <xsl:when test="tei:sp">
+        <!-- si pas de conf, en produire une -->
+        <xsl:if test="not(.//tei:listPerson)">
+          <xsl:call-template name="conf">
+            <xsl:with-param name="code" select="$code"/>
+          </xsl:call-template>
+        </xsl:if>
+        <xsl:apply-templates select="*">
+          <xsl:with-param name="act" select="$code"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:for-each select="tei:div2|tei:div">
+          <xsl:call-template name="scene">
+            <xsl:with-param name="act" select="$code"/>
+          </xsl:call-template>
+        </xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Scène -->
-  <xsl:template match="tei:body/tei:div1/tei:div2 | tei:body/tei:div/tei:div">
+  <xsl:template match="tei:div2 | tei:div/tei:div" name="scene">
     <xsl:param name="act"/>
     <xsl:variable name="code">
       <xsl:choose>
@@ -169,7 +189,15 @@ Ramasser des informations chiffrées d’une pièce
     <xsl:value-of select="$tab"/>
     <xsl:value-of select="$label"/>
     <xsl:value-of select="$tab"/>
-    <xsl:value-of select="@type"/>
+    <!-- Fast hack, inherit interlude from act -->
+    <xsl:choose>
+      <xsl:when test="@type and ../@type != 'act'">
+        <xsl:value-of select="../@type"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="@type"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:value-of select="$tab"/>
     <!-- target -->
     <xsl:value-of select="$tab"/>
@@ -215,12 +243,12 @@ Ramasser des informations chiffrées d’une pièce
     -->
     <xsl:variable name="whochain">
       <xsl:for-each select="tei:sp">
-        <xsl:value-of select="@who"/>
+        <xsl:value-of select=" @who"/>
         <xsl:text> </xsl:text>
       </xsl:for-each>
     </xsl:variable>
     <xsl:call-template name="confexpl">
-      <xsl:with-param name="who" select="concat( normalize-space($whochain), ' ')"/>
+      <xsl:with-param name="who" select="concat( normalize-space( translate( $whochain, '#', '' ) ), ' ')"/>
     </xsl:call-template> 
     <xsl:value-of select="$tab"/>
     <xsl:text>auto</xsl:text>
@@ -496,7 +524,7 @@ Ramasser des informations chiffrées d’une pièce
   <xsl:template name="who">
     <xsl:choose>
       <xsl:when test="@who">
-        <xsl:value-of select="substring-before(concat(@who, ' '), ' ')"/>
+        <xsl:value-of select="translate( substring-before(concat(@who, ' '), ' '), '#', '')"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="translate(substring-before(concat(normalize-space(tei:speaker), ' '), ' '), $who1, $who2)"/>

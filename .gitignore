@@ -1,3 +1,4 @@
 edition_pdf.php
 *.sqlite
 .DS_Store
+test*

@@ -16,7 +16,7 @@ class Dramagraph_Table
       $cast[$row['id']] = $row;
     }
     $html = array();
-    $html[] = '<table class="sortable" align="center" cellspacing="0" cellpadding="2">';
+    $html[] = '<table class="sortable" cellspacing="0" cellpadding="2">';
     $html[] = '  <caption>'.$play['author'].'. <i>'.$play['title'].'</i>. Statistiques par relation</caption>';
     $html[] = '  <tr>';
     $html[] = '    <th class="nosort">Relation</th>';
@@ -148,7 +148,7 @@ class Dramagraph_Table
   {
     $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($playcode))->fetch();
     $html = array();
-    $html[] = '<table class="sortable" align="center" cellspacing="0">';
+    $html[] = '<table class="sortable" cellspacing="0">';
     $html[] = '  <caption>'.$play['author'].'. <i>'.$play['title'].'</i>. Table des rôles</caption>';
     $html[] = '  <thead>';
     $html[] = '  <tr>';
