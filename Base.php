@@ -230,7 +230,7 @@ class Dramagraph_Base {
               else $cast[$k]['entries']++;
             }
             if (STDERR && ( !isset($cast[$k]) || !isset($cast[$k]['id']) ) ) {
-              fwrite(STDERR, "\n".'person/@corresp="'.$k. '" unknown role ['.$data['code']."]");
+              fwrite(STDERR, "\n".'person/@corresp="#'.$k. '" unknown role ['.$data['code']."]");
             }
             else {
               if ( !isset($cast[$k]['id']) ) print_r( $cast );
