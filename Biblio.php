@@ -166,9 +166,11 @@ class Dramagraph_Biblio {
        else if ($row['issued']) $date = " (".$row['issued'].") ";
        else $date = ' ; ';
        $title = $row['title'];
-       if ($pos = strpos($title, ' ou ') ) $title = trim( substr( $title, 0, $pos) );
-       if ($pos = strpos($title, ',') ) $title = trim( substr( $title, 0, $pos ) );
-       else if ($pos = strpos($title, '.') ) $title = trim( substr( $title, 0, $pos ) );
+       $max = 100;
+       if ( strlen( $title ) > $max ) {
+         $pos = strpos( $title, ' ', $max);
+         if ( $pos ) $title = substr( $title, 0, $pos );
+       }
        $html[] = '         <option value="'.$row['code'].'"'.$selected.'>'.$row['author'].$date.$title."</option>";
      }
      $html[] = '       </select>';

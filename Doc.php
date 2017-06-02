@@ -29,7 +29,7 @@ class Dramagraph_Doc {
     else {
       if ( !$this->_dom->load( $url, $options ) ) throw new Exception('Unable to load document: ' . $file);
       $this->url = $url;
-      if ( strpos( $url, 'http') !== 0 ) $this->_filemtime = filemtime( $utl );
+      if ( strpos( $url, 'http') !== 0 ) $this->_filemtime = filemtime( $url );
     }
   }
   /**

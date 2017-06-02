@@ -1,11 +1,12 @@
 <?php
 $sqlite = "base.sqlite";
+$dramagraph = '../Dramagraph/';
 
 $playcode = @$_REQUEST['play'];
-include(dirname(__FILE__).'/Biblio.php');
-include(dirname(__FILE__).'/Charline.php');
-include(dirname(__FILE__).'/Net.php');
-include(dirname(__FILE__).'/Table.php');
+include( $dramagraph.'Biblio.php');
+include( $dramagraph.'Charline.php');
+include( $dramagraph.'Net.php');
+include( $dramagraph.'Table.php');
 
 
 
@@ -14,12 +15,12 @@ include(dirname(__FILE__).'/Table.php');
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" charset="utf-8" type="text/css" href="http://oeuvres.github.io/Teinte/tei2html.css"/>
-    <link rel="stylesheet" charset="utf-8" type="text/css" href="dramagraph.css"/>
-    <script src="sigma/sigma.min.js">//</script>
-    <script src="sigma/sigma.layout.forceAtlas2.min.js">//</script>
-    <script src="sigma/sigma.plugins.dragNodes.min.js">//</script>
-    <script src="sigma/sigma.exporters.image.min.js">//</script>
-    <script src="Rolenet.js">//</script>
+    <link rel="stylesheet" charset="utf-8" type="text/css" href="<?php echo $dramagraph ?>dramagraph.css"/>
+    <script src="<?php echo $dramagraph ?>sigma/sigma.min.js">//</script>
+    <script src="<?php echo $dramagraph ?>sigma/sigma.layout.forceAtlas2.min.js">//</script>
+    <script src="<?php echo $dramagraph ?>sigma/sigma.plugins.dragNodes.min.js">//</script>
+    <script src="<?php echo $dramagraph ?>sigma/sigma.exporters.image.min.js">//</script>
+    <script src="<?php echo $dramagraph ?>Rolenet.js">//</script>
     <style>
 div.graph { position: relative; height: 700px; }
     </style>
@@ -69,7 +70,10 @@ echo '<a href=".?">▲</a>
 </main>';
 }
 else {
-  echo '<article style="margin-left: 300px; padding-top: 1rem; padding-right: 2rem; ">';
+  echo '<article style="margin-left: 300px; padding-top: 1rem; padding-right: 2rem; ">
+  <h1>Le Dramagraphe</h1>
+  <p>Le dramagraphe est un outil pour visualiser la distribution du texte dans une pièce de théâtre encodée en XML/TEI (<a href="https://github.com/dramacode/Dramagraph">sources sur GitHub</a>). Le projet est développé par <a href="#" onclick="this.href=\'mailto\u003Afrederic.glorieux\u0040fictif.org\'">Frédéric Glorieux</a>, il a été commencé pour répondre au <a href="http://litlab.stanford.edu/LiteraryLabPamphlet6.pdf">Pamphlet 6</a> de Franco Moretti, afin de vérifier son hypothèse en la généralisant (voir ce <a href="http://resultats.hypotheses.org/644">billet</a>). L’instrument a ensuite servi à la publication en ligne de pièces (par exemple le <a href="http://obvil.paris-sorbonne.fr/corpus/moliere/moliere_tartuffe">Molière</a> du LABEX OBVIL), ou à illustrer des <a href="http://resultats.hypotheses.org/749">études monographiques</a>. Cette installation a pour pour vocation de proposer différents textes classiques, libres de droits, pour situer un chiffre ou une configurations relativement à par exemple : Shakespeare, Sophocle, ou Molière… La bibliographie complète est disponible ci-dessous, cliquer un titre pour voir l‘effet du programme sur un texte.</p>
+  ';
   echo Dramagraph_Biblio::table( $pdo, null, "?play=%s");
   echo '</article>';
 }
