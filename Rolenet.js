@@ -545,13 +545,13 @@ var src = scripts[scripts.length-1].src;
       // linLogMode: true, // oui avec gravité > 1
       gravity: 0.8, // <1 pour le Tartuffe
       // edgeWeightInfluence: 1, // demande iterationsPerRender, désorganise
-      outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
+      // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
       // barnesHutOptimize: true, // tartuffe instable
       // barnesHutTheta: 0.1,  // pas d’effet apparent sur si petit graphe
       // scalingRatio: 2, // non, pas compris
       // strongGravityMode: true, // instable, nécessaire avec outboundAttractionDistribution
       startingIterations : 100,
-      iterationsPerRender : 50, // important
+      iterationsPerRender : 10, // important
     };
     if (window.Worker) {
       pars.worker = true;

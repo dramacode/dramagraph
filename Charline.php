@@ -67,6 +67,60 @@ class Dramagraph_Charline {
     }
     echo '</tr></table>'."\n";
   }
+
+  public static function poph( $value )
+  {
+    return round( 50*log( 10*$value ) ) - 100;
+  }
+
+  /**
+   * Population of speakers on scene scene
+   */
+  public static function population( $pdo, $playcode )
+  {
+    $play = $pdo->query( "SELECT * FROM play where code = ".$pdo->quote( $playcode ) )->fetch();
+    if (!$play) return false;
+    // table nb pers => chars
+    $pers = array();
+    $html = array();
+    $max = 0;
+    $max;
+    $html[] = '<div class="dramapop">';
+    $html[] = '  <div class="right">Nombre de personnages sur scène : ordre temporel et ordre croissant  </div>';
+    $html[] = '  <table class="bars">';
+    $html[] = '    <tr>';
+    // loop on all configurations
+    foreach ( $pdo->query( "SELECT * FROM configuration WHERE play = ".$play['id'] ) as $conf ) {
+      if ( $conf['speakers'] > $max ) $max = $conf['speakers'];
+      $width = ceil( 1000 * $conf['c'] / $play['c'] ) / 10;
+      $html[] = '      <td width="'.$width.'%"><div class="bar" style="height: '.( self::poph( $conf['speakers'] ) ).'px"></div></td>';
+      if ( !isset( $pers[$conf['speakers']] ) ) $pers[$conf['speakers']] = $conf['c'];
+      else $pers[$conf['speakers']] += $conf['c'];
+    }
+    $html[] = '    </tr>';
+    $html[] = '  </table>';
+    // horizontal grid
+    $html[] = '  <div class="hgrid">';
+    for ( $i = 1; $i <= $max; $i++ ) {
+      $html[] = '    <div class="line" style="bottom:'.self::poph($i).'px; padding-left: '. $i .'em">'.$i.'</div>';
+    }
+    $html[] = '  </div>';
+    // cumulative curve
+    $html[] = '  <table class="steps">';
+    $html[] = '    <tr>';
+    for ( $i = 1; $i <= $max; $i++ ) {
+      if ( !isset($pers[$i]) ) continue;
+      $width = ceil( 1000 * $pers[$i] / $play['c'] ) / 10;
+      $html[] = '    <td width="'.$width.'%"><div class="step" style="height: '.self::poph($i).'px;"></div></td>';
+    }
+    $html[] = '    </tr>';
+    $html[] = '  </table>';
+
+    $html[] = '</div>';
+    return implode("\n", $html);
+  }
+
+
   /**
    * Panneau vertical de pièce
    */

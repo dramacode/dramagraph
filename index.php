@@ -22,7 +22,7 @@ include( $dramagraph.'Table.php');
     <script src="<?php echo $dramagraph ?>sigma/sigma.exporters.image.min.js">//</script>
     <script src="<?php echo $dramagraph ?>Rolenet.js">//</script>
     <style>
-div.graph { position: relative; height: 700px; }
+div.graph { position: relative; height: 600px; }
     </style>
   </head>
   <body id="top">
@@ -55,11 +55,10 @@ echo '<a href=".?">▲</a>
 </form>';
   echo '<main style="margin-left: 300px; "><p> </p>';
   echo Dramagraph_Net::graph( $pdo, $playcode );
+  echo Dramagraph_Charline::population( $pdo, $playcode );
   echo '<div style="padding-left: 5rem; padding-right: 2rem; ">';
   echo '<section class="page" id="tables"> <p> </p>';
   echo Dramagraph_Table::roles( $pdo, $playcode );
-  echo '</section>';
-  echo '<section class="page" id="a2">';
   echo Dramagraph_Table::relations( $pdo, $playcode );
   echo '</section> <a id="text"></a>';
   echo '<section style="padding: 2rem; background-color: #FFFFFF; max-width: 800px;  ">';

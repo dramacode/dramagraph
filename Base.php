@@ -443,6 +443,9 @@ class Dramagraph_Base {
    */
   function _sqlstats($playid) {
     $this->pdo->beginTransaction();
+
+
+
     $this->pdo->exec("UPDATE play SET sp = (SELECT COUNT(*) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET l = (SELECT SUM(l) FROM sp WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE play SET w = (SELECT SUM(w) FROM sp WHERE play = $playid) WHERE id = $playid;");
@@ -483,14 +486,18 @@ class Dramagraph_Base {
     $this->pdo->exec("UPDATE role SET l = (SELECT SUM(sp.l) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET w = (SELECT SUM(sp.w) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET c = (SELECT SUM(sp.c) FROM sp WHERE sp.role = role.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM edge WHERE edge.source = role.id) WHERE play = $playid;");
-    $this->pdo->exec("UPDATE role SET sources = (SELECT COUNT(DISTINCT source) FROM edge WHERE edge.target = role.id) WHERE play = $playid;");
     $this->pdo->exec("UPDATE role SET participation = (SELECT SUM(configuration.c) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid ");
     // vu, des faux rôles
     // $this->pdo->exec("DELETE FROM role WHERE play = $playid AND presence IS NULL");
     $this->pdo->exec("UPDATE play SET croles = (SELECT SUM(c * roles) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->commit();
-    // stats needing a commit
+    // stats after commit
+    // delete edges to targets who do not talk in configuration
+    $this->pdo->exec("DELETE FROM edge WHERE id IN ( SELECT edge.id FROM edge, presence, configuration WHERE edge.play = $playid AND edge.target = presence.role AND presence.c IS NULL AND edge.configuration = configuration.id AND presence.configuration = configuration.id  ) ");
+    $this->pdo->exec("UPDATE role SET targets = (SELECT COUNT(DISTINCT target) FROM edge WHERE edge.source = role.id) WHERE play = $playid;");
+    $this->pdo->exec("UPDATE role SET sources = (SELECT COUNT(DISTINCT source) FROM edge WHERE edge.target = role.id) WHERE play = $playid;");
+
+
     $this->pdo->exec("UPDATE configuration SET speakers = (SELECT COUNT(*) FROM presence WHERE presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");
     $this->pdo->exec("UPDATE play SET cspeakers = (SELECT SUM(c * speakers) FROM configuration WHERE play = $playid) WHERE id = $playid;");
     $this->pdo->exec("UPDATE role SET cspeakers = (SELECT SUM(configuration.c * configuration.speakers) FROM configuration, presence WHERE presence.role = role.id AND presence.configuration = configuration.id AND presence.c > 0) WHERE play = $playid;");

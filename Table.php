@@ -172,7 +172,7 @@ class Dramagraph_Table
     $html[] = '    <td>'.number_format($play['c']/60, 0, ',', ' ').' l.</td>';
     $html[] = '    <td>'.number_format($play['c']/60, 0, ',', ' ').' l.</td>';
     $html[] = '    <td>'.ceil(100 * $play['c']/$play['cspeakers'])." %</td>";
-    $html[] = '    <td>'.number_format($play['cspeakers']/60, 0, ',', ' ')." l.</td>";
+    $html[] = '    <td>'.number_format($play['cspeakers']/60, 0, ',', ' ')." l. (100 %)</td>";
     $html[] = '    <td>'.number_format($play['cspeakers']/$play['c'], 1, ',', ' ').' pers.</td>';
     $html[] = '  </tr>';
     $html[] = '  </thead>';
@@ -196,7 +196,7 @@ class Dramagraph_Table
       if ($role['presence']) $html[] = '    <td align="right">'.ceil( 100 * $role['c']/$role['presence']).' %</td>';
       else $html[] = '    <td align="right">0 %</td>';
       // diffusion
-      $html[] = '    <td align="right">'.number_format($role['cspeakers']/60, 0, ',', ' ').' l.</td>';
+      $html[] = '    <td align="right">'.number_format($role['cspeakers']/60, 0, ',', ' ').' l. ('.ceil( 100 * $role['cspeakers']/ $play['cspeakers']).' %)</td>';
       // interlocution
       if ($role['participation']) $html[] = '    <td align="right">'.number_format($role['cspeakers']/$role['participation'], 1, ',', ' ').' pers.</td>';
       else $html[] = '    <td align="right">0</td>';
