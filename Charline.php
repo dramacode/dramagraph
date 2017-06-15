@@ -86,7 +86,7 @@ class Dramagraph_Charline {
     $max = 0;
     $max;
     $html[] = '<div class="dramapop">';
-    $html[] = '  <div class="right">Nombre de personnages sur scène : ordre temporel et ordre croissant  </div>';
+    $html[] = '  <div class="right">Nombre de personnages parlants sur scène : ordre temporel et ordre croissant  </div>';
     $html[] = '  <table class="bars">';
     $html[] = '    <tr>';
     // loop on all configurations

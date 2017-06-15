@@ -543,12 +543,12 @@ var src = scripts[scripts.length-1].src;
       // slowDown: 1,
       // adjustSizes: true, // avec iterationsPerRender, resserre trop le réseau
       // linLogMode: true, // oui avec gravité > 1
-      gravity: 0.8, // <1 pour le Tartuffe
+      gravity: 0.4, // <1 pour le Tartuffe
       // edgeWeightInfluence: 1, // demande iterationsPerRender, désorganise
       // outboundAttractionDistribution: true, // ?, même avec iterationsPerRender
       // barnesHutOptimize: true, // tartuffe instable
       // barnesHutTheta: 0.1,  // pas d’effet apparent sur si petit graphe
-      // scalingRatio: 2, // non, pas compris
+      scalingRatio: 2, // non, pas compris
       // strongGravityMode: true, // instable, nécessaire avec outboundAttractionDistribution
       startingIterations : 100,
       iterationsPerRender : 10, // important
