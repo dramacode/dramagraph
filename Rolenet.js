@@ -506,7 +506,8 @@ var src = scripts[scripts.length-1].src;
           size: size,
           clip: true,
           zoomRatio: 1,
-          labels: false
+          background: "#FFFFFF",
+          labels: false,
         });
       };
     }

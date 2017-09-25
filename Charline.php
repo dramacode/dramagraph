@@ -74,7 +74,7 @@ class Dramagraph_Charline {
   }
 
   /**
-   * Population of speakers on scene scene
+   * Population of speakers on scene
    */
   public static function population( $pdo, $playcode )
   {
@@ -129,9 +129,12 @@ class Dramagraph_Charline {
       'playcode' => null,
       'width' => 230,
       'refsize' => 600,
+      'rythm' => false,
       'prehref' => '',
       'target' => '', // iframe target
     ), $p);
+
+
     if ($p['target']) $p['target'] = ' target="'.$p['target'].'"';
     $play = $pdo->query("SELECT * FROM play where code = ".$pdo->quote($p['playcode']))->fetch();
     $playid = $play['id'];
@@ -176,16 +179,18 @@ class Dramagraph_Charline {
         // Configuration content
         $title = 'Acte '.$act['n'];
         if ($scene) $title .= ', scène '.$scene['n'];
-        $html[] =  '    <div class="conf" style="height: '.($confsize +1).'px;" title="'.$title.'">';
+
+        if ( $p['rythm'] ) $html[] =  '    <div class="conf" style="height: '.($confsize +1).'px;" title="'.$title.'">';
+
         // role bar
-        $html[] =  '      <a'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" class="cast">';
+        $html[] =  '    <a class="cast"'.$p['target'].' href="'.$p['prehref'].'#'.$conf['code'].'" style="height: '.($confsize +1).'px;" title="'.$title.'">';
         $qsp->execute(array($conf['id']));
         // loop on role
         while ($role = $qsp->fetch()) {
           if (!$role['ord']) continue;
-          $rolewidth = number_format($confwidth * $role['ord'] / $conf['c']) ;
+          $rolewidth = number_format(99 * $role['ord'] / $conf['c'], 1, '.', '') ;
           $span = '<span class="role '.$role['rend'].'"';
-          $span .= ' style="width: '.$rolewidth.'px"';
+          $span .= ' style="width: '.$rolewidth.'%"';
           $title = $role['label'].', acte '.$act['n'];
           if ($scene) $title .= ', scène '.$scene['n'];
           $span .= ' title="'.$title.', '.round(100*$role['ord'] / $conf['c']).'%"';
@@ -199,28 +204,30 @@ class Dramagraph_Charline {
           $html[] = $span;
         }
         $html[] = "      </a>";
-        // rythm
-        $html[] = '      <div class="sps">';
-        // courir par 3 pixels, ne pas oublier floor, si la hauteur n’est pas multiple de 3
-        $cstep = floor($conf['c'] / floor($confsize / 3));
-        // take first $sp
-        $cn = $conf['cn'];
-        $qcn->execute( array($conf['id'], $cn));
-        $splast = $qcn->fetch();
-        $first = 1;
-        while ($cn < $conf['cn']+$conf['c']) {
-          $cn = $cn + $cstep +1;
-          $qcn->execute( array($conf['id'], $cn));
-          $sp = $qcn->fetch();
-          $dif = $first + $sp['id'] - $splast['id'];
-          if ($dif>15) $dif = 15;
-          $html[] = '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.($dif*3).'px"> </b></a>';
-          $splast = $sp;
-          $first = 0;
-        }
-        $html[] = "      </div>";
 
-        $html[] = "    </div>";
+        if ( $p['rythm'] ) {
+          // rythm
+          $html[] = '      <div class="sps">';
+          // courir par 3 pixels, ne pas oublier floor, si la hauteur n’est pas multiple de 3
+          $cstep = floor($conf['c'] / floor($confsize / 3));
+          // take first $sp
+          $cn = $conf['cn'];
+          $qcn->execute( array($conf['id'], $cn));
+          $splast = $qcn->fetch();
+          $first = 1;
+          while ($cn < $conf['cn']+$conf['c']) {
+            $cn = $cn + $cstep +1;
+            $qcn->execute( array($conf['id'], $cn));
+            $sp = $qcn->fetch();
+            $dif = $first + $sp['id'] - $splast['id'];
+            if ($dif>15) $dif = 15;
+            $html[] = '<a'.$p['target'].' href="'.$p['prehref'].'#'.$splast['code'].'"><b style="width: '.($dif*3).'px"> </b></a>';
+            $splast = $sp;
+            $first = 0;
+          }
+          $html[] = "      </div>";
+          $html[] = "    </div>";
+        }
       }
       $html[] = "  </div>";
     }

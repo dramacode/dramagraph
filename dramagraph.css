@@ -78,9 +78,9 @@ b.sp20 { height: 60px; }
 b.n { position: absolute; left: 0; font-weight: bold; color: #999; }
 
 .charline div.scene { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.charline div.conf { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.charline div.conf {  }
 .charline .acthead { display: block; text-align: center; padding: 5px  30px 1px 0; clear: both;  }
-.charline a.cast { display: block; height: 100%; float: left; padding-left: 2ex; }
+.charline a.cast { display: block; width: 100%; float: left; margin-bottom: 1px; }
 .charline div.sps { margin-left: 5px; margin-bottom: 1px; float: left; width: 40px; border-right: 1px dotted #CCCCCC; background: #FFFFFF; }
 .charline div.sps a { display: block; line-height: 3px; position: relative; }
 .charline div.sps b { background: #AAAAAA; display: block; }
