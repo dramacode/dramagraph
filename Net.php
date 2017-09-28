@@ -7,6 +7,13 @@ else if (php_sapi_name() == "cli") {
 " Graphe d’interlocution <i>(cliquez ici pour plus d’explications)</i></summary>
   <p>Ce graphe est généré automatiquement à partir du texte balisé de la pièce de théâtre. Chaque pastille est un personnage, dont la taille est proportionnelle à la quantité de paroles qui lui sont attribuées. Les flèches indiquent à qui s’adresse ces paroles. Le placement des pastilles résulte d’un algorithme automatique cherchant à éviter les croisements entre les flèches. Jouer avec les boutons ci-dessous, notamment le mélange aléatoire (♻) et la relance de l’algorithme (►), permet de mieux saisir ce qui est arbitraire, ou déterminé par le poids des paroles, dans la disposition relative des pastilles. Les couleurs sont des convenances facilitant la lecture, elles résultent d’une combinatoire entre sexe, âge, et statut des personnages. Retrouvez <a href="#tables">ci-dessous</a> les tables de données avec lesquelles l’image est produite.</p>
 ";
+Pinche en un disco para desplazarlo. Clic derecho para borrarlo.
+
+S’il est possible de traduire pour les tables en bas :
+Tabla de roles
+Estadísticas por relación
+
+
 */
 /**
  * Visualisation relatives au réseaux de parole
