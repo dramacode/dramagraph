@@ -3,7 +3,7 @@
 setlocale(LC_ALL, 'fr_FR.utf8');
 mb_internal_encoding("UTF-8");
 foreach (array('Charline.php', 'Net.php', 'Table.php', 'Doc.php') as $file) include(dirname(__FILE__).'/'.$file);
-include(dirname(__FILE__).'/../Teinte/Doc.php'); // dépendance déclarée
+// include(dirname(__FILE__).'/../Teinte/Doc.php'); // dépendance déclarée
 
 if (realpath($_SERVER['SCRIPT_FILENAME']) != realpath(__FILE__)); // file is include do nothing
 else if (php_sapi_name() == "cli") {
@@ -433,7 +433,7 @@ class Dramagraph_Base {
     if (STDERR) fwrite(STDERR, " stats: ".number_format(microtime(true) - $time, 3)."s.");
     $time = microtime(true);
 
-    $this->_insobj($doc->dom(), $playid, $play['code']);
+    $this->_insobj($doc, $playid, $play['code']);
     if (STDERR) fwrite(STDERR, " html: ".number_format(microtime(true) - $time, 3)."s.");
     if (STDERR) fwrite(STDERR, "\n");
   }
@@ -506,7 +506,7 @@ class Dramagraph_Base {
   /**
    * Insérer des contenus, à ne pas appeller n’importe comment (demande à ce qu’un TEI soit chargé en DOM)
    */
-  private function _insobj($dom, $playid, $playcode) {
+  private function _insobj($doc, $playid, $playcode) {
     $insert = $this->pdo->prepare("
     INSERT INTO object (play, playcode, type, code, cont)
                 VALUES (?,    ?,        ?,    ?,    ?)
@@ -525,9 +525,12 @@ class Dramagraph_Base {
     $cont = Dramagraph_Table::relations($this->pdo, $playcode);
     $insert->execute(array($playid, $playcode, 'relations', null, $cont));
     // text
-    $teinte = new Teinte_Doc($dom);
-    $insert->execute(array( $playid, $playcode, 'article', null, $teinte->article() ));
-    $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc() ));
+    // $teinte = new Teinte_Doc($dom);
+
+
+    $insert->execute(array( $playid, $playcode, 'article', null, $doc->article() ));
+    // why toc ?
+    // $insert->execute(array( $playid, $playcode, 'toc', null, $teinte->toc() ));
     // $insert->execute(array( $playid, $playcode, 'tocfront', null, $teinte->toc('front') ));
     // $insert->execute(array( $playid, $playcode, 'tocback', null, $teinte->toc('back') ));
 

@@ -265,6 +265,23 @@ class Dramagraph_Doc {
     return self::$trans['drama2csv']->transformToXML($this->_dom);
   }
 
+  /**
+   * Will load an xsl from GitHub
+   */
+  function article()
+  {
+    $key = 'drama2article';
+    if (!isset(self::$trans[$key]) ) {
+      $xsl = new DOMDocument("1.0", "UTF-8");
+      $xsl->load('https://oeuvres.github.io/teinte/xsl/tei_html_article.xsl');
+      self::$trans[$key] = new XSLTProcessor();
+      self::$trans[$key]->importStyleSheet($xsl);
+    }
+    // $trans->setParameter('', 'filename', $play['code']); // ?
+    return self::$trans[$key]->transformToXML($this->_dom);
+  }
+
+
 }
 
 ?>

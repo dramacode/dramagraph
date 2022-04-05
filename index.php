@@ -1,6 +1,6 @@
 <?php
 $sqlite = "base.sqlite";
-$dramagraph = '../Dramagraph/';
+$dramagraph = '';
 
 $playcode = @$_REQUEST['play'];
 include( $dramagraph.'Biblio.php');
@@ -14,7 +14,8 @@ include( $dramagraph.'Table.php');
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" charset="utf-8" type="text/css" href="http://oeuvres.github.io/Teinte/tei2html.css"/>
+    <link rel="stylesheet" charset="utf-8" type="text/css" href="http://oeuvres.github.io/teinte/theme/teinte.css"/>
+    <link rel="stylesheet" charset="utf-8" type="text/css" href="http://oeuvres.github.io/teinte/theme/teinte.sortable.css"/>
     <link rel="stylesheet" charset="utf-8" type="text/css" href="<?php echo $dramagraph ?>dramagraph.css"/>
     <script src="<?php echo $dramagraph ?>sigma/sigma.min.js">//</script>
     <script src="<?php echo $dramagraph ?>sigma/sigma.layout.forceAtlas2.min.js">//</script>
@@ -61,7 +62,7 @@ echo '<a href=".?">▲</a>
   echo Dramagraph_Table::roles( $pdo, $playcode );
   echo Dramagraph_Table::relations( $pdo, $playcode );
   echo '</section> <a id="text"></a>';
-  echo '<section style="padding: 2rem; background-color: #FFFFFF; max-width: 800px;  ">';
+  echo '<section style="padding: 2rem; background-color: #FFFFFF; max-width: 70ex;  ">';
   $qobj->execute( array( $playcode, 'article' ) );
   echo  current( $qobj->fetch(PDO::FETCH_ASSOC)) ;
   echo '</section>
@@ -77,6 +78,6 @@ else {
   echo '</article>';
 }
  ?>
-    <script type="text/javascript" src="http://oeuvres.github.io/Teinte/Sortable.js">//</script>
+    <script type="text/javascript" src="http://oeuvres.github.io/teinte/theme/teinte.sortable.js">//</script>
   </body>
 </html>
